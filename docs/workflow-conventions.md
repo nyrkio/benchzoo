@@ -1,7 +1,7 @@
 # CI workflow conventions
 
 For every framework cataloged in
-[`parser-targets.md`](parser-targets.md), perf-checks ships **both**:
+[`parser-targets.md`](parser-targets.md), benchzoo ships **both**:
 
 1. A `frameworks/<category>/<framework>/` directory containing the sample
    benchmark implementation in that framework's idiom (the canonical
@@ -18,11 +18,11 @@ These workflows serve a dual purpose:
   not hand-curated one-off files — they are produced by an actual CI run.
   Any change in framework version, output format, or platform behavior is
   caught the next time the workflow runs.
-- **Dogfood corpus.** perf-checks's own repository becomes the canonical
+- **Dogfood corpus.** benchzoo's own repository becomes the canonical
   example of "many CI workflows emitting many flavors of benchmark
   output." When the GitHub-API ingest layer is eventually built (see
   *Eventual deployment* in [`design.md`](design.md)), it can be pointed at
-  perf-checks's own repo as the end-to-end regression test for the whole
+  benchzoo's own repo as the end-to-end regression test for the whole
   pipeline: parser, ingest, and (eventually) change detection.
 
 ## Naming convention
@@ -245,7 +245,7 @@ On macOS: `brew install act`.
 ### Image selection
 
 `act`'s default Docker image is intentionally minimal (no `sudo`, no
-Python, no Node, etc.) — most perf-checks workflows will fail on it.
+Python, no Node, etc.) — most benchzoo workflows will fail on it.
 Pick a bigger image either per-invocation:
 
 ```bash
@@ -266,7 +266,7 @@ often enough for simpler workflows that only need common toolchains.
 
 ```bash
 act push -W .github/workflows/hyperfine.yml \
-    --artifact-server-path /tmp/perf-checks-artifacts
+    --artifact-server-path /tmp/benchzoo-artifacts
 ```
 
 Explanation:
@@ -274,14 +274,14 @@ Explanation:
 - `act push` — simulate a `push` event (matching our default trigger).
 - `-W .github/workflows/hyperfine.yml` — run only this one workflow,
   not every workflow in the repo.
-- `--artifact-server-path /tmp/perf-checks-artifacts` — where
+- `--artifact-server-path /tmp/benchzoo-artifacts` — where
   `actions/upload-artifact` outputs go. Without this flag, artifacts
   live inside the ephemeral container and are tedious to retrieve.
 
 After the run, the captured output lands at:
 
 ```
-/tmp/perf-checks-artifacts/<run-id>/<artifact-name>/<file>
+/tmp/benchzoo-artifacts/<run-id>/<artifact-name>/<file>
 ```
 
 ### Simulating a schedule trigger
@@ -292,7 +292,7 @@ simulate the cron trigger:
 
 ```bash
 act schedule -W .github/workflows/<framework>.yml \
-    --artifact-server-path /tmp/perf-checks-artifacts
+    --artifact-server-path /tmp/benchzoo-artifacts
 ```
 
 ### What act can't do
@@ -312,7 +312,7 @@ act schedule -W .github/workflows/<framework>.yml \
 
 ### Secrets
 
-Most perf-checks workflows are read-only and need no secrets. If one
+Most benchzoo workflows are read-only and need no secrets. If one
 does, pass them via `--secret` or `--secret-file`:
 
 ```bash
@@ -329,7 +329,7 @@ A framework is considered "shipped" when:
    implementation in that framework's idiom.
 2. `.github/workflows/<framework>.yml` exists, runs green, and uploads
    the output artifact.
-3. The corresponding parser in `src/perf_checks/parsers/` (or wherever
+3. The corresponding parser in `src/benchzoo/parsers/` (or wherever
    parsers eventually live) consumes that fixture and converts it into
    a `list[dict]` of flat Nyrkiö JSON documents (see *Data model* in
    [`design.md`](design.md)), one dict per test run with
@@ -350,7 +350,7 @@ A framework is considered "shipped" when:
    - The workflow file at
      `.github/workflows/<framework>.yml`.
    - The workflow's live run history on GitHub at
-     `https://github.com/nyrkio/perf-checks/actions/workflows/<framework>.yml`.
+     `https://github.com/nyrkio/benchzoo/actions/workflows/<framework>.yml`.
    - The parser source file.
    - The parser test file.
 
@@ -373,8 +373,8 @@ root; adjust `../../../` if the directory depth differs.)
   (e.g. [`benchmark.sh`](benchmark.sh))
 - **Workflow** — [`.github/workflows/<framework>.yml`](../../../.github/workflows/<framework>.yml)
 - **Live run history** —
-  <https://github.com/nyrkio/perf-checks/actions/workflows/<framework>.yml>
-- **Parser** — [`src/perf_checks/parsers/<framework>.py`](../../../src/perf_checks/parsers/<framework>.py)
+  <https://github.com/nyrkio/benchzoo/actions/workflows/<framework>.yml>
+- **Parser** — [`src/benchzoo/parsers/<framework>.py`](../../../src/benchzoo/parsers/<framework>.py)
 - **Parser tests** — [`tests/parsers/test_<framework>.py`](../../../tests/parsers/test_<framework>.py)
 
 ## Sample benchmark
@@ -394,11 +394,11 @@ Implementation of the
 
 \```bash
 act push -W .github/workflows/<framework>.yml \
-    --artifact-server-path /tmp/perf-checks-artifacts
+    --artifact-server-path /tmp/benchzoo-artifacts
 \```
 
 Captured output lands at
-`/tmp/perf-checks-artifacts/<run-id>/<framework>-output/`. See
+`/tmp/benchzoo-artifacts/<run-id>/<framework>-output/`. See
 [`workflow-conventions.md`](../../../docs/workflow-conventions.md#running-workflows-locally-with-act)
 for the full `act` convention.
 

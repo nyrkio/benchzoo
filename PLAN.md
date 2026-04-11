@@ -1,6 +1,6 @@
 # Today's plan
 
-This file is the working plan for the current iteration of perf-checks. It is
+This file is the working plan for the current iteration of benchzoo. It is
 expected to change. For the long-term, evergreen design, see
 [`docs/design.md`](docs/design.md).
 

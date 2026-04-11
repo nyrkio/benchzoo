@@ -1,6 +1,6 @@
 # Parser targets
 
-What perf-checks aims to ingest. Curated and opinionated, **not exhaustive**.
+What benchzoo aims to ingest. Curated and opinionated, **not exhaustive**.
 Any source of per-test or per-operation timing is fair game; the lists below
 are prioritized by how much real-world traffic they're likely to bring.
 

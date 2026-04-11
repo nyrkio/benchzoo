@@ -1,4 +1,4 @@
-# perf-checks design
+# benchzoo design
 
 ## What this is
 
@@ -10,7 +10,7 @@ detection on the resulting time series.
 It is being built as a from-scratch Python rewrite of an earlier TypeScript
 GitHub Action at [`nyrkio/change-detection`][fork], which was itself a fork of
 [`benchmark-action/github-action-benchmark`][upstream]. The fork is
-**reference-only**: perf-checks does not import from it, link to it at runtime,
+**reference-only**: benchzoo does not import from it, link to it at runtime,
 or share code with it. It exists in this project's history as a source of
 design ideas, parser fixtures, and test cases — nothing more.
 
@@ -19,25 +19,25 @@ design ideas, parser fixtures, and test cases — nothing more.
 
 ## What it is not
 
-- **Not a GitHub Action.** perf-checks does not run inside anyone's CI as a
+- **Not a GitHub Action.** benchzoo does not run inside anyone's CI as a
   pipeline step. There is no `action.yml`, no `with:` inputs, no Node runtime.
-- **Not a service.** perf-checks is a library, intended to be embedded in a
+- **Not a service.** benchzoo is a library, intended to be embedded in a
   larger Flask/FastAPI service that lives in a different repository. The web
   layer, persistence, and webhook handling all live in the parent project.
 - **Not a client of any existing Nyrkiö backend.** A future Nyrkiö backend may
-  exist; for now, perf-checks leaves a clean seam where uploads or detection
+  exist; for now, benchzoo leaves a clean seam where uploads or detection
   requests would eventually plug in, but does not call out anywhere.
 - **Not a change-detection algorithm (yet).** Change-point detection is part
-  of the eventual product, but perf-checks does not implement it today. When
+  of the eventual product, but benchzoo does not implement it today. When
   it is added, it will use [Apache Otava][otava] (the donated DataStax
   "hunter" project, an E-divisive change-point detection tool for performance
-  time series) — perf-checks will not roll its own algorithm.
+  time series) — benchzoo will not roll its own algorithm.
 
 [otava]: https://otava.apache.org/
 
 ## Eventual deployment
 
-When the larger product around perf-checks is built, it will be installed into
+When the larger product around benchzoo is built, it will be installed into
 target repositories as a **GitHub App**. The App will use its installation
 token to:
 
@@ -62,18 +62,18 @@ unaffected.
 
 ## Self-testing corpus / dogfood
 
-Every framework that perf-checks supports gets implemented inside this
+Every framework that benchzoo supports gets implemented inside this
 repository as a sample benchmark, plus a corresponding GitHub Actions
 workflow that runs it on every push and PR and uploads the captured
 native output as a workflow artifact. See
 [`workflow-conventions.md`](workflow-conventions.md) for the convention.
 
-This means perf-checks's own repository becomes a working example of
+This means benchzoo's own repository becomes a working example of
 "many CI workflows emitting many flavors of benchmark output" — exactly
 the kind of corpus the eventual GitHub-App ingest layer is designed to
 consume. Once the ingest layer exists, the regression test for the
 entire pipeline (parser → ingest → change detection) can simply point at
-perf-checks itself. We dogfood our own product on its own repository.
+benchzoo itself. We dogfood our own product on its own repository.
 
 It also means parser fixtures are not hand-curated one-off files: they
 are produced by real CI runs against real framework versions, so any
@@ -107,7 +107,7 @@ format from documentation.
 
 ## Holistic parser surface
 
-The most distinctive design choice is that perf-checks aims to consume a wide
+The most distinctive design choice is that benchzoo aims to consume a wide
 range of input formats, not just a fixed list of benchmark frameworks. Anything
 that emits per-test or per-operation timing is in scope:
 
@@ -119,7 +119,7 @@ that emits per-test or per-operation timing is in scope:
   from anything that emits it.
 - **Plain CSV/JSON shapes** for tools that don't fit any of the above.
 
-Parser implementations live in `src/perf_checks/parsers/`, one module per
+Parser implementations live in `src/benchzoo/parsers/`, one module per
 format, all conforming to a common interface.
 
 ## Data model
@@ -140,7 +140,7 @@ in exchange for the simplicity.
 ### The shape
 
 A single Nyrkiö JSON document represents **one test run**. The
-following is a real sample from nyrkio.com (with one perf-checks
+following is a real sample from nyrkio.com (with one benchzoo
 extension: the `passed` key at the end):
 
 ```json
@@ -228,7 +228,7 @@ ran.
 
   **None of the git keys are guaranteed to be present.** The ingest
   layer sets them when it can (for example, when it's running inside
-  CI with the commit it ran against in context). perf-checks is also
+  CI with the commit it ran against in context). benchzoo is also
   usable on arbitrary JSON files that nobody has enriched with git
   metadata — in that case the git attributes simply aren't there and
   downstream consumers must cope with their absence. Don't write code
@@ -242,7 +242,7 @@ ran.
   natural home for commit metadata like `head_commit`/`base_commit`
   when the ingest layer has it.
 
-- **`passed`** — **perf-checks extension, not part of the Nyrkiö wire
+- **`passed`** — **benchzoo extension, not part of the Nyrkiö wire
   format.** Top-level boolean. Set to `false` when the parser sees a
   test that failed. Trivially strippable by a single `del d["passed"]`
   when serializing back to pure Nyrkiö JSON for upload. See
@@ -289,7 +289,7 @@ the source.
   plain Python `dict`/`list`. Serialization to JSON is one `json.dumps()`
   away at the edge of the library; there are no dataclasses, TypedDicts,
   or Pydantic schemas to translate through.
-- **Storage is out of scope.** perf-checks does not own a database or any
+- **Storage is out of scope.** benchzoo does not own a database or any
   on-disk format beyond the test fixtures it reads.
 - **Failed runs are recorded, not filtered.** When a parser encounters a
   test or benchmark that failed (assertion failure, timeout, perf
@@ -304,7 +304,7 @@ the source.
   library's job is to capture, not to judge. This rule applies uniformly
   to dedicated benchmark frameworks and to unit-test runners used as a
   timing source — both can mark results failed; both still flow through
-  unfiltered. Because `passed` is a perf-checks extension rather than a
+  unfiltered. Because `passed` is a benchzoo extension rather than a
   Nyrkiö wire-format field, it sits at the top level of the wrapper
   dict, outside the `metrics` array, so it can be trivially stripped
   (`del d["passed"]`) when serializing back to pure Nyrkiö JSON.
@@ -314,7 +314,7 @@ the source.
 | Decision                  | Choice                                       | Why                                                                       |
 | ------------------------- | -------------------------------------------- | ------------------------------------------------------------------------- |
 | Language                  | Python                                       | User preference; replacing TypeScript                                     |
-| Package layout            | `src/perf_checks/`, `tests/` at repo root    | Standard Python `src/`-layout                                             |
+| Package layout            | `src/benchzoo/`, `tests/` at repo root    | Standard Python `src/`-layout                                             |
 | HTTP client (when needed) | `httpx`                                      | Streaming downloads for logs/artifacts; sync API today, async path open   |
 | GitHub API wrapper        | None — call REST directly                    | Avoid PyGithub / githubkit design coupling; surface area is small         |
 | CLI library (when needed) | `ConfigArgParse`                             | Unifies CLI flags, env vars, and YAML config behind one declaration       |

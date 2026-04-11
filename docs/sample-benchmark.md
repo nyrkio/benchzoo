@@ -291,7 +291,7 @@ parser misreads in a way snapshot tests cannot.
 ### It makes the parsers themselves cheaper to write
 
 This is the part that matters most for *who is writing the parsers*.
-perf-checks expects to ship parsers for ~100 frameworks, the bulk of
+benchzoo expects to ship parsers for ~100 frameworks, the bulk of
 which Claude will write. For each parser, the workflow is:
 
 1. The framework's GitHub Actions workflow runs the canonical sample
@@ -312,7 +312,7 @@ is significantly easier when you already know what number you're looking
 for. This is the difference between "scrutinize the documentation, guess
 at units, hope the framework didn't change since the docs were written"
 and "grep the file." The canonical sample benchmark turns the second
-mode on for every parser perf-checks ships.
+mode on for every parser benchzoo ships.
 
 ## How this drives the rest of the work
 
