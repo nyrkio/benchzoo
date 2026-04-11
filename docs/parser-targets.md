@@ -6,7 +6,11 @@ are prioritized by how much real-world traffic they're likely to bring.
 
 Each section maps to a directory under `frameworks/` in the repo, where the
 sample benchmark implementation, captured fixture outputs, and (eventually)
-producer-specific parser code for each framework will live.
+producer-specific parser code for each framework will live. Each framework
+also gets a corresponding `.github/workflows/<framework>.yml` GitHub Actions
+workflow that runs the sample benchmark on every push/PR and uploads the
+native output as an artifact — see
+[`workflow-conventions.md`](workflow-conventions.md) for the convention.
 
 Tools tagged `[fork]` already had a parser in the predecessor TypeScript
 project at `nyrkio/change-detection`. The fork is reference-only — these
