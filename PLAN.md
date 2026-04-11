@@ -36,16 +36,19 @@ step.
    table-driven and include ground-truth assertions keyed to the known
    sample-benchmark values.
 
-## Explicitly out of scope today
+## Out of scope (deferred or elsewhere)
 
-- The GitHub API integration (auth, workflow run enumeration, log/artifact
-  download). Designed and discussed; deferred to a future session.
-- Any change-point detection algorithm (will be Apache Otava when added —
-  see `docs/design.md`).
-- Any Nyrkiö backend integration.
+These belong elsewhere — either to a downstream consumer (e.g. the
+future change-detection GitHub App in a separate repo) or to a later
+session of benchzoo work:
+
+- Any change-detection algorithm — downstream consumer's job. Apache
+  Otava is the eventual choice for that consumer; see
+  [`docs/design.md`](docs/design.md).
+- Any GitHub API ingest, workflow-run enumeration, log/artifact
+  download — also a downstream consumer's job.
 - The CLI. (No `ConfigArgParse` dependency yet.)
 - Persistence, webhooks, or anything web-server-shaped.
-- Reporting back to GitHub (PR comments, issues, commit status).
 
 ## Phase status
 

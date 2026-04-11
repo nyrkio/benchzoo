@@ -83,10 +83,11 @@ deterministic step-function time series with one change point at every
 month boundary.
 
 The purpose of test 4 is different from tests 1–3: it exists not for
-parser-layer testing but to **showcase change-point detection** (see
+parser-layer testing but to **showcase change-point detection** for
+downstream consumers (see
 [Apache Otava in `design.md`](design.md#what-it-is-not)). A single run
 tells you almost nothing. Many runs over time produce a known signal
-that an eventual ingest → Otava pipeline can be asserted against.
+that downstream change-detection tooling can be asserted against.
 
 ### Formula
 
@@ -130,10 +131,11 @@ structure:
 - **One run** of test 4 produces one datapoint — useful for verifying
   the parser reads a numeric value, not much more.
 - **Many runs over time** (one per day, across months) produce a
-  step-function time series. Once the ingest + Otava layers exist, the
-  pipeline can be asserted against the known structure: "after 12
-  months of runs, Otava should have reported 11 change points at
-  specific month boundaries."
+  step-function time series with known structure: in any 12-month
+  window, downstream change-detection tools should identify 11 change
+  points at specific month boundaries — that's the assertion
+  benchzoo's output enables, even though benchzoo itself doesn't run
+  it.
 - This means test 4 is **only meaningful when the workflow runs
   regularly over time**, not just on push/PR. See the `schedule:`
   trigger note in
@@ -176,14 +178,6 @@ fixture was captured. Parser tests can either:
 Both are acceptable. Start with the loose check. Upgrade to the exact
 check only if and when fixtures grow sidecar metadata — don't jump
 through hoops for it now.
-
-The **change-detection assertion** (the payoff for test 4's existence)
-lives at a different layer: it applies to the full time series across
-many runs, and it checks that Otava identifies change points at the
-expected month boundaries. That assertion can't run until the ingest
-layer exists; for now, test 4 just accumulates history in the
-workflow-artifact stream so the data is ready when the pipeline catches
-up.
 
 ## Reference implementation: bash + `time`
 

@@ -324,11 +324,11 @@ formats. The rest of the catalog above is the long tail.
   downstream consumers decide what to do with the flag. See *Library
   boundaries* in [`docs/design.md`](design.md).
 - **Do we support non-GitHub CIs (GitLab, Buildkite, CircleCI)?**
-  *GitHub-first for now.* Other platforms are explicit future work. The
-  parser layer stays CI-agnostic — parsers never know or care where their
-  input came from — so adding a second CI later is purely an ingest-layer
-  concern, not a parser-layer one. See *Eventual deployment* in
-  [`docs/design.md`](design.md).
+  *Parser layer is CI-agnostic by construction.* Parsers take
+  `bytes`/`str` and return `list[dict]`; they never know or care where
+  the input came from. CI integration lives in downstream consumers,
+  not in benchzoo, so supporting any new CI is purely an ingest-layer
+  change in the consuming project — not a benchzoo change.
 - **Junit XML — single parser or one per producer?** *Separate
   per-producer parsers, clearly distinct.* Each producer that emits junit
   XML gets its own parser file (`junit_pytest`, `junit_jest`,

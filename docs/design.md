@@ -1,64 +1,53 @@
-# benchzoo design
+# Benchmark Zoo design
 
 ## What this is
 
-A Python library that detects performance changes — regressions and
-improvements — in software projects by ingesting timing data from existing CI
-runs, parsing it into a uniform shape, and (eventually) running change-point
-detection on the resulting time series.
+A Python library and corpus that ingests output from benchmark
+frameworks, load-testing tools, unit-test runners, and CLI timing
+tools, and converts it into a uniform JSON shape. The "zoo" half is
+the corpus of frameworks captured by the repository's own CI: each
+framework has a directory with the canonical sample benchmark
+implemented in its idiom, a workflow that runs it on every push and
+PR, captured fixture outputs, and a Python parser that consumes them.
+The library half is the parsers themselves, packaged as `benchzoo` on
+PyPI, which downstream consumers can `pip install` and call directly
+without ever touching the corpus.
 
-It is being built as a from-scratch Python rewrite of an earlier TypeScript
-GitHub Action at [`nyrkio/change-detection`][fork], which was itself a fork of
+It is being built as a from-scratch Python rewrite of the parser layer
+of an earlier TypeScript GitHub Action at
+[`nyrkio/change-detection`][fork], which was itself a fork of
 [`benchmark-action/github-action-benchmark`][upstream]. The fork is
-**reference-only**: benchzoo does not import from it, link to it at runtime,
-or share code with it. It exists in this project's history as a source of
-design ideas, parser fixtures, and test cases — nothing more.
+**reference-only**: benchzoo does not import from it, link to it at
+runtime, or share code with it. It exists in this project's history as
+a source of design ideas, parser fixtures, and test cases — nothing
+more.
 
 [fork]: https://github.com/nyrkio/change-detection
 [upstream]: https://github.com/benchmark-action/github-action-benchmark
 
 ## What it is not
 
-- **Not a GitHub Action.** benchzoo does not run inside anyone's CI as a
-  pipeline step. There is no `action.yml`, no `with:` inputs, no Node runtime.
-- **Not a service.** benchzoo is a library, intended to be embedded in a
-  larger Flask/FastAPI service that lives in a different repository. The web
-  layer, persistence, and webhook handling all live in the parent project.
-- **Not a client of any existing Nyrkiö backend.** A future Nyrkiö backend may
-  exist; for now, benchzoo leaves a clean seam where uploads or detection
-  requests would eventually plug in, but does not call out anywhere.
-- **Not a change-detection algorithm (yet).** Change-point detection is part
-  of the eventual product, but benchzoo does not implement it today. When
-  it is added, it will use [Apache Otava][otava] (the donated DataStax
-  "hunter" project, an E-divisive change-point detection tool for performance
-  time series) — benchzoo will not roll its own algorithm.
+- **Not a GitHub Action.** benchzoo does not run inside anyone's CI as
+  a pipeline step. There is no `action.yml`, no `with:` inputs, no
+  Node runtime. The workflows in this repo run *benchzoo's own* sample
+  benchmarks; they are not shipped to anyone else's CI.
+- **Not a service.** benchzoo is a library plus a static corpus.
+  There is no web layer, no persistence, no webhook handling, no API
+  endpoints. Downstream consumers (e.g. a future change-detection
+  GitHub App) embed it.
+- **Not a change-detection tool.** benchzoo produces time-series data;
+  it does not analyze it. Change-point detection lives in downstream
+  consumers, which will use [Apache Otava][otava] (the donated
+  DataStax "hunter" project, an E-divisive change-point detection tool
+  for performance time series). benchzoo's job ends at "here is the
+  parsed data."
+- **Not coupled to any CI platform.** Parsers take `bytes`/`str` and
+  return `list[dict]`. They do not know or care where their input came
+  from — GitHub Actions, GitLab CI, Buildkite, a local file, output
+  pasted into a tool. CI integration is an *ingest-layer* concern that
+  lives in downstream consumers, not in benchzoo.
 
 [otava]: https://otava.apache.org/
-
-## Eventual deployment
-
-When the larger product around benchzoo is built, it will be installed into
-target repositories as a **GitHub App**. The App will use its installation
-token to:
-
-1. Enumerate workflow runs on the target repo via the GitHub REST API.
-2. Download logs and artifacts from those runs.
-3. Parse timing data out of them using the parser layer in this library.
-4. Feed parsed measurements into change detection.
-5. Optionally report findings back to the target repo (PR comments, commit
-   status, issues).
-
-This is fundamentally a "look at CI from outside" model: a repo can be
-onboarded with a single *Install* click, with no edits to its workflows.
-
-**GitHub-first.** The first (and for now, only) supported CI platform is
-GitHub Actions. Support for other platforms — GitLab CI, Buildkite,
-CircleCI, Jenkins, etc. — is explicit future work, not on the v0 roadmap.
-Crucially, this is an *ingest-layer* constraint, not a *parser-layer* one:
-parsers never know or care where their input came from, so adding a new
-CI platform later is purely a matter of writing a new ingest adapter
-alongside the GitHub one. The parser corpus and the data model are
-unaffected.
 
 ## Self-testing corpus / dogfood
 
@@ -69,11 +58,11 @@ native output as a workflow artifact. See
 [`workflow-conventions.md`](workflow-conventions.md) for the convention.
 
 This means benchzoo's own repository becomes a working example of
-"many CI workflows emitting many flavors of benchmark output" — exactly
-the kind of corpus the eventual GitHub-App ingest layer is designed to
-consume. Once the ingest layer exists, the regression test for the
-entire pipeline (parser → ingest → change detection) can simply point at
-benchzoo itself. We dogfood our own product on its own repository.
+"many CI workflows emitting many flavors of benchmark output." The
+same captured outputs that the parser tests consume in CI are exactly
+the corpus that any downstream change-detection or analytics tool
+wants for its own end-to-end tests — so the repo doubles as a test
+fixture for its own consumers.
 
 It also means parser fixtures are not hand-curated one-off files: they
 are produced by real CI runs against real framework versions, so any
@@ -311,15 +300,8 @@ the source.
 
 ## Decisions already made
 
-| Decision                  | Choice                                       | Why                                                                       |
-| ------------------------- | -------------------------------------------- | ------------------------------------------------------------------------- |
-| Language                  | Python                                       | User preference; replacing TypeScript                                     |
-| Package layout            | `src/benchzoo/`, `tests/` at repo root    | Standard Python `src/`-layout                                             |
-| HTTP client (when needed) | `httpx`                                      | Streaming downloads for logs/artifacts; sync API today, async path open   |
-| GitHub API wrapper        | None — call REST directly                    | Avoid PyGithub / githubkit design coupling; surface area is small         |
-| CLI library (when needed) | `ConfigArgParse`                             | Unifies CLI flags, env vars, and YAML config behind one declaration       |
-| Parser tests              | pytest, table-driven from fixture files      | Mirrors the fork's `normalCases` pattern; easy to extend per-fixture      |
-| Change-point detection (when added) | Apache Otava                       | Don't roll our own; established E-divisive implementation                 |
-
-`httpx`, `ConfigArgParse`, and the GitHub-API parts are deferred — see
-[`PLAN.md`](../PLAN.md) for today's actual scope.
+| Decision        | Choice                                       | Why                                                                  |
+| --------------- | -------------------------------------------- | -------------------------------------------------------------------- |
+| Language        | Python                                       | User preference; replacing TypeScript                                |
+| Package layout  | `src/benchzoo/`, `tests/` at repo root       | Standard Python `src/`-layout                                        |
+| Parser tests    | pytest, table-driven from fixture files      | Mirrors the fork's `normalCases` pattern; easy to extend per-fixture |

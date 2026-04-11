@@ -18,12 +18,11 @@ These workflows serve a dual purpose:
   not hand-curated one-off files — they are produced by an actual CI run.
   Any change in framework version, output format, or platform behavior is
   caught the next time the workflow runs.
-- **Dogfood corpus.** benchzoo's own repository becomes the canonical
-  example of "many CI workflows emitting many flavors of benchmark
-  output." When the GitHub-API ingest layer is eventually built (see
-  *Eventual deployment* in [`design.md`](design.md)), it can be pointed at
-  benchzoo's own repo as the end-to-end regression test for the whole
-  pipeline: parser, ingest, and (eventually) change detection.
+- **Test corpus for downstream consumers.** benchzoo's own repository
+  is a working example of "many CI workflows emitting many flavors of
+  benchmark output" — exactly the corpus that any downstream
+  change-detection or analytics tool wants as its end-to-end test
+  fixture.
 
 ## Naming convention
 
@@ -109,10 +108,9 @@ every commit — most pushes will touch zero or one workflow.
 - Each workflow uploads **exactly one** artifact named `<framework>-output`.
 - The artifact contains the captured native output of the framework's
   sample benchmark run.
-- These artifact names are **stable contracts**. The eventual ingest layer
-  will look them up by name when fetching from the GitHub API. Renaming an
-  artifact is a breaking change for downstream consumers and should be
-  avoided.
+- These artifact names are **stable contracts** for downstream
+  consumers (anything fetching from this repo by artifact name).
+  Renaming an artifact is a breaking change and should be avoided.
 
 ## Service containers (for database / network benchmarks)
 
