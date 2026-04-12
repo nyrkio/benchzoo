@@ -1,0 +1,52 @@
+name: junit-go
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'frameworks/unit-or-qa/junit-go/**'
+      - '.github/workflows/junit-go.yml'
+  pull_request:
+    paths:
+      - 'frameworks/unit-or-qa/junit-go/**'
+      - '.github/workflows/junit-go.yml'
+  workflow_dispatch:
+  schedule:
+    # Daily at 12:00 UTC for the test 4 change-detection showcase.
+    # Avoid 0 0 * * * — month boundary ambiguity.
+    - cron: '0 12 * * *'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: junit-go-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frameworks/unit-or-qa/junit-go
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+          # No go.sum (stdlib-only module), so leave the module cache
+          # disabled — there's nothing to cache. setup-go still caches
+          # the Go toolchain itself.
+          cache: false
+
+      - name: Run sample benchmark
+        run: bash ./run.sh
+
+      - name: Upload output as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: junit-go-output
+          path: frameworks/unit-or-qa/junit-go/output.xml
+          if-no-files-found: error
