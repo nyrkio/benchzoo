@@ -1,0 +1,70 @@
+Randomness seeded to: 2221801952
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+sample_benchmark is a Catch2 v3.7.1 host application.
+Run with -? for options
+
+-------------------------------------------------------------------------------
+benchmark1
+-------------------------------------------------------------------------------
+/home/runner/work/benchzoo/benchzoo/frameworks/language/catch2/benchmarks.cc:62
+...............................................................................
+
+benchmark name                       samples       iterations    est run time
+                                     mean          low mean      high mean
+                                     std dev       low std dev   high std dev
+-------------------------------------------------------------------------------
+benchmark1                                       3             1     6.45031 s 
+                                          2.1501 s     2.15007 s     2.15012 s 
+                                        29.3297 us          0 ns    33.4749 us 
+                                                                               
+
+-------------------------------------------------------------------------------
+benchmark2
+-------------------------------------------------------------------------------
+/home/runner/work/benchzoo/benchzoo/frameworks/language/catch2/benchmarks.cc:73
+...............................................................................
+
+benchmark name                       samples       iterations    est run time
+                                     mean          low mean      high mean
+                                     std dev       low std dev   high std dev
+-------------------------------------------------------------------------------
+benchmark2                                       3            57     55.233 us 
+                                        320.579 ns    320.035 ns    321.082 ns 
+                                       0.684136 ns          0 ns   0.711242 ns 
+                                                                               
+
+-------------------------------------------------------------------------------
+benchmark3
+-------------------------------------------------------------------------------
+/home/runner/work/benchzoo/benchzoo/frameworks/language/catch2/benchmarks.cc:87
+...............................................................................
+
+benchmark name                       samples       iterations    est run time
+                                     mean          low mean      high mean
+                                     std dev       low std dev   high std dev
+-------------------------------------------------------------------------------
+benchmark3                                       3            11      57.09 us 
+                                        2.54342 us    1.74545 us    3.34112 us 
+                                        1.12792 us          0 ns    1.12811 us 
+                                                                               
+
+-------------------------------------------------------------------------------
+benchmark4
+-------------------------------------------------------------------------------
+/home/runner/work/benchzoo/benchzoo/frameworks/language/catch2/benchmarks.cc:108
+...............................................................................
+
+benchmark name                       samples       iterations    est run time
+                                     mean          low mean      high mean
+                                     std dev       low std dev   high std dev
+-------------------------------------------------------------------------------
+benchmark4                                       3             1     6.45041 s 
+                                         2.15011 s     2.15009 s     2.15013 s 
+                                        21.9935 us          0 ns    25.0679 us 
+                                                                               
+
+===============================================================================
+test cases: 4 | 4 passed
+assertions: - none -
+

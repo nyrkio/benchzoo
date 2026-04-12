@@ -1,0 +1,214 @@
+{
+  "version": 1,
+  "metadata": {
+    "name": "sample_benchmark",
+    "rng-seed": 2066320506,
+    "catch2-version": "3.7.1"
+  },
+  "test-run": {
+    "test-cases": [
+      {
+        "test-info": {
+          "name": "benchmark1",
+          "source-location": {
+            "filename": "/home/runner/work/benchzoo/benchzoo/frameworks/language/catch2/benchmarks.cc",
+            "line": 62
+          },
+          "tags": [
+            "benchzoo"
+          ],
+          "properties": [
+          ]
+        },
+        "runs": [
+          {
+            "run-idx": 0,
+            "path": [
+              {
+                "kind": "section",
+                "name": "benchmark1",
+                "source-location": {
+                  "filename": "/home/runner/work/benchzoo/benchzoo/frameworks/language/catch2/benchmarks.cc",
+                  "line": 62
+                },
+                "path": [
+                ]
+              }
+            ],
+            "totals": {
+              "assertions": {
+                "passed": 0,
+                "failed": 0,
+                "fail-but-ok": 0,
+                "skipped": 0
+              }
+            }
+          }
+        ],
+        "totals": {
+          "assertions": {
+            "passed": 0,
+            "failed": 0,
+            "fail-but-ok": 0,
+            "skipped": 0
+          }
+        }
+      },
+      {
+        "test-info": {
+          "name": "benchmark2",
+          "source-location": {
+            "filename": "/home/runner/work/benchzoo/benchzoo/frameworks/language/catch2/benchmarks.cc",
+            "line": 73
+          },
+          "tags": [
+            "benchzoo"
+          ],
+          "properties": [
+          ]
+        },
+        "runs": [
+          {
+            "run-idx": 0,
+            "path": [
+              {
+                "kind": "section",
+                "name": "benchmark2",
+                "source-location": {
+                  "filename": "/home/runner/work/benchzoo/benchzoo/frameworks/language/catch2/benchmarks.cc",
+                  "line": 73
+                },
+                "path": [
+                ]
+              }
+            ],
+            "totals": {
+              "assertions": {
+                "passed": 0,
+                "failed": 0,
+                "fail-but-ok": 0,
+                "skipped": 0
+              }
+            }
+          }
+        ],
+        "totals": {
+          "assertions": {
+            "passed": 0,
+            "failed": 0,
+            "fail-but-ok": 0,
+            "skipped": 0
+          }
+        }
+      },
+      {
+        "test-info": {
+          "name": "benchmark3",
+          "source-location": {
+            "filename": "/home/runner/work/benchzoo/benchzoo/frameworks/language/catch2/benchmarks.cc",
+            "line": 87
+          },
+          "tags": [
+            "benchzoo"
+          ],
+          "properties": [
+          ]
+        },
+        "runs": [
+          {
+            "run-idx": 0,
+            "path": [
+              {
+                "kind": "section",
+                "name": "benchmark3",
+                "source-location": {
+                  "filename": "/home/runner/work/benchzoo/benchzoo/frameworks/language/catch2/benchmarks.cc",
+                  "line": 87
+                },
+                "path": [
+                ]
+              }
+            ],
+            "totals": {
+              "assertions": {
+                "passed": 0,
+                "failed": 0,
+                "fail-but-ok": 0,
+                "skipped": 0
+              }
+            }
+          }
+        ],
+        "totals": {
+          "assertions": {
+            "passed": 0,
+            "failed": 0,
+            "fail-but-ok": 0,
+            "skipped": 0
+          }
+        }
+      },
+      {
+        "test-info": {
+          "name": "benchmark4",
+          "source-location": {
+            "filename": "/home/runner/work/benchzoo/benchzoo/frameworks/language/catch2/benchmarks.cc",
+            "line": 108
+          },
+          "tags": [
+            "benchzoo"
+          ],
+          "properties": [
+          ]
+        },
+        "runs": [
+          {
+            "run-idx": 0,
+            "path": [
+              {
+                "kind": "section",
+                "name": "benchmark4",
+                "source-location": {
+                  "filename": "/home/runner/work/benchzoo/benchzoo/frameworks/language/catch2/benchmarks.cc",
+                  "line": 108
+                },
+                "path": [
+                ]
+              }
+            ],
+            "totals": {
+              "assertions": {
+                "passed": 0,
+                "failed": 0,
+                "fail-but-ok": 0,
+                "skipped": 0
+              }
+            }
+          }
+        ],
+        "totals": {
+          "assertions": {
+            "passed": 0,
+            "failed": 0,
+            "fail-but-ok": 0,
+            "skipped": 0
+          }
+        }
+      }
+    ],
+    "totals": {
+      "assertions": {
+        "passed": 0,
+        "failed": 0,
+        "fail-but-ok": 0,
+        "skipped": 0
+      },
+      "test-cases": {
+        "passed": 4,
+        "failed": 0,
+        "fail-but-ok": 0,
+        "skipped": 0
+      }
+    }
+  }
+}

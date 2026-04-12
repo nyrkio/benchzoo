@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Catch2TestRun name="sample_benchmark" rng-seed="564419893" xml-format-version="3" catch2-version="3.7.1">
+  <TestCase name="benchmark1" tags="[benchzoo]" filename="/home/runner/work/benchzoo/benchzoo/frameworks/language/catch2/benchmarks.cc" line="62">
+    <BenchmarkResults name="benchmark1" samples="3" resamples="100000" iterations="1" clockResolution="18.0474" estimatedDuration="6.45052e+09">
+      <!-- All values in nano seconds -->
+      <mean value="2.15012e+09" lowerBound="2.15007e+09" upperBound="2.15016e+09" ci="0.95"/>
+      <standardDeviation value="49369.3" lowerBound="0" upperBound="55845.4" ci="0.95"/>
+      <outliers variance="0.222222" lowMild="0" lowSevere="0" highMild="0" highSevere="0"/>
+    </BenchmarkResults>
+    <OverallResult success="true" skips="0"/>
+  </TestCase>
+  <TestCase name="benchmark2" tags="[benchzoo]" filename="/home/runner/work/benchzoo/benchzoo/frameworks/language/catch2/benchmarks.cc" line="73">
+    <BenchmarkResults name="benchmark2" samples="3" resamples="100000" iterations="57" clockResolution="18.0474" estimatedDuration="54891">
+      <!-- All values in nano seconds -->
+      <mean value="320.053" lowerBound="319.947" upperBound="320.123" ci="0.95"/>
+      <standardDeviation value="0.085947" lowerBound="0" upperBound="0.0992431" ci="0.95"/>
+      <outliers variance="0.222222" lowMild="0" lowSevere="0" highMild="0" highSevere="0"/>
+    </BenchmarkResults>
+    <OverallResult success="true" skips="0"/>
+  </TestCase>
+  <TestCase name="benchmark3" tags="[benchzoo]" filename="/home/runner/work/benchzoo/benchzoo/frameworks/language/catch2/benchmarks.cc" line="87">
+    <BenchmarkResults name="benchmark3" samples="3" resamples="100000" iterations="11" clockResolution="18.0474" estimatedDuration="58047">
+      <!-- All values in nano seconds -->
+      <mean value="2613.64" lowerBound="1798.27" upperBound="3425.88" ci="0.95"/>
+      <standardDeviation value="1146.48" lowerBound="0" upperBound="1148.68" ci="0.95"/>
+      <outliers variance="0.654637" lowMild="0" lowSevere="0" highMild="0" highSevere="0"/>
+    </BenchmarkResults>
+    <OverallResult success="true" skips="0"/>
+  </TestCase>
+  <TestCase name="benchmark4" tags="[benchzoo]" filename="/home/runner/work/benchzoo/benchzoo/frameworks/language/catch2/benchmarks.cc" line="108">
+    <BenchmarkResults name="benchmark4" samples="3" resamples="100000" iterations="1" clockResolution="18.0474" estimatedDuration="6.45031e+09">
+      <!-- All values in nano seconds -->
+      <mean value="2.15017e+09" lowerBound="2.15011e+09" upperBound="2.15022e+09" ci="0.95"/>
+      <standardDeviation value="75248.3" lowerBound="0" upperBound="77402.7" ci="0.95"/>
+      <outliers variance="0.222222" lowMild="0" lowSevere="0" highMild="0" highSevere="0"/>
+    </BenchmarkResults>
+    <OverallResult success="true" skips="0"/>
+  </TestCase>
+  <OverallResults successes="0" failures="0" expectedFailures="0" skips="0"/>
+  <OverallResultsCases successes="4" failures="0" expectedFailures="0" skips="0"/>
+</Catch2TestRun>
