@@ -1,0 +1,97 @@
+name: perf-stat
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'frameworks/generic/perf-stat/**'
+      - '.github/workflows/perf-stat.yml'
+  pull_request:
+    paths:
+      - 'frameworks/generic/perf-stat/**'
+      - '.github/workflows/perf-stat.yml'
+  workflow_dispatch:
+  schedule:
+    # Daily at 12:00 UTC for the test 4 change-detection showcase.
+    # Avoid 0 0 * * * — month boundary ambiguity.
+    - cron: '0 12 * * *'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: perf-stat-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frameworks/generic/perf-stat
+    steps:
+      - uses: actions/checkout@v4
+
+      # -----------------------------------------------------------------
+      # Install perf.
+      #
+      # On Debian/Ubuntu, `perf` lives in `linux-tools-<kernel-release>`.
+      # The kernel the GitHub runner boots with often doesn't have a
+      # matching `linux-tools-$(uname -r)` in the apt repos (runner
+      # images drift ahead of the package index), so we also install
+      # `linux-tools-generic` and `linux-tools-common` as fallbacks —
+      # these provide a `perf` binary that usually works well enough
+      # even if it doesn't exactly match the running kernel. We tolerate
+      # failures on the kernel-specific package (`|| true`) because its
+      # absence is common and non-fatal.
+      # -----------------------------------------------------------------
+      - name: Install perf (linux-tools)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y linux-tools-common linux-tools-generic || true
+          sudo apt-get install -y "linux-tools-$(uname -r)" || true
+          # Log what we got — helpful when debugging kernel/tools drift.
+          which perf || true
+          perf --version 2>&1 || echo "perf --version failed (expected if paranoid is high)"
+          uname -a
+        working-directory: ${{ github.workspace }}
+
+      # -----------------------------------------------------------------
+      # Try to lower kernel.perf_event_paranoid.
+      #
+      # GitHub-hosted runners typically ship with perf_event_paranoid=4,
+      # which blocks perf entirely for unprivileged users. Lowering it
+      # to 1 allows kernel+user profiling. This sysctl may fail (e.g.
+      # on runners where /proc/sys is read-only or sudo is constrained,
+      # or under `act` with a default Docker container). A failure here
+      # is not fatal — run.sh is written to capture the perf error
+      # message as the fixture in that case, so the artifact upload
+      # still succeeds.
+      #
+      # See the README's "Known limitation" section.
+      # -----------------------------------------------------------------
+      - name: Lower perf_event_paranoid (best effort)
+        run: |
+          echo "Before: $(cat /proc/sys/kernel/perf_event_paranoid 2>/dev/null || echo '?')"
+          sudo sysctl -w kernel.perf_event_paranoid=1 || echo "sysctl failed — continuing anyway"
+          echo "After:  $(cat /proc/sys/kernel/perf_event_paranoid 2>/dev/null || echo '?')"
+        working-directory: ${{ github.workspace }}
+
+      - name: Run sample benchmark
+        # run.sh does NOT abort when perf itself fails; it captures the
+        # error message inline in the output file instead. This keeps
+        # the artifact upload reliable — we get either real counter
+        # data or a diagnostic fixture, never an empty artifact. See
+        # the README's "Known limitation" section for why.
+        run: ./run.sh
+
+      - name: Upload outputs as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          # Single artifact, two files. See workflow-conventions.md on
+          # multi-format capture.
+          name: perf-stat-output
+          path: |
+            frameworks/generic/perf-stat/output-text.txt
+            frameworks/generic/perf-stat/output-csv.txt
+          if-no-files-found: error
