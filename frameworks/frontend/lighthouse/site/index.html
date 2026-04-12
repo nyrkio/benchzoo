@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Minimal static page audited by Lighthouse in the benchzoo corpus.">
+  <title>benchzoo Lighthouse sample</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main>
+    <h1>benchzoo Lighthouse sample</h1>
+    <p>
+      This page exists so that Lighthouse has something to audit when the
+      <code>lighthouse</code> workflow runs. The page deliberately contains
+      a heading, a paragraph, an inline SVG, and one external stylesheet so
+      the audit produces a non-trivial set of web-vitals metrics (LCP, FCP,
+      CLS, TBT, Speed Index, TTI, and friends).
+    </p>
+    <svg xmlns="http://www.w3.org/2000/svg" width="120" height="60" viewBox="0 0 120 60" role="img" aria-label="benchzoo mark">
+      <rect x="2" y="2" width="116" height="56" rx="6" ry="6" fill="#eef" stroke="#446" stroke-width="2"/>
+      <text x="60" y="38" text-anchor="middle" font-family="sans-serif" font-size="20" fill="#224">benchzoo</text>
+    </svg>
+  </main>
+</body>
+</html>

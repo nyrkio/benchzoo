@@ -1,0 +1,61 @@
+name: lighthouse
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'frameworks/frontend/lighthouse/**'
+      - '.github/workflows/lighthouse.yml'
+  pull_request:
+    paths:
+      - 'frameworks/frontend/lighthouse/**'
+      - '.github/workflows/lighthouse.yml'
+  workflow_dispatch:
+  # No schedule: trigger — test 4 (monthly change point) does not apply
+  # to Lighthouse. The canonical sample-benchmark adaptation for this
+  # framework is a single page-load audit with no controllable sleep,
+  # so there is no step-function time series to accumulate. See this
+  # framework's README for the full rationale.
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lighthouse-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frameworks/frontend/lighthouse
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Install Lighthouse
+        run: npm install -g lighthouse@12.3.0
+        working-directory: ${{ github.workspace }}
+
+      - name: Verify Chrome is available
+        # ubuntu-latest ships google-chrome-stable pre-installed; this
+        # step fails loudly if that ever stops being true so we notice
+        # before Lighthouse does.
+        run: google-chrome-stable --version
+        working-directory: ${{ github.workspace }}
+
+      - name: Run sample benchmark
+        run: ./run.sh
+
+      - name: Upload output as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-output
+          path: frameworks/frontend/lighthouse/output.json
+          if-no-files-found: error
