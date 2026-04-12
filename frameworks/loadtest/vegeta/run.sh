@@ -56,4 +56,8 @@ vegeta attack -duration=5s -rate=100/s -targets=targets.txt > results.bin
 
 vegeta report -type=json results.bin > output.json
 vegeta report results.bin > output.txt
-vegeta report -type=hist '[0,10ms,50ms,100ms,500ms]' results.bin > output-histogram.txt
+# Histogram buckets go INSIDE the --type flag as `hist[b1,b2,...]`,
+# not as a separate positional arg. vegeta treats trailing args as
+# input file paths, which is why the earlier attempt failed with
+# "open [0,10ms,...]: no such file or directory".
+vegeta report -type='hist[0,10ms,50ms,100ms,500ms]' results.bin > output-histogram.txt
