@@ -20,17 +20,20 @@ set -euo pipefail
 
 cd "$(dirname "$0")"
 
-rm -rf ./output ./output.json ./output.csv ./output.txt
+rm -rf ./BenchmarkDotNet.Artifacts ./output.json ./output.csv ./output.txt
 
-dotnet run -c Release --project SampleBenchmark.csproj -- \
-    --exporters json csv \
-    --artifacts ./output \
-    2>&1 | tee ./output.txt
+# BenchmarkDotNet's command-line --artifacts flag is finicky when passed
+# through `dotnet run --` alongside multi-value flags like --exporters,
+# so we let it write to its default ./BenchmarkDotNet.Artifacts/ path
+# and copy the reports out after the run. The [JsonExporter] and
+# [CsvExporter] attributes on the benchmark class are what select
+# which reports get emitted (so we don't need --exporters at all).
+dotnet run -c Release --project SampleBenchmark.csproj 2>&1 | tee ./output.txt
 
 # BenchmarkDotNet names reports after the benchmark type. There should
-# be exactly one of each under output/results/.
-JSON_REPORT=$(ls ./output/results/*-report-full.json | head -n 1)
+# be exactly one of each under BenchmarkDotNet.Artifacts/results/.
+JSON_REPORT=$(ls ./BenchmarkDotNet.Artifacts/results/*-report-full.json | head -n 1)
 cp "$JSON_REPORT" ./output.json
 
-CSV_REPORT=$(ls ./output/results/*-report.csv | head -n 1)
+CSV_REPORT=$(ls ./BenchmarkDotNet.Artifacts/results/*-report.csv | head -n 1)
 cp "$CSV_REPORT" ./output.csv
