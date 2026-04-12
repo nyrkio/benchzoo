@@ -1,0 +1,60 @@
+=== benchmark1 ===
+pgbench (16.13 (Ubuntu 16.13-1.pgdg24.04+1))
+transaction type: benchmark1.sql
+scaling factor: 1
+query mode: simple
+number of clients: 1
+number of threads: 1
+maximum number of tries: 1
+number of transactions per client: 1
+number of transactions actually processed: 1/1
+number of failed transactions: 0 (0.000%)
+latency average = 2153.165 ms
+initial connection time = 9.333 ms
+tps = 0.464433 (without initial connection time)
+
+=== benchmark2 ===
+pgbench (16.13 (Ubuntu 16.13-1.pgdg24.04+1))
+transaction type: benchmark2.sql
+scaling factor: 1
+query mode: simple
+number of clients: 1
+number of threads: 1
+maximum number of tries: 1
+number of transactions per client: 1
+number of transactions actually processed: 1/1
+number of failed transactions: 0 (0.000%)
+latency average = 1.063 ms
+initial connection time = 8.211 ms
+tps = 940.733772 (without initial connection time)
+
+=== benchmark3 ===
+pgbench (16.13 (Ubuntu 16.13-1.pgdg24.04+1))
+transaction type: benchmark3.sql
+scaling factor: 1
+query mode: simple
+number of clients: 1
+number of threads: 1
+maximum number of tries: 1
+number of transactions per client: 1
+number of transactions actually processed: 1/1
+number of failed transactions: 0 (0.000%)
+latency average = 8.058 ms
+initial connection time = 8.168 ms
+tps = 124.100273 (without initial connection time)
+
+=== benchmark4 ===
+pgbench (16.13 (Ubuntu 16.13-1.pgdg24.04+1))
+transaction type: benchmark4.sql
+scaling factor: 1
+query mode: simple
+number of clients: 1
+number of threads: 1
+maximum number of tries: 1
+number of transactions per client: 1
+number of transactions actually processed: 1/1
+number of failed transactions: 0 (0.000%)
+latency average = 2153.537 ms
+initial connection time = 7.880 ms
+tps = 0.464352 (without initial connection time)
+
