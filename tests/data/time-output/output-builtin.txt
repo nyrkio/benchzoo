@@ -1,0 +1,37 @@
+=== benchmark1 (bash builtin time) ===
+Starting benchmark1
+End of benchmark1
+
+real	0m2.153s
+user	0m0.001s
+sys	0m0.002s
+=== end benchmark1 ===
+
+=== benchmark2 (bash builtin time) ===
+Starting benchmark2
+End of benchmark2
+
+real	0m0.003s
+user	0m0.001s
+sys	0m0.003s
+=== end benchmark2 ===
+
+=== benchmark3 (bash builtin time) ===
+Starting benchmark3
+End of benchmark3
+
+real	0m0.006s
+user	0m0.000s
+sys	0m0.006s
+=== end benchmark3 ===
+
+=== benchmark4 (bash builtin time) ===
+Starting benchmark4
+benchmark4: month=4, sleep=2.15s
+End of benchmark4
+
+real	0m2.156s
+user	0m0.001s
+sys	0m0.005s
+=== end benchmark4 ===
+
