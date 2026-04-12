@@ -1,0 +1,14 @@
+2026-04-12T07:13:27+00:00
+Running ./build/sample_benchmark
+Run on (2 X 2871.62 MHz CPU s)
+CPU Caches:
+  L1 Data 32 KiB (x1)
+  L1 Instruction 32 KiB (x1)
+  L2 Unified 1024 KiB (x1)
+  L3 Unified 32768 KiB (x1)
+Load Average: 0.99, 0.43, 0.16
+name,iterations,real_time,cpu_time,time_unit,bytes_per_second,items_per_second,label,error_occurred,error_message
+"benchmark1/iterations:1",1,2150.11,0.044186,ms,,,,,
+"benchmark2",1947352,0.000358927,0.000358851,ms,,,,,
+"benchmark3",165579,0.00425568,0.00425482,ms,,,,,
+"benchmark4/iterations:1",1,2150.11,0.032208,ms,,,,,
