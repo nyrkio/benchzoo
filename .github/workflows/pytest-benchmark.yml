@@ -1,0 +1,63 @@
+name: pytest-benchmark
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'frameworks/language/pytest-benchmark/**'
+      - '.github/workflows/pytest-benchmark.yml'
+  pull_request:
+    paths:
+      - 'frameworks/language/pytest-benchmark/**'
+      - '.github/workflows/pytest-benchmark.yml'
+  workflow_dispatch:
+  schedule:
+    # Daily at 12:00 UTC for the test 4 change-detection showcase.
+    # Avoid 0 0 * * * — month boundary ambiguity.
+    - cron: '0 12 * * *'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pytest-benchmark-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frameworks/language/pytest-benchmark
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: frameworks/language/pytest-benchmark/requirements.txt
+
+      - name: Install pytest-benchmark
+        run: pip install -r requirements.txt
+
+      - name: Run sample benchmark (JSON output)
+        run: pytest test_sample_benchmark.py --benchmark-json=output.json
+
+      - name: Run sample benchmark (JUnit XML output)
+        # Second run captures pytest's --junitxml format, which
+        # pytest-benchmark augments with <properties> carrying benchmark
+        # stats. This exercises the junit_pytest parser separately from
+        # the JSON parser. The benchmark itself is fast enough that
+        # running twice is cheaper than the value of having both fixtures.
+        run: pytest test_sample_benchmark.py --junitxml=output-junit.xml
+
+      - name: Upload output as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: pytest-benchmark-output
+          path: |
+            frameworks/language/pytest-benchmark/output.json
+            frameworks/language/pytest-benchmark/output-junit.xml
+          if-no-files-found: error
