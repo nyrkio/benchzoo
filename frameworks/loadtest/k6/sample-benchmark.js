@@ -41,29 +41,31 @@ export const options = {
 
 export default function () {
   // ---------------------------------------------------------------
-  // benchmark1 — sleep 2.15 s. Uses performance.now() for consistency
+  // benchmark1 — sleep 2.15 s. Uses Date.now() for consistency
   // with the other tests; millisecond resolution is plenty here.
   // ---------------------------------------------------------------
   {
-    const t0 = performance.now();
+    const t0 = Date.now();
     sleep(2.15);
-    benchmark1Trend.add(performance.now() - t0);
+    benchmark1Trend.add(Date.now() - t0);
   }
 
   // ---------------------------------------------------------------
   // benchmark2 — tight loop 0..1000, summing into a sink so the JS
-  // engine (goja) cannot elide it. k6 exposes the standard
-  // `performance.now()` which has sub-millisecond resolution; we use
-  // it throughout so test 2 does not collapse to 0 ms the way
-  // Date.now() would.
+  // engine (goja) cannot elide it. k6's goja runtime does NOT expose
+  // the W3C `performance.now()` global, so we use `Date.now()` with
+  // millisecond resolution. Test 2's body is sub-millisecond and will
+  // typically record 0 ms — that is fine: the purpose is to exercise
+  // the parser's handling of small / zero-valued durations, not to
+  // produce a stable number.
   // ---------------------------------------------------------------
   {
-    const t0 = performance.now();
+    const t0 = Date.now();
     let sum = 0;
     for (let i = 0; i < 1000; i++) sum += i;
     // Touch `sum` so the loop is observably side-effecting.
     if (sum < 0) throw new Error('unreachable');
-    benchmark2Trend.add(performance.now() - t0);
+    benchmark2Trend.add(Date.now() - t0);
   }
 
   // ---------------------------------------------------------------
@@ -76,13 +78,13 @@ export default function () {
   // disk I/O. This is documented in the README.
   // ---------------------------------------------------------------
   {
-    const t0 = performance.now();
+    const t0 = Date.now();
     const buf = new ArrayBuffer(1_400_000);
     const view = new Uint8Array(buf);
     for (let i = 0; i < view.length; i += 4096) {
       view[i] = i & 0xff;
     }
-    benchmark3Trend.add(performance.now() - t0);
+    benchmark3Trend.add(Date.now() - t0);
   }
 
   // ---------------------------------------------------------------
@@ -94,8 +96,8 @@ export default function () {
   {
     const m = new Date().getUTCMonth() + 1; // 1..12
     const sleepSeconds = 2.15 + ((m % 3) - 1);
-    const t0 = performance.now();
+    const t0 = Date.now();
     sleep(sleepSeconds);
-    benchmark4Trend.add(performance.now() - t0);
+    benchmark4Trend.add(Date.now() - t0);
   }
 }
