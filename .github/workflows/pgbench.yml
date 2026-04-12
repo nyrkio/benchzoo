@@ -1,0 +1,68 @@
+name: pgbench
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'frameworks/database/pgbench/**'
+      - '.github/workflows/pgbench.yml'
+  pull_request:
+    paths:
+      - 'frameworks/database/pgbench/**'
+      - '.github/workflows/pgbench.yml'
+  workflow_dispatch:
+  schedule:
+    # Daily at 12:00 UTC for the test 4 change-detection showcase.
+    # Avoid 0 0 * * * — month boundary ambiguity.
+    - cron: '0 12 * * *'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pgbench-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    defaults:
+      run:
+        working-directory: frameworks/database/pgbench
+    env:
+      PGHOST: localhost
+      PGPORT: '5432'
+      PGUSER: postgres
+      PGPASSWORD: postgres
+      PGDATABASE: postgres
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install pgbench (postgresql-client)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+          pgbench --version
+        working-directory: ${{ github.workspace }}
+
+      - name: Run sample benchmark
+        run: ./run.sh
+
+      - name: Upload output as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: pgbench-output
+          path: frameworks/database/pgbench/output.txt
+          if-no-files-found: error
