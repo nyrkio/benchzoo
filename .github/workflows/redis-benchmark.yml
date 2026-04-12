@@ -1,0 +1,58 @@
+name: redis-benchmark
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'frameworks/database/redis-benchmark/**'
+      - '.github/workflows/redis-benchmark.yml'
+  pull_request:
+    paths:
+      - 'frameworks/database/redis-benchmark/**'
+      - '.github/workflows/redis-benchmark.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: redis-benchmark-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    services:
+      redis:
+        image: redis:7
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    defaults:
+      run:
+        working-directory: frameworks/database/redis-benchmark
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install redis-benchmark (redis-tools)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y redis-tools
+          redis-benchmark --version
+        working-directory: ${{ github.workspace }}
+
+      - name: Run sample benchmark
+        run: ./run.sh
+
+      - name: Upload output as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: redis-benchmark-output
+          path: |
+            frameworks/database/redis-benchmark/output.csv
+            frameworks/database/redis-benchmark/output.txt
+          if-no-files-found: error
