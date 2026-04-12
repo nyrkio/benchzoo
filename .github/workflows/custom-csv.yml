@@ -1,0 +1,45 @@
+name: custom-csv
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'frameworks/generic/custom-csv/**'
+      - '.github/workflows/custom-csv.yml'
+  pull_request:
+    paths:
+      - 'frameworks/generic/custom-csv/**'
+      - '.github/workflows/custom-csv.yml'
+  workflow_dispatch:
+  schedule:
+    # Daily at 12:00 UTC for the test 4 change-detection showcase.
+    # Avoid 0 0 * * * — month boundary ambiguity.
+    - cron: '0 12 * * *'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: custom-csv-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frameworks/generic/custom-csv
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Emit exemplar fixture
+        run: |
+          chmod +x emit.sh
+          ./emit.sh
+
+      - name: Upload output as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: custom-csv-output
+          path: frameworks/generic/custom-csv/output.csv
+          if-no-files-found: error

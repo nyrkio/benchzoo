@@ -1,0 +1,47 @@
+name: custom-json
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'frameworks/generic/custom-json/**'
+      - '.github/workflows/custom-json.yml'
+  pull_request:
+    paths:
+      - 'frameworks/generic/custom-json/**'
+      - '.github/workflows/custom-json.yml'
+  workflow_dispatch:
+  schedule:
+    # Daily at 12:00 UTC for the test 4 change-detection showcase.
+    # Avoid 0 0 * * * — month boundary ambiguity.
+    - cron: '0 12 * * *'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: custom-json-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frameworks/generic/custom-json
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Emit exemplar fixtures
+        run: |
+          chmod +x emit.sh
+          ./emit.sh
+
+      - name: Upload output as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: custom-json-output
+          path: |
+            frameworks/generic/custom-json/output-bigger.json
+            frameworks/generic/custom-json/output-smaller.json
+          if-no-files-found: error
