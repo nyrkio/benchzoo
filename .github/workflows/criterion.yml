@@ -1,0 +1,58 @@
+name: criterion
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'frameworks/language/criterion/**'
+      - '.github/workflows/criterion.yml'
+  pull_request:
+    paths:
+      - 'frameworks/language/criterion/**'
+      - '.github/workflows/criterion.yml'
+  workflow_dispatch:
+  schedule:
+    # Daily at 12:00 UTC for the test 4 change-detection showcase.
+    # Avoid 0 0 * * * — month boundary ambiguity.
+    - cron: '0 12 * * *'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: criterion-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frameworks/language/criterion
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        # dtolnay/rust-toolchain is the community-standard setup action;
+        # there is no first-party actions/setup-rust. Pin to a specific
+        # compiler version so the captured fixture is a function of a
+        # known input (see workflow-conventions.md § "Versioning the
+        # framework").
+        uses: dtolnay/rust-toolchain@1.82.0
+
+      - name: Cache cargo build
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: frameworks/language/criterion
+
+      - name: Run sample benchmark
+        run: bash ./run.sh
+
+      - name: Upload output as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: criterion-output
+          path: |
+            frameworks/language/criterion/output/
+            frameworks/language/criterion/output-bencher.txt
+          if-no-files-found: error

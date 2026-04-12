@@ -1,0 +1,25 @@
+[package]
+name = "sample_benchmark"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+# This crate exists only to host the canonical benchzoo sample benchmark
+# under criterion. It is not published and the library is empty — all
+# the interesting code lives under `benches/`.
+
+[lib]
+path = "src/lib.rs"
+
+[[bench]]
+name = "sample_benchmark"
+path = "benches/sample_benchmark.rs"
+harness = false
+
+[dev-dependencies]
+# Pin exactly. Whenever we deliberately bump the version, the diff in
+# the captured output is part of the PR — that is the point.
+criterion = { version = "=0.5.1", features = ["html_reports"] }
+# Used by bench_benchmark4 to get the current UTC month. Rust's stdlib
+# has no calendar math; chrono is the least-bad option.
+chrono = "=0.4.38"
