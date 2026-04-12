@@ -1,0 +1,50 @@
+name: junit-vanilla
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'frameworks/unit-or-qa/junit-vanilla/**'
+      - '.github/workflows/junit-vanilla.yml'
+  pull_request:
+    paths:
+      - 'frameworks/unit-or-qa/junit-vanilla/**'
+      - '.github/workflows/junit-vanilla.yml'
+  workflow_dispatch:
+  schedule:
+    # Daily at 12:00 UTC for the test 4 change-detection showcase.
+    # Avoid 0 0 * * * — month boundary ambiguity.
+    - cron: '0 12 * * *'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: junit-vanilla-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frameworks/unit-or-qa/junit-vanilla
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+
+      - name: Run sample benchmark
+        run: bash run.sh
+
+      - name: Upload output as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: junit-vanilla-output
+          path: frameworks/unit-or-qa/junit-vanilla/output.xml
+          if-no-files-found: error

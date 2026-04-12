@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Raw JUnit 5 (vanilla) sample-benchmark POM for benchzoo.
+
+  This is *not* a dedicated benchmark framework — it is plain JUnit 5
+  unit tests run via Maven Surefire. The only reason it lives in the
+  benchzoo corpus is that Surefire, like almost every other test runner,
+  records per-test wall-clock duration in its junit XML output, and a
+  stable test name with a stable duration is a usable performance
+  time-series even when nobody set it up as a benchmark.
+
+  Surefire writes one XML file per test class to
+  target/surefire-reports/TEST-<class>.xml by default. Our single test
+  class (SampleTest) therefore produces exactly one XML file, which
+  run.sh copies to ./output.xml for artifact upload.
+
+  Java 17 is the target; the CI workflow sets up temurin 17 via
+  actions/setup-java.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>io.nyrkio.benchzoo.junit</groupId>
+    <artifactId>sample-junit-vanilla</artifactId>
+    <version>0.0.0</version>
+    <packaging>jar</packaging>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <junit.jupiter.version>5.11.3</junit.jupiter.version>
+        <surefire.version>3.5.2</surefire.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${junit.jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.13.0</version>
+                <configuration>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <!--
+                  Surefire emits junit XML to target/surefire-reports/ by
+                  default; any modern 3.x version does the right thing
+                  out of the box. We pin the version so the captured
+                  fixture is a function of a known input.
+                -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${surefire.version}</version>
+            </plugin>
+        </plugins>
+    </build>
+</project>
