@@ -1,0 +1,68 @@
+name: clickbench
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'frameworks/database/clickbench/**'
+      - '.github/workflows/clickbench.yml'
+  pull_request:
+    paths:
+      - 'frameworks/database/clickbench/**'
+      - '.github/workflows/clickbench.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: clickbench-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    services:
+      clickhouse:
+        image: clickhouse/clickhouse-server:24.12-alpine
+        ports:
+          - 9000:9000
+          - 8123:8123
+        options: >-
+          --health-cmd "wget -qO- http://localhost:8123/ping || exit 1"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+    defaults:
+      run:
+        working-directory: frameworks/database/clickbench
+    env:
+      CLICKHOUSE_HOST: localhost
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install clickhouse-client
+        # The `clickhouse-client` package is not in Ubuntu's default
+        # repos on ubuntu-latest runners, so we add ClickHouse's own
+        # apt repository. Version is pinned to match the server image
+        # (24.12) so client/server protocols stay in sync.
+        run: |
+          sudo apt-get install -y apt-transport-https ca-certificates curl gnupg
+          curl -fsSL 'https://packages.clickhouse.com/rpm/lts/repodata/repomd.xml.key' \
+            | sudo gpg --dearmor -o /usr/share/keyrings/clickhouse-keyring.gpg
+          echo "deb [signed-by=/usr/share/keyrings/clickhouse-keyring.gpg] https://packages.clickhouse.com/deb stable main" \
+            | sudo tee /etc/apt/sources.list.d/clickhouse.list
+          sudo apt-get update
+          sudo apt-get install -y clickhouse-client=24.12.*
+          clickhouse-client --version
+        working-directory: ${{ github.workspace }}
+
+      - name: Run sample benchmark
+        run: ./run.sh
+
+      - name: Upload output as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: clickbench-output
+          path: frameworks/database/clickbench/output.json
+          if-no-files-found: error
