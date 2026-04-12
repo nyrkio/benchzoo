@@ -1,0 +1,11 @@
+{
+  "system": "ClickHouse",
+  "date": "2026-04-12",
+  "machine": "github-actions-ubuntu-latest",
+  "cluster_size": 1,
+  "comment": "benchzoo fixture — synthetic 10k-row dataset, 5 of 43 queries",
+  "tags": ["column-oriented", "OLAP", "benchzoo-fixture"],
+  "load_time": 0.194548,
+  "data_size": 180872,
+  "result": [[0.0403614,0.0444212,0.039382],[0.0408716,0.0405626,0.0413239],[0.0408387,0.040555,0.0407515],[0.060087,0.044915,0.0427723],[0.0424941,0.0432715,0.0430384]]
+}
