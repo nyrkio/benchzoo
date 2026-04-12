@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>benchzoo / locust sample target</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body { font-family: system-ui, sans-serif; max-width: 720px; margin: 2em auto; padding: 0 1em; line-height: 1.5; color: #222; }
+h1 { border-bottom: 2px solid #444; padding-bottom: 0.25em; }
+code { background: #f4f4f4; padding: 0.1em 0.3em; border-radius: 3px; }
+</style>
+</head>
+<body>
+<h1>benchzoo / locust sample target</h1>
+
+<p>This page is a static HTTP target served by a minimal nginx
+instance on port 8080. It exists solely to give
+<a href="https://locust.io">Locust</a> a stable endpoint to
+benchmark while <a href="https://github.com/nyrkio/benchzoo">benchzoo</a>
+captures Locust's CSV output for parser development.</p>
+
+<h2>Why this page exists</h2>
+
+<p>Unlike synthetic benchmarks that time a <code>sleep</code> or a
+CPU loop, Locust fundamentally measures real HTTP request/response
+latency under a simulated user workload. It needs something to talk
+to. Rather than pointing Locust at an external service (unstable,
+rate-limited, noisy), we stand up a minimal nginx instance serving
+this page, hit it locally over the loopback interface, and record
+Locust's CSV reports.</p>
+
+<h2>What Locust actually measures here</h2>
+
+<p>Per-endpoint request counts, failure counts, response-time
+percentiles (p50 through p100), average content size, and aggregate
+throughput — the numbers Locust writes into its
+<code>_stats.csv</code>, <code>_failures.csv</code>, and
+<code>_stats_history.csv</code> files. The measurements are a
+property of nginx + Locust + the runner's kernel, not of this page's
+content. The page exists to be served, not to be scrutinized.</p>
+
+<h2>Why the page is not empty</h2>
+
+<p>Locust's default HTTP request is a simple GET and the response
+needs a non-trivial body for the average-content-size number to be
+interesting. A few paragraphs of prose is enough to make that metric
+non-zero without inflating page size to the point where the transfer
+rate dominates the latency measurement. The goal is a realistic-ish
+static page, not a stress test of nginx's sendfile path.</p>
+
+<h2>What this page is not</h2>
+
+<p>This is not a meaningful web application. There are no scripts, no
+external assets, no cookies, no forms. A real web-performance
+benchmark would look completely different (and Lighthouse, not
+Locust, is the right tool for that). This is an HTTP load-test
+target, which is a different question entirely.</p>
+
+<h2>Further reading</h2>
+
+<ul>
+<li><a href="https://locust.io">Locust</a> — Python-based
+distributed load-testing framework.</li>
+<li><a href="https://docs.locust.io/en/stable/configuration.html#all-available-configuration-options">Locust CLI reference</a>.</li>
+<li><a href="https://github.com/nyrkio/benchzoo">benchzoo</a> — the
+parser corpus this page is part of.</li>
+</ul>
+
+</body>
+</html>
