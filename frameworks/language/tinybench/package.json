@@ -1,0 +1,13 @@
+{
+  "name": "benchzoo-tinybench-sample",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "benchzoo canonical sample benchmark implemented directly on tinybench (the engine vitest bench uses under the hood).",
+  "scripts": {
+    "start": "node sample-benchmark.js"
+  },
+  "dependencies": {
+    "tinybench": "3.0.6"
+  }
+}
