@@ -62,7 +62,13 @@ jobs:
           echo "deb [signed-by=/usr/share/keyrings/clickhouse-keyring.gpg] https://packages.clickhouse.com/deb stable main" \
             | sudo tee /etc/apt/sources.list.d/clickhouse.list
           sudo apt-get update
-          sudo apt-get install -y clickhouse-client=24.12.*
+          # clickhouse-client has a hard = dependency on
+          # clickhouse-common-static of the same version, so we must
+          # pin both or apt tries to mix 24.12 client with the latest
+          # (26.x) common-static package and fails.
+          sudo apt-get install -y \
+            clickhouse-common-static=24.12.* \
+            clickhouse-client=24.12.*
           clickhouse-client --version
         working-directory: ${{ github.workspace }}
 
