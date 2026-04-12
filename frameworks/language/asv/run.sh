@@ -17,7 +17,13 @@ set -euo pipefail
 
 asv machine --yes
 
-asv run --python=same --quick --show-stderr
+# Let asv create its own virtualenv per asv.conf.json (pythons:
+# ["3.12"]) rather than reusing the CI interpreter via --python=same.
+# The --python=same mode appears to complete benchmark runs without
+# persisting the per-commit results JSON, leaving .asv/results/
+# with only machine.json. Letting asv provision its own env adds
+# ~30 s to CI but produces the results file reliably.
+asv run --quick --show-stderr HEAD^!
 
 # The raw per-commit results JSON under .asv/results/<machine>/<hash>-<env>.json
 # is written directly by `asv run` — we do NOT call `asv publish` because
