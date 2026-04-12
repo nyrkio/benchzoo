@@ -1,0 +1,50 @@
+name: junit-jest
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'frameworks/unit-or-qa/junit-jest/**'
+      - '.github/workflows/junit-jest.yml'
+  pull_request:
+    paths:
+      - 'frameworks/unit-or-qa/junit-jest/**'
+      - '.github/workflows/junit-jest.yml'
+  workflow_dispatch:
+  schedule:
+    # Daily at 12:00 UTC for the test 4 change-detection showcase.
+    # Avoid 0 0 * * * — month boundary ambiguity.
+    - cron: '0 12 * * *'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: junit-jest-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frameworks/unit-or-qa/junit-jest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: frameworks/unit-or-qa/junit-jest/package.json
+
+      - name: Run sample benchmark
+        run: ./run.sh
+
+      - name: Upload output as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: junit-jest-output
+          path: frameworks/unit-or-qa/junit-jest/output.xml
+          if-no-files-found: error
