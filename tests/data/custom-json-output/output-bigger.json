@@ -1,0 +1,26 @@
+[
+  {
+    "name": "benchmark1",
+    "unit": "runs/s",
+    "value": 0.4651,
+    "extra": "1 run per 2.15 s canonical sleep"
+  },
+  {
+    "name": "benchmark2",
+    "unit": "ops/s",
+    "value": 20000,
+    "extra": "tight CPU loop throughput"
+  },
+  {
+    "name": "benchmark3",
+    "unit": "MB/s",
+    "value": 1400,
+    "extra": "1.4 MB write to /dev/null in ~1 ms"
+  },
+  {
+    "name": "benchmark4",
+    "unit": "runs/s",
+    "value": 0.4651,
+    "extra": "monthly change-point showcase; month=4 UTC"
+  }
+]

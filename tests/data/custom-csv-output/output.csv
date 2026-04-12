@@ -1,0 +1,14 @@
+test_name,metric_name,unit,value,direction
+benchmark1,mean,s,2.15,lower_is_better
+benchmark1,min,s,2.14,lower_is_better
+benchmark1,max,s,2.16,lower_is_better
+benchmark1,stddev,s,0.01,lower_is_better
+benchmark2,mean,us,50,lower_is_better
+benchmark2,min,us,45,lower_is_better
+benchmark2,max,us,58,lower_is_better
+benchmark3,mean,ms,1.0,lower_is_better
+benchmark3,min,ms,0.9,lower_is_better
+benchmark3,max,ms,1.2,lower_is_better
+benchmark3,throughput,MB/s,1400,higher_is_better
+benchmark4,mean,s,2.15,lower_is_better
+benchmark4,month,,4,

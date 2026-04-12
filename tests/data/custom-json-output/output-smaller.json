@@ -1,0 +1,26 @@
+[
+  {
+    "name": "benchmark1",
+    "unit": "s",
+    "value": 2.15,
+    "extra": "sleep-dominated; canonical 2.15 s wall time"
+  },
+  {
+    "name": "benchmark2",
+    "unit": "us",
+    "value": 50,
+    "extra": "tight CPU loop, 0..1000"
+  },
+  {
+    "name": "benchmark3",
+    "unit": "ms",
+    "value": 1.0,
+    "extra": "write 1.4 MB of /dev/urandom to /dev/null"
+  },
+  {
+    "name": "benchmark4",
+    "unit": "s",
+    "value": 2.15,
+    "extra": "monthly change-point showcase; month=4 UTC"
+  }
+]
