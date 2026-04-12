@@ -1,0 +1,57 @@
+name: asv
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'frameworks/language/asv/**'
+      - '.github/workflows/asv.yml'
+  pull_request:
+    paths:
+      - 'frameworks/language/asv/**'
+      - '.github/workflows/asv.yml'
+  workflow_dispatch:
+  schedule:
+    # Daily at 12:00 UTC for the test 4 change-detection showcase.
+    # Avoid 0 0 * * * — month boundary ambiguity.
+    - cron: '0 12 * * *'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: asv-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frameworks/language/asv
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # asv uses git history to identify the commit under test, so
+          # a shallow checkout would leave it unable to resolve HEAD.
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: frameworks/language/asv/requirements.txt
+
+      - name: Install asv
+        run: pip install -r requirements.txt
+
+      - name: Run sample benchmark
+        run: ./run.sh
+
+      - name: Upload output as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: asv-output
+          path: frameworks/language/asv/output.json
+          if-no-files-found: error
