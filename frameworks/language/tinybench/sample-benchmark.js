@@ -75,10 +75,32 @@ await bench.run();
 // p99, p995, p999, samples[], totalTime). Spreading `t.result` copies
 // them all verbatim — the parser is free to pick whichever fields it
 // needs.
+// Strip the raw `samples` arrays before emitting. Fast sub-microsecond
+// benchmarks (test 2 is an empty loop) accumulate millions of samples
+// and blow up the fixture to 100+ MB, exceeding GitHub's 100 MB per-
+// file limit. We replace each samples array with its count (recording
+// the original length alongside so downstream consumers can still see
+// how much data was collected) and keep everything else verbatim.
+function stripSamples(obj) {
+  if (Array.isArray(obj)) return obj.map(stripSamples);
+  if (obj && typeof obj === 'object') {
+    const out = {};
+    for (const [k, v] of Object.entries(obj)) {
+      if (k === 'samples' && Array.isArray(v)) {
+        out.samples_count = v.length;
+      } else {
+        out[k] = stripSamples(v);
+      }
+    }
+    return out;
+  }
+  return obj;
+}
+
 const out = {
   framework: 'tinybench',
   version: '3.0.6',
   month,
-  results: bench.tasks.map((t) => ({ name: t.name, ...t.result })),
+  results: bench.tasks.map((t) => stripSamples({ name: t.name, ...t.result })),
 };
 process.stdout.write(JSON.stringify(out, null, 2) + '\n');
