@@ -1,0 +1,70 @@
+name: time
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'frameworks/generic/time/**'
+      - '.github/workflows/time.yml'
+  pull_request:
+    paths:
+      - 'frameworks/generic/time/**'
+      - '.github/workflows/time.yml'
+  workflow_dispatch:
+  schedule:
+    # Daily at 12:00 UTC for the test 4 change-detection showcase.
+    # Avoid 0 0 * * * — month boundary ambiguity.
+    - cron: '0 12 * * *'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: time-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frameworks/generic/time
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install GNU time
+        # /usr/bin/time is not installed by default on ubuntu-latest.
+        # The `time` apt package provides it. We accept the distro
+        # version rather than pinning a specific upstream release — the
+        # GNU time output format has been stable for ~two decades and
+        # the upstream is effectively unmaintained, so the distro
+        # snapshot is the reasonable choice here. `time --version` is
+        # captured in the log for whatever the runner shipped with.
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y time
+          /usr/bin/time --version
+        working-directory: ${{ github.workspace }}
+
+      - name: Show bash version
+        # The builtin `time` keyword ships with bash itself, so there's
+        # nothing to install. Logging the bash version makes any future
+        # output-format drift attributable.
+        run: bash --version
+        working-directory: ${{ github.workspace }}
+
+      - name: Run sample benchmark
+        run: ./run.sh
+
+      - name: Upload outputs as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          # Single artifact, two files. actions/upload-artifact accepts
+          # a multi-line `path:` list and archives all matched files
+          # into one artifact — see the docs at
+          # https://github.com/actions/upload-artifact#upload-an-entire-directory
+          name: time-output
+          path: |
+            frameworks/generic/time/output-builtin.txt
+            frameworks/generic/time/output-gnu.txt
+          if-no-files-found: error
