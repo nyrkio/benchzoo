@@ -111,6 +111,32 @@ that emits per-test or per-operation timing is in scope:
 Parser implementations live in `src/benchzoo/parsers/`, one module per
 format, all conforming to a common interface.
 
+### Multi-format capture
+
+Many benchmark frameworks support multiple output formats — for example,
+Google Benchmark can emit JSON, CSV, and console text; JMH emits JSON,
+CSV, and its own text format; hyperfine has JSON, CSV, and Markdown.
+**benchzoo captures all common output formats** for each framework, not
+just the single richest one. Each format gets:
+
+- its own output file in the workflow artifact (e.g. `output.json`,
+  `output.csv`, `output.txt`),
+- its own parser module in `src/benchzoo/parsers/` (e.g.
+  `google_benchmark_json.py`, `google_benchmark_csv.py`),
+- its own fixture in the test suite.
+
+The rationale: benchzoo's use case is *"the user already ran their
+benchmarks and has results in whatever format they chose."* We can't ask
+them to re-run with a different flag. If a framework has three common
+output modes, we need three parsers. The workflow captures all three so
+we have real fixtures for each.
+
+"All common" means: output formats that are machine-readable and that
+real users actually use. A framework's HTML report (pretty, but not
+parseable) or its internal binary cache format (not user-facing) can be
+skipped. When in doubt, include it — a parser we don't need is cheaper
+than a gap a user falls into.
+
 ## Data model
 
 Parsers convert framework-native output into the **Nyrkiö JSON** shape —
@@ -230,6 +256,21 @@ ran.
   parameterization lives if the source output carries it. Also the
   natural home for commit metadata like `head_commit`/`base_commit`
   when the ingest layer has it.
+
+  **Grouping and classification metadata belongs here too.** Many
+  frameworks organize tests into groups, suites, or categories — for
+  example, pytest-benchmark has an explicit `group` field per
+  benchmark, JMH has `params`, BenchmarkDotNet has `Categories`.
+  These go into `extra_info` (e.g. `extra_info["group"]`,
+  `extra_info["params"]`), not into `attributes`. The rule of thumb:
+  `attributes` carries **identity** (the keys that uniquely identify a
+  test run — primarily `test_name`), while `extra_info` carries
+  **optional metadata** that downstream consumers can use for
+  filtering, grouping into graphs, or drill-down navigation. A
+  downstream UI might, for instance, let the user first select a
+  `group`, then see the tests within that group — that interaction
+  pattern is why `group` lives in `extra_info` rather than being
+  thrown away.
 
 - **`passed`** — **benchzoo extension, not part of the Nyrkiö wire
   format.** Top-level boolean. Set to `false` when the parser sees a

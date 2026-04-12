@@ -112,6 +112,44 @@ every commit — most pushes will touch zero or one workflow.
   consumers (anything fetching from this repo by artifact name).
   Renaming an artifact is a breaking change and should be avoided.
 
+## Multi-format capture
+
+Many frameworks support multiple output formats (JSON, CSV, text, XML,
+etc.). **Workflows capture all common machine-readable formats**, not
+just the richest one. The rationale: benchzoo's target use case is "the
+user already ran their benchmarks in whatever format they chose, and we
+parse that." Each output format gets a separate parser module.
+
+Concretely, the `run.sh` script for such a framework invokes the
+benchmark multiple times (once per output format) or uses
+framework-specific flags to emit multiple outputs in a single run.
+All output files land in the single `<framework>-output` artifact:
+
+```yaml
+- name: Upload output as artifact
+  uses: actions/upload-artifact@v4
+  with:
+    name: <framework>-output
+    path: |
+      frameworks/<category>/<framework>/output.json
+      frameworks/<category>/<framework>/output.csv
+      frameworks/<category>/<framework>/output.txt
+    if-no-files-found: error
+```
+
+"All common" means: formats that are machine-readable and that real
+users actually use. HTML reports, binary caches, and niche internal
+formats can be skipped. When in doubt, include — a fixture we don't
+need is cheaper than a format gap.
+
+For frameworks where capturing multiple formats requires running the
+benchmark more than once, accept the extra CI time. The runs are
+typically fast (the canonical sample-benchmark takes seconds) and CI
+minutes are cheap relative to the value of having real fixtures for
+every parser. If a specific framework is so slow that running it 3×
+is problematic, document it in the framework's README and pick the
+two most common formats.
+
 ## Service containers (for database / network benchmarks)
 
 Some frameworks need a service to benchmark against — sysbench needs
