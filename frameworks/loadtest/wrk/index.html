@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>benchzoo / wrk sample target</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body { font-family: system-ui, sans-serif; max-width: 720px; margin: 2em auto; padding: 0 1em; line-height: 1.5; color: #222; }
+h1 { border-bottom: 2px solid #444; padding-bottom: 0.25em; }
+code { background: #f4f4f4; padding: 0.1em 0.3em; border-radius: 3px; }
+</style>
+</head>
+<body>
+<h1>benchzoo / wrk sample target</h1>
+
+<p>This page is a static HTTP target served by a minimal nginx
+instance on port 8080. It exists solely to give
+<a href="https://github.com/wg/wrk">wrk</a> a stable endpoint to
+benchmark while <a href="https://github.com/nyrkio/benchzoo">benchzoo</a>
+captures wrk's text output for parser development.</p>
+
+<h2>Why this page exists</h2>
+
+<p>Unlike synthetic benchmarks that time a <code>sleep</code> or a
+CPU loop, wrk fundamentally measures real HTTP request/response
+latency. It needs something to talk to. Rather than pointing wrk at an
+external service (unstable, rate-limited, noisy), we stand up a
+minimal nginx container serving this page, hit it locally over the
+loopback interface, and record wrk's report.</p>
+
+<h2>What wrk actually measures here</h2>
+
+<p>Latency percentiles (p50, p75, p90, p99), requests per second, and
+transfer rate — the numbers wrk prints at the end of every run. The
+measurements are a property of nginx + wrk + the runner's kernel, not
+of this page's content. The page exists to be served, not to be
+scrutinized.</p>
+
+<h2>Why the page is not empty</h2>
+
+<p>wrk's default HTTP request is a simple GET and the response needs
+a non-trivial body for the <em>transfer/sec</em> number to be
+interesting. A few paragraphs of prose is enough to make that metric
+non-zero without inflating page size to the point where the transfer
+rate dominates the latency measurement. The goal is a realistic-ish
+static page, not a stress test of nginx's sendfile path.</p>
+
+<h2>What this page is not</h2>
+
+<p>This is not a meaningful web application. There are no scripts, no
+external assets, no cookies, no forms. A real web-performance
+benchmark would look completely different (and Lighthouse, not wrk,
+is the right tool for that). This is an HTTP load-test target, which
+is a different question entirely.</p>
+
+<h2>Further reading</h2>
+
+<ul>
+<li><a href="https://github.com/wg/wrk">wrk</a> — Will Glozer's
+HTTP benchmarking tool.</li>
+<li><a href="https://github.com/giltene/wrk2">wrk2</a> — Gil Tene's
+constant-throughput fork with HDR histograms.</li>
+<li><a href="https://github.com/nyrkio/benchzoo">benchzoo</a> — the
+parser corpus this page is part of.</li>
+</ul>
+
+</body>
+</html>

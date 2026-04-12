@@ -1,0 +1,49 @@
+name: wrk
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'frameworks/loadtest/wrk/**'
+      - '.github/workflows/wrk.yml'
+  pull_request:
+    paths:
+      - 'frameworks/loadtest/wrk/**'
+      - '.github/workflows/wrk.yml'
+  workflow_dispatch:
+
+# No `schedule:` trigger — wrk does not implement test 4 of the
+# canonical sample benchmark (see README for the deviation rationale),
+# so there is no change-detection time series for this framework to
+# accumulate.
+
+permissions:
+  contents: read
+
+concurrency:
+  group: wrk-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frameworks/loadtest/wrk
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install wrk and nginx
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wrk nginx
+
+      - name: Run sample benchmark
+        run: bash run.sh
+
+      - name: Upload output as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: wrk-output
+          path: frameworks/loadtest/wrk/output.txt
+          if-no-files-found: error
