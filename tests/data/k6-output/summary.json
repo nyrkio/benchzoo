@@ -1,0 +1,73 @@
+{
+    "root_group": {
+        "path": "",
+        "id": "d41d8cd98f00b204e9800998ecf8427e",
+        "groups": {},
+        "checks": {},
+        "name": ""
+    },
+    "metrics": {
+        "data_sent": {
+            "count": 0,
+            "rate": 0
+        },
+        "data_received": {
+            "rate": 0,
+            "count": 0
+        },
+        "vus_max": {
+            "value": 1,
+            "min": 1,
+            "max": 1
+        },
+        "benchmark1": {
+            "avg": 2151,
+            "min": 2151,
+            "med": 2151,
+            "max": 2151,
+            "p(90)": 2151,
+            "p(95)": 2151
+        },
+        "iterations": {
+            "count": 1,
+            "rate": 0.2322393325590401
+        },
+        "benchmark2": {
+            "avg": 0,
+            "min": 0,
+            "med": 0,
+            "max": 0,
+            "p(90)": 0,
+            "p(95)": 0
+        },
+        "benchmark3": {
+            "p(90)": 1,
+            "p(95)": 1,
+            "avg": 1,
+            "min": 1,
+            "med": 1,
+            "max": 1
+        },
+        "vus": {
+            "min": 1,
+            "max": 1,
+            "value": 1
+        },
+        "benchmark4": {
+            "avg": 2151,
+            "min": 2151,
+            "med": 2151,
+            "max": 2151,
+            "p(90)": 2151,
+            "p(95)": 2151
+        },
+        "iteration_duration": {
+            "avg": 4302.760741,
+            "min": 4302.760741,
+            "med": 4302.760741,
+            "max": 4302.760741,
+            "p(90)": 4302.760741,
+            "p(95)": 4302.760741
+        }
+    }
+}
