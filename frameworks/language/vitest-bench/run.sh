@@ -11,4 +11,9 @@ set -euo pipefail
 cd "$(dirname "$0")"
 
 npm install
-npx vitest bench --run --reporter=json --outputFile=output.json
+# NOTE: vitest bench mode only supports the "default" and "verbose"
+# reporters — the "json" string is interpreted as a path to a reporter
+# module and fails with "Failed to load url json". To capture JSON,
+# we use the --outputJson flag (supported since vitest 1.x) which
+# writes the raw bench results separately from the reporter.
+npx vitest bench --run --outputJson=output.json

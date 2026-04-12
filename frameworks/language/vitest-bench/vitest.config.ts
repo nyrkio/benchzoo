@@ -9,11 +9,10 @@ import { defineConfig } from 'vitest/config';
 export default defineConfig({
   test: {
     benchmark: {
-      // Write the bench JSON report to ./output.json. The CLI flag
-      // `--outputFile=output.json` does the same thing; we set it here too
-      // so `npx vitest bench --run --reporter=json` produces the file even
-      // when the caller forgets the flag.
-      outputFile: 'output.json',
+      // Bench mode reporters are limited to "default" and "verbose" —
+      // "json" is not available here (it is a test-mode-only reporter).
+      // To capture JSON we pass --outputJson=output.json on the CLI,
+      // which is a separate flag independent of the reporter.
       reporters: ['default'],
     },
   },
