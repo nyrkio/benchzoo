@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="4" failures="0" errors="0" time="7.087130">
+	<testsuite tests="4" failures="0" time="4.308000" name="github.com/nyrkio/benchzoo/frameworks/unit-or-qa/junit-go" timestamp="2026-04-12T19:44:26Z">
+		<properties>
+			<property name="go.version" value="go1.22.12 linux/amd64"></property>
+		</properties>
+		<testcase classname="github.com/nyrkio/benchzoo/frameworks/unit-or-qa/junit-go" name="TestBenchmark1" time="2.150000"></testcase>
+		<testcase classname="github.com/nyrkio/benchzoo/frameworks/unit-or-qa/junit-go" name="TestBenchmark2" time="0.000000"></testcase>
+		<testcase classname="github.com/nyrkio/benchzoo/frameworks/unit-or-qa/junit-go" name="TestBenchmark3" time="0.000000"></testcase>
+		<testcase classname="github.com/nyrkio/benchzoo/frameworks/unit-or-qa/junit-go" name="TestBenchmark4" time="2.150000"></testcase>
+	</testsuite>
+</testsuites>

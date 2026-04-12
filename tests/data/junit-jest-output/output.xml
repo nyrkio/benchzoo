@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="jest tests" tests="4" failures="0" errors="0" time="4.622">
+  <testsuite name="undefined" errors="0" failures="0" skipped="0" timestamp="2026-04-12T19:44:15" time="4.591" tests="4">
+    <testcase classname=" benchmark1" name=" benchmark1" time="2.153">
+    </testcase>
+    <testcase classname=" benchmark2" name=" benchmark2" time="0.001">
+    </testcase>
+    <testcase classname=" benchmark3" name=" benchmark3" time="0.004">
+    </testcase>
+    <testcase classname=" benchmark4" name=" benchmark4" time="2.15">
+    </testcase>
+  </testsuite>
+</testsuites>
