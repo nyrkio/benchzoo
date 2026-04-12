@@ -1,0 +1,54 @@
+name: go-test-bench
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'frameworks/language/go-test-bench/**'
+      - '.github/workflows/go-test-bench.yml'
+  pull_request:
+    paths:
+      - 'frameworks/language/go-test-bench/**'
+      - '.github/workflows/go-test-bench.yml'
+  workflow_dispatch:
+  schedule:
+    # Daily at 12:00 UTC for the test 4 change-detection showcase.
+    # Avoid 0 0 * * * — month boundary ambiguity.
+    - cron: '0 12 * * *'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: go-test-bench-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frameworks/language/go-test-bench
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+          # No go.sum (stdlib-only module), so leave the module cache
+          # disabled — there's nothing to cache. setup-go still caches
+          # the Go toolchain itself.
+          cache: false
+
+      - name: Run sample benchmark
+        run: bash ./run.sh
+
+      - name: Upload output as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: go-test-bench-output
+          path: |
+            frameworks/language/go-test-bench/output.txt
+            frameworks/language/go-test-bench/output.json
+          if-no-files-found: error
