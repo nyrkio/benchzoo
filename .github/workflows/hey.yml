@@ -1,0 +1,58 @@
+name: hey
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'frameworks/loadtest/hey/**'
+      - '.github/workflows/hey.yml'
+  pull_request:
+    paths:
+      - 'frameworks/loadtest/hey/**'
+      - '.github/workflows/hey.yml'
+  workflow_dispatch:
+
+# No `schedule:` trigger — hey does not implement test 4 of the
+# canonical sample benchmark (see README for the deviation rationale),
+# so there is no change-detection time series for this framework to
+# accumulate.
+
+permissions:
+  contents: read
+
+concurrency:
+  group: hey-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frameworks/loadtest/hey
+    steps:
+      - uses: actions/checkout@v4
+
+      # hey is packaged in Ubuntu 24.04+ (`hey` 0.1.4). GitHub's
+      # `ubuntu-latest` runner is on 24.04 as of 2025, so the apt
+      # install path is the simplest. If the runner ever reverts to
+      # an older Ubuntu where `hey` is not in apt, swap this step for:
+      #   - uses: actions/setup-go@v5
+      #     with: { go-version: '1.22' }
+      #   - run: go install github.com/rakyll/hey@v0.1.4
+      # and add ~/go/bin to PATH. For now, apt is the path of least
+      # resistance and gives us a version pin via the distro.
+      - name: Install hey and nginx
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y hey nginx
+
+      - name: Run sample benchmark
+        run: bash run.sh
+
+      - name: Upload output as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: hey-output
+          path: frameworks/loadtest/hey/output.txt
+          if-no-files-found: error
