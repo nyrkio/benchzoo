@@ -1,0 +1,12 @@
+goos: linux
+goarch: amd64
+pkg: github.com/nyrkio/benchzoo/frameworks/language/go-test-bench
+cpu: AMD EPYC 7763 64-Core Processor                
+BenchmarkBenchmark1-2   	       1	2150163312 ns/op	      88 B/op	       2 allocs/op
+BenchmarkBenchmark2-2   	       1	      1232 ns/op	       0 B/op	       0 allocs/op
+BenchmarkBenchmark3-2   	       1	   1873856 ns/op	   32808 B/op	       3 allocs/op
+BenchmarkBenchmark4-2   	       1	2151037524 ns/op	    1320 B/op	      16 allocs/op
+--- BENCH: BenchmarkBenchmark4-2
+    benchmarks_test.go:107: benchmark4: month=4, sleep=2.15s
+PASS
+ok  	github.com/nyrkio/benchzoo/frameworks/language/go-test-bench	4.309s

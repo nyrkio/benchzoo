@@ -1,0 +1,25 @@
+{"Time":"2026-04-12T07:13:08.545677953Z","Action":"start","Package":"github.com/nyrkio/benchzoo/frameworks/language/go-test-bench"}
+{"Time":"2026-04-12T07:13:08.547918553Z","Action":"output","Package":"github.com/nyrkio/benchzoo/frameworks/language/go-test-bench","Output":"goos: linux\n"}
+{"Time":"2026-04-12T07:13:08.547938059Z","Action":"output","Package":"github.com/nyrkio/benchzoo/frameworks/language/go-test-bench","Output":"goarch: amd64\n"}
+{"Time":"2026-04-12T07:13:08.54794397Z","Action":"output","Package":"github.com/nyrkio/benchzoo/frameworks/language/go-test-bench","Output":"pkg: github.com/nyrkio/benchzoo/frameworks/language/go-test-bench\n"}
+{"Time":"2026-04-12T07:13:08.547949631Z","Action":"output","Package":"github.com/nyrkio/benchzoo/frameworks/language/go-test-bench","Output":"cpu: AMD EPYC 7763 64-Core Processor                \n"}
+{"Time":"2026-04-12T07:13:08.547955862Z","Action":"run","Package":"github.com/nyrkio/benchzoo/frameworks/language/go-test-bench","Test":"BenchmarkBenchmark1"}
+{"Time":"2026-04-12T07:13:08.54795981Z","Action":"output","Package":"github.com/nyrkio/benchzoo/frameworks/language/go-test-bench","Test":"BenchmarkBenchmark1","Output":"=== RUN   BenchmarkBenchmark1\n"}
+{"Time":"2026-04-12T07:13:08.547964027Z","Action":"output","Package":"github.com/nyrkio/benchzoo/frameworks/language/go-test-bench","Test":"BenchmarkBenchmark1","Output":"BenchmarkBenchmark1\n"}
+{"Time":"2026-04-12T07:13:10.698934712Z","Action":"output","Package":"github.com/nyrkio/benchzoo/frameworks/language/go-test-bench","Test":"BenchmarkBenchmark1","Output":"BenchmarkBenchmark1-2   \t       1\t2150387943 ns/op\t      88 B/op\t       2 allocs/op\n"}
+{"Time":"2026-04-12T07:13:10.699000835Z","Action":"run","Package":"github.com/nyrkio/benchzoo/frameworks/language/go-test-bench","Test":"BenchmarkBenchmark2"}
+{"Time":"2026-04-12T07:13:10.699006866Z","Action":"output","Package":"github.com/nyrkio/benchzoo/frameworks/language/go-test-bench","Test":"BenchmarkBenchmark2","Output":"=== RUN   BenchmarkBenchmark2\n"}
+{"Time":"2026-04-12T07:13:10.699011675Z","Action":"output","Package":"github.com/nyrkio/benchzoo/frameworks/language/go-test-bench","Test":"BenchmarkBenchmark2","Output":"BenchmarkBenchmark2\n"}
+{"Time":"2026-04-12T07:13:10.699416517Z","Action":"output","Package":"github.com/nyrkio/benchzoo/frameworks/language/go-test-bench","Test":"BenchmarkBenchmark2","Output":"BenchmarkBenchmark2-2   \t       1\t       992.0 ns/op\t       0 B/op\t       0 allocs/op\n"}
+{"Time":"2026-04-12T07:13:10.69942861Z","Action":"run","Package":"github.com/nyrkio/benchzoo/frameworks/language/go-test-bench","Test":"BenchmarkBenchmark3"}
+{"Time":"2026-04-12T07:13:10.69943445Z","Action":"output","Package":"github.com/nyrkio/benchzoo/frameworks/language/go-test-bench","Test":"BenchmarkBenchmark3","Output":"=== RUN   BenchmarkBenchmark3\n"}
+{"Time":"2026-04-12T07:13:10.699438057Z","Action":"output","Package":"github.com/nyrkio/benchzoo/frameworks/language/go-test-bench","Test":"BenchmarkBenchmark3","Output":"BenchmarkBenchmark3\n"}
+{"Time":"2026-04-12T07:13:10.702019698Z","Action":"output","Package":"github.com/nyrkio/benchzoo/frameworks/language/go-test-bench","Test":"BenchmarkBenchmark3","Output":"BenchmarkBenchmark3-2   \t       1\t   2043434 ns/op\t   32808 B/op\t       3 allocs/op\n"}
+{"Time":"2026-04-12T07:13:10.702038553Z","Action":"run","Package":"github.com/nyrkio/benchzoo/frameworks/language/go-test-bench","Test":"BenchmarkBenchmark4"}
+{"Time":"2026-04-12T07:13:10.702041939Z","Action":"output","Package":"github.com/nyrkio/benchzoo/frameworks/language/go-test-bench","Test":"BenchmarkBenchmark4","Output":"=== RUN   BenchmarkBenchmark4\n"}
+{"Time":"2026-04-12T07:13:10.702045246Z","Action":"output","Package":"github.com/nyrkio/benchzoo/frameworks/language/go-test-bench","Test":"BenchmarkBenchmark4","Output":"BenchmarkBenchmark4\n"}
+{"Time":"2026-04-12T07:13:10.702397232Z","Action":"output","Package":"github.com/nyrkio/benchzoo/frameworks/language/go-test-bench","Test":"BenchmarkBenchmark4","Output":"    benchmarks_test.go:107: benchmark4: month=4, sleep=2.15s\n"}
+{"Time":"2026-04-12T07:13:12.854392047Z","Action":"output","Package":"github.com/nyrkio/benchzoo/frameworks/language/go-test-bench","Test":"BenchmarkBenchmark4","Output":"BenchmarkBenchmark4-2   \t       1\t2151883962 ns/op\t    1648 B/op\t      20 allocs/op\n"}
+{"Time":"2026-04-12T07:13:12.854435247Z","Action":"output","Package":"github.com/nyrkio/benchzoo/frameworks/language/go-test-bench","Output":"PASS\n"}
+{"Time":"2026-04-12T07:13:12.85490914Z","Action":"output","Package":"github.com/nyrkio/benchzoo/frameworks/language/go-test-bench","Output":"ok  \tgithub.com/nyrkio/benchzoo/frameworks/language/go-test-bench\t4.309s\n"}
+{"Time":"2026-04-12T07:13:12.854949294Z","Action":"pass","Package":"github.com/nyrkio/benchzoo/frameworks/language/go-test-bench","Elapsed":4.309}
