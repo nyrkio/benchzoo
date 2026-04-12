@@ -1,0 +1,52 @@
+=== perf --version ===
+perf version 6.17.13
+
+=== benchmark1 (perf stat, csv) ===
+Starting benchmark1
+End of benchmark1
+# started on Sun Apr 12 22:06:43 2026
+
+2227810,,task-clock,2227810,100.00,0.001,CPUs utilized
+2,,context-switches,2227810,100.00,897.743,/sec
+0,,cpu-migrations,2227810,100.00,0.000,/sec
+284,,page-faults,2227810,100.00,127.479,K/sec
+<not supported>,,cycles,0,100.00,,
+=== end benchmark1 ===
+
+=== benchmark2 (perf stat, csv) ===
+Starting benchmark2
+End of benchmark2
+# started on Sun Apr 12 22:06:45 2026
+
+2650108,,task-clock,2650108,100.00,0.853,CPUs utilized
+0,,context-switches,2650108,100.00,0.000,/sec
+0,,cpu-migrations,2650108,100.00,0.000,/sec
+151,,page-faults,2650108,100.00,56.979,K/sec
+<not supported>,,cycles,0,100.00,,
+=== end benchmark2 ===
+
+=== benchmark3 (perf stat, csv) ===
+Starting benchmark3
+End of benchmark3
+# started on Sun Apr 12 22:06:45 2026
+
+6638960,,task-clock,6638960,100.00,0.926,CPUs utilized
+1,,context-switches,6638960,100.00,150.626,/sec
+0,,cpu-migrations,6638960,100.00,0.000,/sec
+308,,page-faults,6638960,100.00,46.393,K/sec
+<not supported>,,cycles,0,100.00,,
+=== end benchmark3 ===
+
+=== benchmark4 (perf stat, csv) ===
+Starting benchmark4
+benchmark4: month=4, sleep=2.15s
+End of benchmark4
+# started on Sun Apr 12 22:06:45 2026
+
+5696184,,task-clock,5696184,100.00,0.003,CPUs utilized
+8,,context-switches,5696184,100.00,1.404,K/sec
+1,,cpu-migrations,5696184,100.00,175.556,/sec
+716,,page-faults,5696184,100.00,125.698,K/sec
+<not supported>,,cycles,0,100.00,,
+=== end benchmark4 ===
+
