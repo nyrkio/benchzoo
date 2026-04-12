@@ -86,7 +86,7 @@ public class SampleBenchmark
     public void Benchmark3()
     {
         var buffer = new byte[1_400_000];
-        var rng = new Random(seed: 42);
+        var rng = new Random(42);
         rng.NextBytes(buffer);
         using var stream = File.OpenWrite("/dev/null");
         stream.Write(buffer, 0, buffer.Length);
