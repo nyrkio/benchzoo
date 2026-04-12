@@ -1,0 +1,60 @@
+name: vegeta
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'frameworks/loadtest/vegeta/**'
+      - '.github/workflows/vegeta.yml'
+  pull_request:
+    paths:
+      - 'frameworks/loadtest/vegeta/**'
+      - '.github/workflows/vegeta.yml'
+  workflow_dispatch:
+
+# No `schedule:` trigger — vegeta does not implement test 4 of the
+# canonical sample benchmark (see README for the deviation rationale),
+# so there is no change-detection time series for this framework to
+# accumulate.
+
+permissions:
+  contents: read
+
+concurrency:
+  group: vegeta-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frameworks/loadtest/vegeta
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+
+      - name: Install vegeta
+        run: go install github.com/tsenart/vegeta/v12/cmd/vegeta@v12.12.0
+
+      - name: Install nginx
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y nginx
+
+      - name: Run sample benchmark
+        run: bash run.sh
+
+      - name: Upload output as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: vegeta-output
+          path: |
+            frameworks/loadtest/vegeta/output.json
+            frameworks/loadtest/vegeta/output.txt
+            frameworks/loadtest/vegeta/output-histogram.txt
+          if-no-files-found: error
