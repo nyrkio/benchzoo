@@ -1,0 +1,30 @@
+[package]
+name = "sample_benchmark_libtest"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+# This crate hosts the canonical benchzoo sample benchmark under Rust's
+# built-in `#[bench]` / `test::Bencher` API (a.k.a. "cargo bench with
+# libtest", the original pre-criterion benchmarking harness).
+#
+# IMPORTANT: `#[bench]` and the `test` crate are **unstable** and require
+# the **nightly** Rust toolchain. A stable compiler will fail to build
+# `benches/sample_benchmark.rs` because of the `#![feature(test)]`
+# attribute. The toolchain is pinned via `rust-toolchain.toml` in this
+# same directory.
+#
+# Unlike the criterion sibling crate, no explicit `[[bench]]` stanza is
+# needed: cargo auto-discovers `benches/*.rs` and, without
+# `harness = false`, uses the built-in libtest harness — which is
+# exactly what we want here.
+
+[lib]
+path = "src/lib.rs"
+
+[dev-dependencies]
+# Used by benchmark4 to get the current UTC month. Rust's stdlib has no
+# calendar math; chrono is the least-bad option. Pin exactly — whenever
+# we deliberately bump the version, the diff in the captured output is
+# part of the PR.
+chrono = "=0.4.38"

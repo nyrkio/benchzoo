@@ -1,0 +1,59 @@
+name: cargo-bench
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'frameworks/language/cargo-bench/**'
+      - '.github/workflows/cargo-bench.yml'
+  pull_request:
+    paths:
+      - 'frameworks/language/cargo-bench/**'
+      - '.github/workflows/cargo-bench.yml'
+  workflow_dispatch:
+  schedule:
+    # Daily at 12:00 UTC for the test 4 change-detection showcase.
+    # Avoid 0 0 * * * — month boundary ambiguity.
+    - cron: '0 12 * * *'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cargo-bench-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frameworks/language/cargo-bench
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install nightly Rust toolchain
+        # `#[bench]` / `extern crate test` require nightly. The specific
+        # nightly date is pinned in
+        # frameworks/language/cargo-bench/rust-toolchain.toml, which
+        # rustup honours automatically inside the working directory — so
+        # we just ask dtolnay/rust-toolchain for "nightly" here and the
+        # toolchain file narrows it down. Keeping the exact date in one
+        # place (the toolchain file) avoids drift between the workflow
+        # and the crate.
+        uses: dtolnay/rust-toolchain@nightly
+
+      - name: Cache cargo build
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: frameworks/language/cargo-bench
+
+      - name: Run sample benchmark
+        run: bash ./run.sh
+
+      - name: Upload output as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: cargo-bench-output
+          path: frameworks/language/cargo-bench/output.txt
+          if-no-files-found: error

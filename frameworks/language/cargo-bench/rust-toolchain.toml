@@ -1,0 +1,16 @@
+# Pin the nightly toolchain used for this crate. `#[bench]` and the
+# `test` crate are nightly-only, so stable Rust cannot build the sample
+# benchmark in `benches/sample_benchmark.rs`.
+#
+# Cargo reads this file automatically (via rustup) and selects the
+# specified toolchain for every invocation inside this directory — both
+# locally and in CI. The workflow does not need a separate `+nightly`
+# selector if it respects this file; `run.sh` passes `+nightly` anyway
+# as a belt-and-suspenders.
+#
+# Whenever we deliberately bump the nightly date, the diff in the
+# captured output is part of the PR — that is the point.
+[toolchain]
+channel = "nightly-2025-10-01"
+components = ["rustc", "cargo"]
+profile = "minimal"
