@@ -1,0 +1,123 @@
+# JMH version: 1.37
+# VM version: JDK 17.0.18, OpenJDK 64-Bit Server VM, 17.0.18+8
+# VM invoker: /usr/lib/jvm/temurin-17-jdk-amd64/bin/java
+# VM options: <none>
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 1 iterations, 1 s each
+# Measurement: 3 iterations, 1 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: io.nyrkio.benchzoo.jmh.SampleBenchmark.benchmark1
+
+# Run progress: 0.00% complete, ETA 00:00:16
+# Fork: 1 of 1
+# Warmup Iteration   1: 2150.135 ms/op
+Iteration   1: 2150.112 ms/op
+Iteration   2: 2150.108 ms/op
+Iteration   3: 2150.131 ms/op
+
+
+Result "io.nyrkio.benchzoo.jmh.SampleBenchmark.benchmark1":
+  2150.117 ±(99.9%) 0.222 ms/op [Average]
+  (min, avg, max) = (2150.108, 2150.117, 2150.131), stdev = 0.012
+  CI (99.9%): [2149.895, 2150.339] (assumes normal distribution)
+
+
+# JMH version: 1.37
+# VM version: JDK 17.0.18, OpenJDK 64-Bit Server VM, 17.0.18+8
+# VM invoker: /usr/lib/jvm/temurin-17-jdk-amd64/bin/java
+# VM options: <none>
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 1 iterations, 1 s each
+# Measurement: 3 iterations, 1 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: io.nyrkio.benchzoo.jmh.SampleBenchmark.benchmark2
+
+# Run progress: 25.00% complete, ETA 00:00:26
+# Fork: 1 of 1
+# Warmup Iteration   1: ≈ 10⁻⁴ ms/op
+Iteration   1: ≈ 10⁻⁴ ms/op
+Iteration   2: ≈ 10⁻⁴ ms/op
+Iteration   3: ≈ 10⁻⁴ ms/op
+
+
+Result "io.nyrkio.benchzoo.jmh.SampleBenchmark.benchmark2":
+  ≈ 10⁻⁴ ms/op
+
+
+# JMH version: 1.37
+# VM version: JDK 17.0.18, OpenJDK 64-Bit Server VM, 17.0.18+8
+# VM invoker: /usr/lib/jvm/temurin-17-jdk-amd64/bin/java
+# VM options: <none>
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 1 iterations, 1 s each
+# Measurement: 3 iterations, 1 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: io.nyrkio.benchzoo.jmh.SampleBenchmark.benchmark3
+
+# Run progress: 50.00% complete, ETA 00:00:13
+# Fork: 1 of 1
+# Warmup Iteration   1: 2.028 ms/op
+Iteration   1: 1.917 ms/op
+Iteration   2: 1.913 ms/op
+Iteration   3: 1.913 ms/op
+
+
+Result "io.nyrkio.benchzoo.jmh.SampleBenchmark.benchmark3":
+  1.914 ±(99.9%) 0.043 ms/op [Average]
+  (min, avg, max) = (1.913, 1.914, 1.917), stdev = 0.002
+  CI (99.9%): [1.872, 1.957] (assumes normal distribution)
+
+
+# JMH version: 1.37
+# VM version: JDK 17.0.18, OpenJDK 64-Bit Server VM, 17.0.18+8
+# VM invoker: /usr/lib/jvm/temurin-17-jdk-amd64/bin/java
+# VM options: <none>
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 1 iterations, 1 s each
+# Measurement: 3 iterations, 1 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: io.nyrkio.benchzoo.jmh.SampleBenchmark.benchmark4
+
+# Run progress: 75.00% complete, ETA 00:00:05
+# Fork: 1 of 1
+# Warmup Iteration   1: 2151.024 ms/op
+Iteration   1: 2150.143 ms/op
+Iteration   2: 2150.180 ms/op
+Iteration   3: 2150.151 ms/op
+
+
+Result "io.nyrkio.benchzoo.jmh.SampleBenchmark.benchmark4":
+  2150.158 ±(99.9%) 0.354 ms/op [Average]
+  (min, avg, max) = (2150.143, 2150.158, 2150.180), stdev = 0.019
+  CI (99.9%): [2149.804, 2150.511] (assumes normal distribution)
+
+
+# Run complete. Total time: 00:00:26
+
+REMEMBER: The numbers below are just data. To gain reusable insights, you need to follow up on
+why the numbers are the way they are. Use profilers (see -prof, -lprof), design factorial
+experiments, perform baseline and negative tests that provide experimental control, make sure
+the benchmarking environment is safe on JVM/OS/HW level, ask for reviews from the domain experts.
+Do not assume the numbers tell you what you want them to tell.
+
+NOTE: Current JVM experimentally supports Compiler Blackholes, and they are in use. Please exercise
+extra caution when trusting the results, look into the generated code to check the benchmark still
+works, and factor in a small probability of new VM bugs. Additionally, while comparisons between
+different JVMs are already problematic, the performance difference caused by different Blackhole
+modes can be very significant. Please make sure you use the consistent Blackhole mode for comparisons.
+
+Benchmark                   Mode  Cnt     Score    Error  Units
+SampleBenchmark.benchmark1  avgt    3  2150.117 ±  0.222  ms/op
+SampleBenchmark.benchmark2  avgt    3    ≈ 10⁻⁴           ms/op
+SampleBenchmark.benchmark3  avgt    3     1.914 ±  0.043  ms/op
+SampleBenchmark.benchmark4  avgt    3  2150.158 ±  0.354  ms/op
+
+Benchmark result is saved to output.json
