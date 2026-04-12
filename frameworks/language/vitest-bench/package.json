@@ -1,0 +1,14 @@
+{
+  "name": "benchzoo-vitest-bench",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "benchzoo canonical sample benchmark implemented under Vitest's built-in bench mode (tinybench under the hood).",
+  "scripts": {
+    "bench": "vitest bench --run --reporter=json --outputFile=output.json"
+  },
+  "devDependencies": {
+    "typescript": "5.7.2",
+    "vitest": "2.1.8"
+  }
+}
