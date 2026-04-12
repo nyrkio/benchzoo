@@ -1,0 +1,51 @@
+name: benchmarkdotnet
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'frameworks/language/benchmarkdotnet/**'
+      - '.github/workflows/benchmarkdotnet.yml'
+  pull_request:
+    paths:
+      - 'frameworks/language/benchmarkdotnet/**'
+      - '.github/workflows/benchmarkdotnet.yml'
+  workflow_dispatch:
+  schedule:
+    # Daily at 12:00 UTC for the test 4 change-detection showcase.
+    # Avoid 0 0 * * * — month boundary ambiguity.
+    - cron: '0 12 * * *'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: benchmarkdotnet-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frameworks/language/benchmarkdotnet
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Run sample benchmark
+        run: ./run.sh
+
+      - name: Upload output as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmarkdotnet-output
+          path: |
+            frameworks/language/benchmarkdotnet/output.json
+            frameworks/language/benchmarkdotnet/output.csv
+            frameworks/language/benchmarkdotnet/output.txt
+          if-no-files-found: error
