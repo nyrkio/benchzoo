@@ -19,12 +19,12 @@ asv machine --yes
 
 asv run --python=same --quick --show-stderr
 
-# asv publishes per-commit JSON under .asv/results/<machine>/<hash>-<env>.json.
-# The machine name defaults to the hostname; on GitHub's runners that is
-# something like "fv-az123-456". Glob to find the single commit's result
-# file (there is exactly one since we only ran against HEAD).
-asv publish
-
+# The raw per-commit results JSON under .asv/results/<machine>/<hash>-<env>.json
+# is written directly by `asv run` — we do NOT call `asv publish` because
+# that step wants to resolve the repo URL for history rendering and chokes
+# on `repo: "."` in a shallow CI checkout ("Can not determine what kind of
+# DVCS to use for URL '.'"). The raw results file is what the parser
+# actually needs; asv publish is purely a human-readable aggregator.
 result_file=$(find .asv/results -mindepth 2 -type f -name '*.json' \
     ! -name 'machine.json' ! -name 'benchmarks.json' | head -n 1)
 
