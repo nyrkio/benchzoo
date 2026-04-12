@@ -1,0 +1,56 @@
+name: hyperfine
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'frameworks/generic/hyperfine/**'
+      - '.github/workflows/hyperfine.yml'
+  pull_request:
+    paths:
+      - 'frameworks/generic/hyperfine/**'
+      - '.github/workflows/hyperfine.yml'
+  workflow_dispatch:
+  schedule:
+    # Daily at 12:00 UTC for the test 4 change-detection showcase.
+    # Avoid 0 0 * * * — month boundary ambiguity.
+    - cron: '0 12 * * *'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: hyperfine-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frameworks/generic/hyperfine
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install hyperfine
+        run: |
+          HYPERFINE_VERSION=1.19.0
+          curl -sSLo hyperfine.deb \
+            "https://github.com/sharkdp/hyperfine/releases/download/v${HYPERFINE_VERSION}/hyperfine_${HYPERFINE_VERSION}_amd64.deb"
+          sudo dpkg -i hyperfine.deb
+          rm hyperfine.deb
+          hyperfine --version
+        working-directory: ${{ github.workspace }}
+
+      - name: Run sample benchmark
+        run: ./run.sh
+
+      - name: Upload output as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: hyperfine-output
+          path: |
+            frameworks/generic/hyperfine/output.json
+            frameworks/generic/hyperfine/output.csv
+            frameworks/generic/hyperfine/output.md
+          if-no-files-found: error
