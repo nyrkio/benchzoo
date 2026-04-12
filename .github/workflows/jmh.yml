@@ -1,0 +1,53 @@
+name: jmh
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'frameworks/language/jmh/**'
+      - '.github/workflows/jmh.yml'
+  pull_request:
+    paths:
+      - 'frameworks/language/jmh/**'
+      - '.github/workflows/jmh.yml'
+  workflow_dispatch:
+  schedule:
+    # Daily at 12:00 UTC for the test 4 change-detection showcase.
+    # Avoid 0 0 * * * — month boundary ambiguity.
+    - cron: '0 12 * * *'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: jmh-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frameworks/language/jmh
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+
+      - name: Run sample benchmark
+        run: bash run.sh
+
+      - name: Upload output as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: jmh-output
+          path: |
+            frameworks/language/jmh/output.json
+            frameworks/language/jmh/output.csv
+            frameworks/language/jmh/output.txt
+          if-no-files-found: error
