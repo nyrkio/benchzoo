@@ -1,0 +1,50 @@
+name: k6
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'frameworks/loadtest/k6/**'
+      - '.github/workflows/k6.yml'
+  pull_request:
+    paths:
+      - 'frameworks/loadtest/k6/**'
+      - '.github/workflows/k6.yml'
+  workflow_dispatch:
+  schedule:
+    # Daily at 12:00 UTC for the test 4 change-detection showcase.
+    # Avoid 0 0 * * * — month boundary ambiguity.
+    - cron: '0 12 * * *'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: k6-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frameworks/loadtest/k6
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install k6
+        uses: grafana/setup-k6-action@v1
+        with:
+          k6-version: '0.54.0'
+
+      - name: Run sample benchmark
+        run: bash run.sh
+
+      - name: Upload output as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: k6-output
+          path: |
+            frameworks/loadtest/k6/summary.json
+            frameworks/loadtest/k6/output.json
+          if-no-files-found: error
