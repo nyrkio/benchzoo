@@ -1,0 +1,53 @@
+name: benchmark-ips
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'frameworks/language/benchmark-ips/**'
+      - '.github/workflows/benchmark-ips.yml'
+  pull_request:
+    paths:
+      - 'frameworks/language/benchmark-ips/**'
+      - '.github/workflows/benchmark-ips.yml'
+  workflow_dispatch:
+  schedule:
+    # Daily at 12:00 UTC for the test 4 change-detection showcase.
+    # Avoid 0 0 * * * — month boundary ambiguity.
+    - cron: '0 12 * * *'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: benchmark-ips-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frameworks/language/benchmark-ips
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+          working-directory: frameworks/language/benchmark-ips
+
+      - name: Run sample benchmark
+        run: ./run.sh
+
+      - name: Upload output as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-ips-output
+          path: |
+            frameworks/language/benchmark-ips/output.json
+            frameworks/language/benchmark-ips/output.txt
+            frameworks/language/benchmark-ips/output-raw.dump
+          if-no-files-found: error
