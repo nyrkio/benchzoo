@@ -137,6 +137,36 @@ parseable) or its internal binary cache format (not user-facing) can be
 skipped. When in doubt, include it — a parser we don't need is cheaper
 than a gap a user falls into.
 
+### LLM fallback parsers
+
+For formats that benchzoo does not have a deterministic parser for,
+two optional parsers — `benchzoo.parsers.llm_anthropic` and
+`benchzoo.parsers.llm_local` — call an LLM with the Nyrkiö schema and
+few-shot examples from the corpus, asking it to produce a parser-
+contract-compliant `list[dict]`. `llm_local` uses Ollama with a small
+coder-tuned model (default `qwen2.5-coder:3b`), runs offline, and is
+deterministic with `temperature=0`. `llm_anthropic` uses the Anthropic
+API for higher accuracy at the cost of network and per-call dollars.
+
+These are **experimental and explicitly optional**: they require
+extra installs, they break the "pure, deterministic, no-network"
+property of the rest of the parser library, and they should never sit
+in a production change-detection pipeline. Their purpose is:
+
+1. **Triage** — quickly identify or consume a format nobody has
+   written a dedicated parser for.
+2. **Bootstrapping new parsers** — let the LLM's output guide the
+   writing of a deterministic parser.
+3. **User convenience for one-off, proprietary formats** that will
+   never be worth a dedicated parser.
+
+Tests for these parsers live at `tests/parsers/test_llm.py` and skip
+by default; setting `BENCHZOO_RUN_LLM_ANTHROPIC=1` or
+`BENCHZOO_RUN_LLM_LOCAL=1` turns them on. When enabled, they evaluate
+accuracy against a subset of the existing fixture corpus — so the
+same `2.15 s` ground-truth signature we use to test deterministic
+parsers also grades the LLM backends.
+
 ## Data model
 
 Parsers convert framework-native output into the **Nyrkiö JSON** shape —

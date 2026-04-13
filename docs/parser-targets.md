@@ -313,6 +313,64 @@ formats. The rest of the catalog above is the long tail.
 
 ---
 
+## Status key
+
+- **✅ shipped** — framework dir + workflow + captured fixture + parser
+  + ground-truth tests all landed. See [`README.md`](../README.md) for
+  the live table linking to each framework.
+- **long-tailed** — attempted and deferred this pass with a documented
+  reason. Listed below.
+- **unmarked** — not yet attempted; remains in the catalog for future
+  work.
+
+## Shipped frameworks
+
+As of the end of the first implementation pass:
+
+- **Language:** criterion, cargo bench (libtest), JMH, Google Benchmark,
+  Catch2, BenchmarkDotNet, `go test -bench`, pytest-benchmark, asv,
+  benchmark.js, tinybench, mitata, vitest bench, BenchmarkTools.jl,
+  PHPBench, benchmark-ips.
+- **Load testing:** k6, wrk, wrk2, hey, vegeta, Locust, JMeter, Gatling.
+- **Databases:** pgbench, sysbench, redis-benchmark, memtier_benchmark,
+  ClickBench.
+- **Frontend:** Lighthouse.
+- **Unit-test runners (as timing source):** per-producer junit parsers
+  for pytest, Jest, go test, vanilla JUnit, CTest, Catch2. Plus
+  mocha's native JSON reporter, dotnet test's TRX, and Playwright.
+- **Generic:** hyperfine, Unix time (builtin + GNU), perf stat, custom
+  JSON (bigger/smaller), custom CSV.
+- **LLM fallback:** `llm_anthropic` (Anthropic API) and `llm_local`
+  (Ollama) — optional, experimental parsers for unknown formats.
+
+## Long-tailed this pass
+
+These were attempted or scoped during the first implementation pass
+and deliberately deferred:
+
+- **MLPerf Inference, vLLM benchmark scripts, lm-evaluation-harness** —
+  all require GPU and/or multi-GB model weights; not tractable in a
+  10-minute CI run. Hand-crafting fixtures without actually running
+  the benchmarks would violate benchzoo's "real captured output"
+  principle.
+- **cassandra-stress** — `cassandra-tools` isn't in Ubuntu 24.04's
+  default apt repos, and the version bundled in the service container
+  needs Python 3.6–3.11 while Ubuntu 24.04 ships 3.12. Two orthogonal
+  breakages; not worth the yak-shaving this pass.
+- **YCSB** — the 0.17.0 launcher script is Python 2 only
+  (`except E, err:` syntax); would require installing Python 2.7,
+  which is EOL'd and not available in Ubuntu 24.04 apt.
+- **Cypress** — ran our four synthetic sleep tests in 348 ms total
+  because `cy.wait(2150)` inside `cy.then()` doesn't block as
+  expected. Cypress is designed for E2E tests against real apps, not
+  synthetic timing suites; the canonical sample-benchmark doesn't fit
+  Cypress's model well.
+- **HammerDB** — GUI-oriented, with a non-interactive CLI mode that
+  still needs a full workload definition. Not a snappy CI fit.
+
+All of these remain valuable parser targets; a future pass with
+GPU-equipped runners or more targeted workloads can pick them up.
+
 ## Open questions
 
 (none currently)
