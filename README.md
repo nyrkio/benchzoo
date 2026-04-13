@@ -13,12 +13,20 @@ benchmark frameworks. Therefore if you need to extract benchmark results
 from a log file or from a separate artifact file, then the goal is that
 this repository should always have the parser you need.
 
-As a catch all, final parser, there's also a parser which evaluates the 
-output from any arbitrary benchmark and tries to extract the correct
-values using an LLM model. There are 4 different LLMs supported: 1)
-Use the Anthropic API, and locally 2) using the
-`qwen2.5-coder:3b` by default and a few other alternative models.
-Ollama is the common denominator for all the LLM parsers.
+As a catch-all, there are also two LLM-backed parsers that extract
+benchmark results from arbitrary input by prompting an LLM with the
+Nyrkiö schema plus a few worked examples from the corpus:
+
+1. `llm_anthropic` — calls the Anthropic API directly. Highest
+   accuracy; requires `ANTHROPIC_API_KEY` and `pip install anthropic`.
+2. `llm_local` — calls a local [Ollama](https://ollama.com) instance.
+   Default model is `qwen2.5-coder:3b`; also works with other small
+   coder- or instruction-tuned models (Llama 3.2, Phi-3.5, Gemma 2).
+   Offline; deterministic with `temperature=0`.
+
+Both are experimental and non-deterministic by nature. Not appropriate
+for production change-detection pipelines; great for triage, one-off
+proprietary formats, or bootstrapping a new deterministic parser.
  
 
 ## Status
@@ -135,18 +143,12 @@ LLM parser tests skip by default; set `BENCHZOO_RUN_LLM_ANTHROPIC=1`
 
 ### Optional: LLM fallback parsers
 
-For formats that don't match any of the above, two optional parsers call
-an LLM with the Nyrkiö schema and few-shot examples:
-
-- **`benchzoo.parsers.llm_anthropic`** — uses the Anthropic API
-  (requires `ANTHROPIC_API_KEY` + `pip install anthropic`).
-- **`benchzoo.parsers.llm_local`** — uses a local Ollama instance,
-  default model `qwen2.5-coder:3b`. Offline, deterministic with
-  `temperature=0`.
-
-Both are **experimental** and non-deterministic. See each module's
-docstring and [`tests/parsers/test_llm.py`](tests/parsers/test_llm.py)
-for the evaluation harness against the real fixture corpus.
+`benchzoo.parsers.llm_anthropic` and `benchzoo.parsers.llm_local` (see
+intro above) cover formats that don't match any of the built-in
+parsers. Their evaluation harness lives at
+[`tests/parsers/test_llm.py`](tests/parsers/test_llm.py) — set
+`BENCHZOO_RUN_LLM_ANTHROPIC=1` (+ `ANTHROPIC_API_KEY`) or
+`BENCHZOO_RUN_LLM_LOCAL=1` to run it against the real fixture corpus.
 
 ## Adding a framework
 
