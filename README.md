@@ -41,16 +41,36 @@ Pre-1.0: parser API may still move; not yet on PyPI.
 ## Install and use
 
 ```bash
-    pip install -e .
+pip install -e .
+```
 
-    python -c "
-    from benchzoo.parsers import hyperfine_json
-    import json
+```python
+import benchzoo
 
-    # Parse whatever output your tool produced
-    result = hyperfine_json.parse(open('output.json').read())
-    print(json.dumps(result, indent=2))
-"
+content = open("output.json").read()
+
+# 1. Explicit — best when you have out-of-band info (e.g. a CI
+#    artifact name, a config setting) that tells you which
+#    framework produced `content`.
+results = benchzoo.find_parser("hyperfine", "json").parse(content)
+
+# 2. Sniff-based — best-effort content detection. Returns the
+#    framework name (string) or None. Never returns a wrong name:
+#    when the input is ambiguous, it's None and the caller decides
+#    what to do next.
+framework = benchzoo.sniff(content)      # e.g. "hyperfine" or None
+if framework:
+    results = benchzoo.find_parser(framework).parse(content)
+else:
+    # 3. Catch-all — hand off to the LLM fallback parsers for
+    #    formats benchzoo doesn't have a dedicated parser for.
+    from benchzoo.parsers import llm_local
+    results = llm_local.parse(content)
+
+# Browse the registry directly if you're wiring up your own
+# dispatcher.
+for framework, formats in benchzoo.PARSERS.items():
+    print(framework, list(formats))
 ```
 
 Every parser has the same contract: `parse(content: bytes | str) ->
