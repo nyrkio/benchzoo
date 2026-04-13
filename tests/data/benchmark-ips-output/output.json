@@ -11,10 +11,40 @@
   "benchmarks": [
     {
       "name": "benchmark1",
-      "ips": 0.46508852323566136,
+      "ips": 0.46508960996624976,
       "ips_stddev": 0,
-      "microseconds_per_iteration": 2150128.3090000004,
-      "seconds_per_iteration": 2.1501283090000007,
+      "microseconds_per_iteration": 2150123.2849999964,
+      "seconds_per_iteration": 2.1501232849999963,
+      "iterations": 1,
+      "measurement_cycle": 1,
+      "stats_class": "Benchmark::IPS::Stats::SD"
+    },
+    {
+      "name": "benchmark2",
+      "ips": 22518.165737538402,
+      "ips_stddev": 377,
+      "microseconds_per_iteration": 2069998.0949999765,
+      "seconds_per_iteration": 4.440859045339437e-05,
+      "iterations": 46599,
+      "measurement_cycle": 2219,
+      "stats_class": "Benchmark::IPS::Stats::SD"
+    },
+    {
+      "name": "benchmark3",
+      "ips": 261.24991879443945,
+      "ips_stddev": 14,
+      "microseconds_per_iteration": 2027180.9899999946,
+      "seconds_per_iteration": 0.0038277523859704425,
+      "iterations": 528,
+      "measurement_cycle": 24,
+      "stats_class": "Benchmark::IPS::Stats::SD"
+    },
+    {
+      "name": "benchmark4",
+      "ips": 0.4650780704186565,
+      "ips_stddev": 0,
+      "microseconds_per_iteration": 2150176.633999996,
+      "seconds_per_iteration": 2.150176633999996,
       "iterations": 1,
       "measurement_cycle": 1,
       "stats_class": "Benchmark::IPS::Stats::SD"

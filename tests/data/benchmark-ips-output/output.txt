@@ -1,7 +1,18 @@
 ruby 3.3.11 (2026-03-26 revision 1f2d15125a) [x86_64-linux]
 Warming up --------------------------------------
           benchmark1     1.000 i/100ms
+          benchmark2     2.219k i/100ms
+          benchmark3    24.000 i/100ms
+          benchmark4     1.000 i/100ms
 Calculating -------------------------------------
-          benchmark1      0.465 (± 0.0%) i/s     (2.15 s/i) -      1.000 in   2.150128s
+          benchmark1      0.465 (± 0.0%) i/s     (2.15 s/i) -      1.000 in   2.150123s
+          benchmark2     22.518k (± 1.7%) i/s   (44.41 μs/i) -     46.599k in   2.069998s
+          benchmark3    261.250 (± 5.4%) i/s    (3.83 ms/i) -    528.000 in   2.027181s
+          benchmark4      0.465 (± 0.0%) i/s     (2.15 s/i) -      1.000 in   2.150177s
 
-Pausing here -- run Ruby again to measure the next benchmark...
+Comparison:
+          benchmark2:    22518.2 i/s
+          benchmark3:      261.2 i/s - 86.19x  slower
+          benchmark1:        0.5 i/s - 48416.83x  slower
+          benchmark4:        0.5 i/s - 48418.03x  slower
+
