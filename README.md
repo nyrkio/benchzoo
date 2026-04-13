@@ -165,6 +165,11 @@ that captures the output as an artifact, write the parser against the
 real captured fixture (grep for `2.15` in the output — that's test 1's
 wall time), and add ground-truth tests.
 
+To iterate on a parser without round-tripping through GitHub CI,
+run the workflow locally via [`nektos/act`](https://github.com/nektos/act).
+See [`docs/act.md`](docs/act.md) for the install, image selection,
+and full invocation recipe.
+
 
 
 ## More Documentation
@@ -176,6 +181,9 @@ wall time), and add ground-truth tests.
 - **Canonical sample benchmark:** [`docs/sample-benchmark.md`](docs/sample-benchmark.md) —
   the four fixed tests every framework implements.
 - **Workflow conventions:** [`docs/workflow-conventions.md`](docs/workflow-conventions.md) —
-  CI / `act` conventions for the corpus.
+  CI conventions for the corpus.
+- **Running workflows locally:** [`docs/act.md`](docs/act.md) —
+  `nektos/act` install, image selection, running a single workflow,
+  simulating `schedule` triggers, limitations, and secrets handling.
 
 
