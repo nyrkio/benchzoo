@@ -13,6 +13,25 @@ benchmark frameworks. Therefore if you need to extract benchmark results
 from a log file or from a separate artifact file, then the goal is that
 this repository should always have the parser you need.
 
+**And you don't even need to tell benchzoo which parser to use.**
+Hand `benchzoo.sniff(content)` any benchmark output — **36 of the 42
+supported frameworks are autodetected from content alone**, via a
+four-tier signature matcher (JSON top-level keys → XML root element →
+CSV header row → distinctive text substring):
+
+> asv, benchmark-ips, benchmark-js, benchmarkdotnet, benchmarktools-jl,
+> cargo-bench, catch2, clickbench, custom-json, dotnet-test, gatling,
+> go-test-bench, google-benchmark, hey, hyperfine, jmeter, jmh, k6,
+> lighthouse, locust, memtier, mitata, mocha, perf-stat, pgbench,
+> phpbench, playwright, pytest-benchmark, redis-benchmark, sysbench,
+> time, tinybench, vegeta, vitest-bench, wrk, wrk2.
+
+Hard invariant: `sniff` never returns a wrong framework. When content
+is genuinely ambiguous — four of the six holdouts are variants of
+vanilla `<testsuite>` junit XML from different producers (jest / go /
+vanilla junit / CTest) that look byte-identical — it returns `None`
+and you fall through to explicit selection or the LLM parsers below.
+
 As a catch-all, there are also two LLM-backed parsers that extract
 benchmark results from arbitrary input by prompting an LLM with the
 Nyrkiö schema plus a few worked examples from the corpus:
