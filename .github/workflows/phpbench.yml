@@ -1,0 +1,65 @@
+name: phpbench
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'frameworks/language/phpbench/**'
+      - '.github/workflows/phpbench.yml'
+  pull_request:
+    paths:
+      - 'frameworks/language/phpbench/**'
+      - '.github/workflows/phpbench.yml'
+  workflow_dispatch:
+  schedule:
+    # Daily at 12:00 UTC for the test 4 change-detection showcase.
+    # Avoid 0 0 * * * — month boundary ambiguity.
+    - cron: '0 12 * * *'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: phpbench-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frameworks/language/phpbench
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          tools: composer
+          coverage: none
+
+      - name: Get Composer cache directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> "$GITHUB_OUTPUT"
+
+      - name: Cache Composer packages
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('frameworks/language/phpbench/composer.json') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      - name: Run sample benchmark (XML, JSON, text)
+        run: bash run.sh
+
+      - name: Upload output as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: phpbench-output
+          path: |
+            frameworks/language/phpbench/output.xml
+            frameworks/language/phpbench/output.json
+            frameworks/language/phpbench/output.txt
+          if-no-files-found: error
