@@ -1,0 +1,48 @@
+name: dotnet-test
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'frameworks/unit-or-qa/dotnet-test/**'
+      - '.github/workflows/dotnet-test.yml'
+  pull_request:
+    paths:
+      - 'frameworks/unit-or-qa/dotnet-test/**'
+      - '.github/workflows/dotnet-test.yml'
+  workflow_dispatch:
+  schedule:
+    # Daily at 12:00 UTC for the test 4 change-detection showcase.
+    # Avoid 0 0 * * * — month boundary ambiguity.
+    - cron: '0 12 * * *'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dotnet-test-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frameworks/unit-or-qa/dotnet-test
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Run sample benchmark
+        run: ./run.sh
+
+      - name: Upload output as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dotnet-test-output
+          path: frameworks/unit-or-qa/dotnet-test/output.trx
+          if-no-files-found: error
