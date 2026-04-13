@@ -1,0 +1,31 @@
+# YCSB workload for benchzoo's sample-benchmark capture.
+#
+# Shape: YCSB's classic "Workload A" — 50/50 read/update mix, zipfian
+# request distribution, small record/op counts to keep the CI run
+# bounded. YCSB ships canonical workload files (workloada..workloadf)
+# in its `workloads/` directory; this file inlines the subset we need
+# so the framework directory is self-contained and doesn't depend on
+# the tarball's layout.
+#
+# Parameters:
+#   recordcount         — rows inserted during the `load` phase
+#   operationcount      — operations issued during the `run`  phase
+#   readproportion      — fraction of ops that are READs
+#   updateproportion    — fraction of ops that are UPDATEs
+#   requestdistribution — key selection; zipfian = hot-key workload
+#
+# The workload *class* is the Java class YCSB uses to drive the
+# mix; CoreWorkload is the standard one underneath workloads A-F.
+
+recordcount=1000
+operationcount=10000
+workload=site.ycsb.workloads.CoreWorkload
+
+readallfields=true
+
+readproportion=0.5
+updateproportion=0.5
+scanproportion=0
+insertproportion=0
+
+requestdistribution=zipfian
