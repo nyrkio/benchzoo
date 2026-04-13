@@ -1,0 +1,48 @@
+name: ctest
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'frameworks/unit-or-qa/ctest/**'
+      - '.github/workflows/ctest.yml'
+  pull_request:
+    paths:
+      - 'frameworks/unit-or-qa/ctest/**'
+      - '.github/workflows/ctest.yml'
+  workflow_dispatch:
+  schedule:
+    # Daily at 12:00 UTC for the test 4 change-detection showcase.
+    # Avoid 0 0 * * * — month boundary ambiguity.
+    - cron: '0 12 * * *'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ctest-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frameworks/unit-or-qa/ctest
+    steps:
+      - uses: actions/checkout@v4
+
+      # CMake (>= 3.22 on ubuntu-latest as of writing, satisfies our
+      # 3.21 `--output-junit` floor) and g++ are preinstalled on
+      # GitHub's hosted ubuntu-latest image. We declare `project(...
+      # NONE)` in CMakeLists.txt so no compiler is actually invoked,
+      # but CMake itself is required.
+      - name: Run sample benchmark
+        run: bash run.sh
+
+      - name: Upload output as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ctest-output
+          path: frameworks/unit-or-qa/ctest/output.xml
+          if-no-files-found: error
