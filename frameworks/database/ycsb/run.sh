@@ -19,10 +19,22 @@ set -euo pipefail
 
 cd "$(dirname "$0")"
 
-./ycsb-0.17.0/bin/ycsb load redis -s -P workload.txt \
+# The redis-binding tarball extracts to
+# ``ycsb-redis-binding-0.17.0/``, not ``ycsb-0.17.0/`` as the
+# unspecialised distribution does. Resolve dynamically so the run
+# script survives naming-convention churn between YCSB binding
+# tarballs.
+YCSB_DIR=$(ls -d ycsb-*-0.17.0 ycsb-0.17.0 2>/dev/null | head -n 1)
+if [[ -z "${YCSB_DIR}" ]]; then
+    echo "ERROR: could not find extracted YCSB directory" >&2
+    ls -la >&2
+    exit 1
+fi
+
+"${YCSB_DIR}/bin/ycsb" load redis -s -P workload.txt \
     -p redis.host=localhost -p redis.port=6379 \
     > output-load.txt 2>&1
 
-./ycsb-0.17.0/bin/ycsb run redis -s -P workload.txt \
+"${YCSB_DIR}/bin/ycsb" run redis -s -P workload.txt \
     -p redis.host=localhost -p redis.port=6379 \
     > output-run.txt 2>&1
