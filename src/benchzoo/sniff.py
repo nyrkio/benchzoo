@@ -332,6 +332,8 @@ _CSV_HEADERS = {
         "hyperfine",
     '"test","rps","avg_latency_ms","min_latency_ms","p50_latency_ms","p95_latency_ms","p99_latency_ms","max_latency_ms"':
         "redis-benchmark",
+    'test_name,metric_name,unit,value,direction':
+        "custom-csv",
 }
 
 

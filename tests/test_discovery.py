@@ -109,7 +109,7 @@ _FIXTURE_EXPECTATIONS: dict[str, str | None] = {
     "junit-vanilla-output":      "junit-standard",
     "ctest-output":              "junit-standard",
     # Tier 3 — CSV
-    "custom-csv-output":         None,              # no distinctive header
+    "custom-csv-output":         "custom-csv",
     "redis-benchmark-output":    "redis-benchmark",
     "jmeter-output":             "jmeter",
     "locust-output":             "locust",
