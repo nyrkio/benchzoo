@@ -1,0 +1,20 @@
+name = "benchzoo_benchmarktools_sample"
+uuid = "9a0b3e4d-1c5f-4c22-8e41-2b1a7a0e6c10"
+authors = ["benchzoo"]
+version = "0.1.0"
+
+# This project exists only to host the canonical benchzoo sample
+# benchmark under BenchmarkTools.jl. It is not registered and has no
+# library code of its own — all the interesting code lives in
+# bench.jl, driven by `julia --project=. bench.jl`.
+
+[deps]
+BenchmarkTools = "6e4b80f9-dd63-53aa-95a3-0cdb28fa8baf"
+Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
+Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
+
+[compat]
+# Pin exactly. Whenever we deliberately bump the version, the diff in
+# the captured output is part of the PR — that is the point.
+BenchmarkTools = "=1.5.0"
+julia = "1.11"

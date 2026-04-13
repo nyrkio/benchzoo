@@ -1,0 +1,56 @@
+name: benchmarktools-jl
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'frameworks/language/benchmarktools-jl/**'
+      - '.github/workflows/benchmarktools-jl.yml'
+  pull_request:
+    paths:
+      - 'frameworks/language/benchmarktools-jl/**'
+      - '.github/workflows/benchmarktools-jl.yml'
+  workflow_dispatch:
+  schedule:
+    # Daily at 12:00 UTC for the test 4 change-detection showcase.
+    # Avoid 0 0 * * * — month boundary ambiguity.
+    - cron: '0 12 * * *'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: benchmarktools-jl-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frameworks/language/benchmarktools-jl
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Julia
+        # julia-actions/setup-julia is the community-standard setup
+        # action for Julia; there is no first-party actions/setup-julia.
+        # Pin to 1.11 (current LTS-track) so the captured fixture is a
+        # function of a known input (see workflow-conventions.md
+        # § "Versioning the framework").
+        uses: julia-actions/setup-julia@v2
+        with:
+          version: '1.11'
+
+      - name: Cache Julia depot
+        uses: julia-actions/cache@v2
+
+      - name: Run sample benchmark
+        run: bash ./run.sh
+
+      - name: Upload output as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmarktools-jl-output
+          path: frameworks/language/benchmarktools-jl/output.json
+          if-no-files-found: error
