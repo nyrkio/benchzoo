@@ -24,7 +24,7 @@ cd "$(dirname "$0")"
 # unspecialised distribution does. Resolve dynamically so the run
 # script survives naming-convention churn between YCSB binding
 # tarballs.
-YCSB_DIR=$(ls -d ycsb-*-0.17.0 ycsb-0.17.0 2>/dev/null | head -n 1)
+YCSB_DIR=$({ ls -d ycsb-*-0.17.0 ycsb-0.17.0 2>/dev/null || true; } | head -n 1)
 if [[ -z "${YCSB_DIR}" ]]; then
     echo "ERROR: could not find extracted YCSB directory" >&2
     ls -la >&2
