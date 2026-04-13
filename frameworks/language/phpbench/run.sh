@@ -19,10 +19,8 @@ composer install --no-interaction --no-progress
     --progress=none \
     2>&1 | tee output.txt
 
-# JSON aggregate report: the ``aggregate`` report rendered via the
-# ``json`` output. One summary row per subject/variant.
-./vendor/bin/phpbench run \
-    --report=aggregate \
-    --output='json:path=output.json' \
-    --progress=none \
-    >/dev/null
+# PHPBench's JSON output is a configured renderer service, not a
+# flag. The XML dump is sufficient as the machine-readable capture;
+# parsers consume that. (A JSON renderer could be registered via
+# phpbench.json under report.renderers, but keeping the workflow
+# simple beats shipping two formats we don't strictly need.)
