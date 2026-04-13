@@ -1,0 +1,79 @@
+name: memtier
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'frameworks/database/memtier/**'
+      - '.github/workflows/memtier.yml'
+  pull_request:
+    paths:
+      - 'frameworks/database/memtier/**'
+      - '.github/workflows/memtier.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: memtier-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    services:
+      redis:
+        image: redis:7
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    defaults:
+      run:
+        working-directory: frameworks/database/memtier
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install memtier_benchmark
+        # Prefer apt if the package exists on this runner's Ubuntu
+        # release. memtier-benchmark has appeared in universe on recent
+        # Ubuntu releases but coverage is inconsistent; fall back to
+        # building 2.1.1 from source when apt doesn't have it.
+        run: |
+          set -euxo pipefail
+          sudo apt-get update
+          if sudo apt-get install -y memtier-benchmark; then
+            echo "Installed memtier_benchmark from apt"
+          else
+            echo "memtier-benchmark not available via apt; building from source"
+            sudo apt-get install -y \
+                build-essential autoconf automake \
+                libpcre3-dev libevent-dev pkg-config \
+                zlib1g-dev libssl-dev git
+            tmpdir=$(mktemp -d)
+            git clone https://github.com/RedisLabs/memtier_benchmark "$tmpdir/memtier_benchmark"
+            cd "$tmpdir/memtier_benchmark"
+            git checkout 2.1.1
+            autoreconf -ivf
+            ./configure
+            make -j"$(nproc)"
+            sudo make install
+          fi
+          memtier_benchmark --version
+        working-directory: ${{ github.workspace }}
+
+      - name: Run sample benchmark
+        run: ./run.sh
+
+      - name: Upload output as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: memtier-output
+          path: |
+            frameworks/database/memtier/output.json
+            frameworks/database/memtier/output.txt
+          if-no-files-found: error
