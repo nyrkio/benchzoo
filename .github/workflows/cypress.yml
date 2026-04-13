@@ -36,22 +36,19 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: npm
-          cache-dependency-path: frameworks/unit-or-qa/cypress/package.json
 
-      # cypress-io/github-action handles npm install, Cypress binary
-      # caching, and the required X / GTK system libraries for the
-      # headless Electron run. We pass `command:` instead of letting
-      # the action pick a default so the reporter config from
-      # cypress.config.js is honored and output.xml lands next to the
-      # config file.
+      # cypress-io/github-action requires a package-lock.json; we
+      # deliberately don't ship one (the pinned versions in
+      # package.json are our stable contract). Install and run
+      # manually instead.
+      - name: Install Cypress
+        run: |
+          npm install
+          npx cypress install
+          npx cypress verify
+
       - name: Run sample benchmark
-        uses: cypress-io/github-action@v6
-        with:
-          working-directory: frameworks/unit-or-qa/cypress
-          browser: electron
-          headed: false
-          command: npx cypress run --headless --browser=electron
+        run: npx cypress run --headless --browser=electron
 
       - name: Upload output as artifact
         uses: actions/upload-artifact@v4
