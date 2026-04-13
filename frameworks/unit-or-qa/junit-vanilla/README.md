@@ -4,9 +4,8 @@ Raw [JUnit 5](https://junit.org/junit5/) unit tests run via
 [Maven Surefire](https://maven.apache.org/surefire/maven-surefire-plugin/),
 producing standard junit XML. This is the **fallback** producer for
 benchzoo's junit surface: when we have junit XML and no
-producer-specific parser (`junit_pytest`, `junit_jest`, `junit_dotnet`,
-`junit_go`, `junit_catch2`, `junit_playwright`, …) applies, the
-`junit_vanilla` parser handles it.
+producer-specific parser (`junit_pytest`, `junit_go`, `dotnet_test_trx`, `playwright_json`, …) applies, the
+`junit_standard` parser handles it.
 
 ## Links
 
@@ -16,8 +15,8 @@ producer-specific parser (`junit_pytest`, `junit_jest`, `junit_dotnet`,
 - **Workflow** — [`.github/workflows/junit-vanilla.yml`](../../../.github/workflows/junit-vanilla.yml)
 - **Live run history** —
   <https://github.com/nyrkio/benchzoo/actions/workflows/junit-vanilla.yml>
-- **Parser** — [`src/benchzoo/parsers/junit_vanilla.py`](../../../src/benchzoo/parsers/junit_vanilla.py) *(not yet written — pending a real captured fixture)*
-- **Parser tests** — [`tests/parsers/test_junit_vanilla.py`](../../../tests/parsers/test_junit_vanilla.py) *(not yet written)*
+- **Parser** — [`src/benchzoo/parsers/junit_standard.py`](../../../src/benchzoo/parsers/junit_standard.py)
+- **Parser tests** — `tests/parsers/test_batch2.py::test_junit_standard_vanilla`
 
 ## Sample benchmark
 
@@ -74,7 +73,7 @@ Alternatively, with Java 17 and Maven installed locally, you can bypass
 
 ## Parser notes
 
-`junit_vanilla` consumes raw Surefire junit XML — the usual
+`junit_standard` consumes raw Surefire junit XML — the usual
 `<testsuite>/<testcase>` shape, where each `<testcase>` carries a
 `name` attribute (the JUnit test method name), a `classname` attribute
 (the fully-qualified class), and — crucially — a `time` attribute
@@ -102,9 +101,9 @@ plain Java JUnit, Maven Surefire, Gradle's junit XML output, Ant's
 `junitreport`, and any other tool emitting the baseline
 `<testsuite>/<testcase>` shape with only the `time` attribute as
 timing data. Producer-specific parsers
-(`junit_pytest` for pytest-benchmark `<properties>`, `junit_jest` for
-jest-junit's extensions, etc.) should always be preferred when they
-apply, because they extract richer metrics that `junit_vanilla` cannot
+(`junit_pytest` for pytest-benchmark `<properties>`, `junit_go` for
+gotestsum's `Test`-prefix normalization) should always be preferred when they
+apply, because they extract richer metrics that `junit_standard` cannot
 see. Cross-reference
 [`junit_pytest`](../../../src/benchzoo/parsers/junit_pytest.py) for the
 producer-specific contrast.

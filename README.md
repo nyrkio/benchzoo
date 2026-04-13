@@ -14,23 +14,30 @@ from a log file or from a separate artifact file, then the goal is that
 this repository should always have the parser you need.
 
 **And you don't even need to tell benchzoo which parser to use.**
-Hand `benchzoo.sniff(content)` any benchmark output — **36 of the 42
+Hand `benchzoo.sniff(content)` any benchmark output — **40 of the 42
 supported frameworks are autodetected from content alone**, via a
 four-tier signature matcher (JSON top-level keys → XML root element →
 CSV header row → distinctive text substring):
 
 > asv, benchmark-ips, benchmark-js, benchmarkdotnet, benchmarktools-jl,
 > cargo-bench, catch2, clickbench, custom-json, dotnet-test, gatling,
-> go-test-bench, google-benchmark, hey, hyperfine, jmeter, jmh, k6,
-> lighthouse, locust, memtier, mitata, mocha, perf-stat, pgbench,
-> phpbench, playwright, pytest-benchmark, redis-benchmark, sysbench,
-> time, tinybench, vegeta, vitest-bench, wrk, wrk2.
+> go-test-bench, google-benchmark, hey, hyperfine, jmeter, jmh,
+> junit-standard, k6, lighthouse, locust, memtier, mitata, mocha,
+> perf-stat, pgbench, phpbench, playwright, pytest-benchmark,
+> redis-benchmark, sysbench, time, tinybench, vegeta, vitest-bench,
+> wrk, wrk2.
+
+`junit-standard` covers jest-junit, Maven Surefire / vanilla Java
+JUnit, CTest and Catch2's junit reporter — all four emit structurally
+indistinguishable `<testsuite>` XML, and a single shared parser reads
+testcase `name` + `time` verbatim. The two remaining holdouts
+(`junit-go`, `custom-csv`) genuinely can't be told apart from content:
+gotestsum's junit XML is byte-identical to vanilla junit but needs a
+`Test`-prefix strip, and custom-csv has no distinctive header.
 
 Hard invariant: `sniff` never returns a wrong framework. When content
-is genuinely ambiguous — four of the six holdouts are variants of
-vanilla `<testsuite>` junit XML from different producers (jest / go /
-vanilla junit / CTest) that look byte-identical — it returns `None`
-and you fall through to explicit selection or the LLM parsers below.
+is genuinely ambiguous it returns `None` and you fall through to
+explicit selection or the LLM parsers below.
 
 As a catch-all, there are also two LLM-backed parsers that extract
 benchmark results from arbitrary input by prompting an LLM with the
@@ -115,7 +122,7 @@ LLM parser tests skip by default; set `BENCHZOO_RUN_LLM_ANTHROPIC=1`
 | Rust | [criterion](frameworks/language/criterion/) | `criterion_estimates`, `criterion_bencher` |
 | Rust | [cargo bench (libtest)](frameworks/language/cargo-bench/) | `cargo_bench_libtest` (shares `criterion_bencher`) |
 | C++ | [Google Benchmark](frameworks/language/google-benchmark/) | `google_benchmark_json`, `google_benchmark_csv` |
-| C++ | [Catch2](frameworks/language/catch2/) | `catch2_xml`, `junit_catch2` |
+| C++ | [Catch2](frameworks/language/catch2/) | `catch2_xml`, `junit_standard` |
 | Java/JVM | [JMH](frameworks/language/jmh/) | `jmh_json`, `jmh_csv` |
 | C# / .NET | [BenchmarkDotNet](frameworks/language/benchmarkdotnet/) | `benchmarkdotnet_json`, `benchmarkdotnet_csv` |
 | Go | [`go test -bench`](frameworks/language/go-test-bench/) | `go_bench_text`, `go_bench_json` |
@@ -163,11 +170,11 @@ LLM parser tests skip by default; set `BENCHZOO_RUN_LLM_ANTHROPIC=1`
 | Framework | Parser(s) |
 | --- | --- |
 | [mocha (--reporter json)](frameworks/unit-or-qa/mocha/) | `mocha_json` |
-| [Jest (jest-junit)](frameworks/unit-or-qa/junit-jest/) | `junit_jest` |
+| [Jest (jest-junit)](frameworks/unit-or-qa/junit-jest/) | `junit_standard` |
 | [go test (gotestsum)](frameworks/unit-or-qa/junit-go/) | `junit_go` |
-| [JUnit 5 / Maven Surefire](frameworks/unit-or-qa/junit-vanilla/) | `junit_vanilla` |
+| [JUnit 5 / Maven Surefire](frameworks/unit-or-qa/junit-vanilla/) | `junit_standard` |
 | [dotnet test (TRX)](frameworks/unit-or-qa/dotnet-test/) | `dotnet_test_trx` |
-| [CTest (--output-junit)](frameworks/unit-or-qa/ctest/) | `junit_ctest` |
+| [CTest (--output-junit)](frameworks/unit-or-qa/ctest/) | `junit_standard` |
 | [Playwright](frameworks/unit-or-qa/playwright/) | `playwright_json` |
 
 ### Generic / escape hatches

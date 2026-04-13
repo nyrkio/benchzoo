@@ -13,8 +13,8 @@ See parser-targets.md section 6 ("Unit test / QA frameworks").
 - **Workflow** — [`.github/workflows/junit-jest.yml`](../../../.github/workflows/junit-jest.yml)
 - **Live run history** —
   <https://github.com/nyrkio/benchzoo/actions/workflows/junit-jest.yml>
-- **Parser** — [`src/benchzoo/parsers/junit_jest.py`](../../../src/benchzoo/parsers/junit_jest.py) *(not yet written)*
-- **Parser tests** — [`tests/parsers/test_junit_jest.py`](../../../tests/parsers/test_junit_jest.py) *(not yet written)*
+- **Parser** — [`src/benchzoo/parsers/junit_standard.py`](../../../src/benchzoo/parsers/junit_standard.py) — shared with `junit-vanilla`, `ctest`, and `catch2`'s junit reporter
+- **Parser tests** — `tests/parsers/test_batch2.py::test_junit_standard_jest`
 
 ## Sample benchmark
 
@@ -94,7 +94,7 @@ the same `output.xml`.
 Unlike pytest-benchmark's junit output, `jest-junit` does **not**
 augment testcases with benchmark-stat `<properties>` — there is no
 `min`/`max`/`mean`/`stddev` to extract. The only metric available is
-the single wall-clock `time` attribute, so the `junit_jest` parser
+the single wall-clock `time` attribute, so the `junit_standard` parser
 takes the same fallback path as `junit_pytest` takes when properties
 are absent: emit one `duration` metric with `unit: "s"` and
 `direction: "lower_is_better"` per testcase.
@@ -106,7 +106,7 @@ extraction logic; they differ primarily in how they derive
 
 - `junit_pytest` strips a leading `test_` from `name` (pytest's
   conventional prefix) so `test_benchmark1` → `"benchmark1"`.
-- `junit_jest` reads `name` directly — Jest's `test('benchmark1', ...)`
+- `junit_standard` reads `name` directly — Jest's `test('benchmark1', ...)`
   records `name="benchmark1"` with no prefix to strip. `classname`
   from `jest-junit` is the suite describe-path (or the filename when
   no `describe` wraps the test); the sample here uses no `describe`

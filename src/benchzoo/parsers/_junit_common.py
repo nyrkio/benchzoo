@@ -1,12 +1,13 @@
 """Shared helpers for per-producer junit XML parsers.
 
-All benchzoo junit parsers (``junit_pytest``, ``junit_jest``,
-``junit_go``, ``junit_vanilla``, ...) read pytest-produced junit XML
-and fall back to each ``<testcase>``'s ``time`` attribute as a
-``duration`` metric when there are no producer-specific
-``<properties>``. What differs between producers is primarily the
-``test_name`` normalization (strip ``test_`` for pytest, strip
-``Test`` + lowercase for go, no transform for jest).
+Three benchzoo parsers layer on top of this helper:
+
+- :mod:`junit_standard` — the canonical verbatim reader (no name
+  transform). Covers jest-junit, Maven Surefire / vanilla Java JUnit,
+  CTest, and Catch2's junit reporter.
+- :mod:`junit_go` — strips gotestsum's ``Test`` prefix and lowercases.
+- :mod:`junit_pytest` — reads pytest-benchmark's ``<properties>`` for
+  richer metrics when present.
 """
 
 from __future__ import annotations

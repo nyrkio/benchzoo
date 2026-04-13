@@ -19,7 +19,7 @@ Note: Catch2's ``--reporter json`` and ``--reporter junit`` produce
 structured output for test assertions but **do not include
 BenchmarkResults** — only the native XML reporter exposes benchmark
 statistics. Use this parser for benchmark mode; if you want junit
-parsing for Catch2 assertion-based tests, point ``junit_vanilla`` at
+parsing for Catch2 assertion-based tests, point ``junit_standard`` at
 the junit output.
 
 See ``frameworks/language/catch2/README.md``.

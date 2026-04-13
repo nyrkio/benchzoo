@@ -8,8 +8,8 @@
 # Catch2 v3 selects its reporter via --reporter <name>; the default is
 # the human-readable "console" table. For machine-readable fixtures we
 # also capture "xml" (Catch2's native structured format, rich) and
-# "junit" (standard JUnit XML, which a future `junit_catch2` parser
-# will consume — see docs/parser-targets.md section 6). JSON is
+# "junit" (standard JUnit XML, consumed by the shared `junit_standard`
+# parser — see docs/parser-targets.md section 6). JSON is
 # available on newer Catch2 versions but is not yet as stable as XML,
 # so we capture it optionally and tolerate failure.
 #
@@ -41,7 +41,7 @@ SAMPLES=--benchmark-samples=3
 # Catch2's native XML reporter — richest structured format.
 "$BIN" $SAMPLES --reporter xml --out output.xml
 
-# JUnit XML — consumed by the planned junit_catch2 parser.
+# JUnit XML — consumed by the shared junit_standard parser.
 "$BIN" $SAMPLES --reporter junit --out output.junit.xml
 
 # JSON reporter — available on Catch2 v3.4+ . Best-effort: older

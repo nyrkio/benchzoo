@@ -22,8 +22,8 @@ CTest's `time` attribute is the number we care about.
 - **Workflow** — [`.github/workflows/ctest.yml`](../../../.github/workflows/ctest.yml)
 - **Live run history** —
   <https://github.com/nyrkio/benchzoo/actions/workflows/ctest.yml>
-- **Parser** — [`src/benchzoo/parsers/junit_ctest.py`](../../../src/benchzoo/parsers/junit_ctest.py) *(not yet written — pending a real captured fixture)*
-- **Parser tests** — [`tests/parsers/test_junit_ctest.py`](../../../tests/parsers/test_junit_ctest.py) *(not yet written)*
+- **Parser** — [`src/benchzoo/parsers/junit_standard.py`](../../../src/benchzoo/parsers/junit_standard.py) — shared with `junit-vanilla`, `junit-jest`, and `catch2`'s junit reporter
+- **Parser tests** — `tests/parsers/test_batch5.py::test_junit_standard_ctest`
 
 ## Sample benchmark
 
@@ -92,36 +92,15 @@ CTest's `--output-junit` writes a standard junit report: a single
 measured wall-clock duration in seconds. Test failures surface as a
 `<failure>` child on the testcase.
 
-The parser module is **`junit_ctest`**. In principle the baseline
-`junit_vanilla` parser could consume this file unchanged — the
-shape is the same — but CTest-specific quirks justify a dedicated
-module:
-
-- **`classname` is the CMake project name**, not a Java-style
-  fully-qualified class. Downstream consumers will probably want it
-  dropped (or stashed into `extra_info["project"]`) rather than
-  surfaced verbatim.
-- **CTest's `time` is the process wall time**, same as the
-  junit-vanilla `time` attribute, so the metric the parser emits is
-  identical: a single `duration` measurement per testcase, unit
-  `s`, `lower_is_better`.
-- **No per-test failure message distinction** beyond junit's
-  `<failure>` child — CTest wraps the test command's stdout/stderr
-  inside, which is useful for debugging but not for metric
-  extraction.
-
-Test names map directly: the parser uses the `name` attribute
-verbatim as `attributes["test_name"]` (no prefix stripping — the
-`add_test(NAME benchmarkN ...)` calls already use the canonical
-`benchmarkN` names).
-
-### Relationship to `junit_vanilla`
-
-If the dedicated `junit_ctest` module turns out to be a pure
-passthrough to `junit_vanilla` after the fixture is captured, we may
-collapse it into a one-line dispatch that calls `junit_vanilla` and
-massages `classname` into `extra_info`. Decide that against the real
-captured output, not in advance.
+The parser module is **`junit_standard`** — the same shared parser
+used by `junit-vanilla`, `junit-jest`, and `catch2`'s junit reporter.
+CTest's `--output-junit` emits structurally plain junit XML: `time` is
+the process wall time in seconds (one `duration` metric per testcase,
+`lower_is_better`), `name` holds the `add_test(NAME ...)` value
+verbatim (used directly as `test_name` — our `add_test(NAME benchmarkN)`
+calls already use the canonical names), and `<failure>` children flip
+`passed` to `false`. `classname` carries the CMake project name; the
+shared parser ignores it.
 
 ### Ground-truth assertions
 

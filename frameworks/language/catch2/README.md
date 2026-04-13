@@ -17,9 +17,11 @@ cases without pulling in a second framework.
 - **Parser** — [`src/benchzoo/parsers/catch2.py`](../../../src/benchzoo/parsers/catch2.py) *(not yet written — pending a real captured fixture)*
 - **Parser tests** — [`tests/parsers/test_catch2.py`](../../../tests/parsers/test_catch2.py) *(not yet written)*
 
-A separate `junit_catch2` parser is planned for Catch2's JUnit
-reporter output — see [`docs/parser-targets.md`](../../../docs/parser-targets.md)
-section 6 (per-producer JUnit parsers).
+Catch2's `--reporter junit` output is handled by the shared
+`junit_standard` parser — see [`docs/parser-targets.md`](../../../docs/parser-targets.md)
+section 6. Note that Catch2's benchmark statistics do **not** appear
+in junit output; only assertion-based test cases do. Use `catch2_xml`
+against the native XML reporter to capture benchmark timings.
 
 ## Sample benchmark
 
@@ -139,13 +141,11 @@ nanoseconds. This is the richest of the machine-readable formats and
 is the recommended input for the primary Catch2 parser.
 
 **JUnit XML** (`--reporter junit`) emits standard JUnit `<testsuite>`
-/ `<testcase>` shape with the benchmark result embedded in each test
-case. This format feeds a separate `junit_catch2` parser (planned —
-see [`docs/parser-targets.md`](../../../docs/parser-targets.md)
-section 6 on per-producer JUnit parsers). The JUnit output is
-especially valuable because Catch2 encodes its benchmark-specific
-numbers in a producer-specific way that the generic `junit_vanilla`
-parser cannot recover.
+/ `<testcase>` shape, consumed by the shared `junit_standard` parser.
+Benchmark-mode statistics do **not** appear in this format — only
+assertion-based test cases — so it's useful for tracking test-suite
+wall time, not benchmark throughput. Use the native `--reporter xml`
+(and `catch2_xml`) for benchmark timings.
 
 **JSON** (`--reporter json`, Catch2 v3.4+) is a newer reporter whose
 format is still evolving upstream. We capture it when available

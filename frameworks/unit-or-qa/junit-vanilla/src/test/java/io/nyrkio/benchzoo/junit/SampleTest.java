@@ -15,7 +15,7 @@ import java.util.Random;
  * no pytest-benchmark-style timing extension. The JUnit test runner
  * (driven by Maven Surefire) records per-test wall-clock duration in its
  * junit XML output regardless, and that duration is what benchzoo's
- * {@code junit_vanilla} parser consumes.
+ * {@code junit_standard} parser consumes.
  *
  * <p>See {@code docs/sample-benchmark.md} for the spec. Test method
  * names (benchmark1..benchmark4) are kept identical to the canonical

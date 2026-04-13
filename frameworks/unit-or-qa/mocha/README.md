@@ -141,7 +141,7 @@ pre-emptively.
 with `unit: "ms"`) when emitting the `duration` metric. The canonical
 sample benchmark's ground truth is stated in seconds; the parser's
 emitted metric should follow the same "seconds, `lower_is_better`"
-convention the other unit-test-runner parsers (junit_jest,
+convention the other unit-test-runner parsers (junit_standard,
 junit_pytest) use, so downstream consumers can compare across
 frameworks without unit juggling.
 

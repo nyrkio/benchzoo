@@ -210,13 +210,14 @@ per-test duration in machine-readable output, even though they're not
 performance time series.
 
 **Per-producer parsers** — see the *Resolved questions* section below.
-Each producer that emits junit XML or its own native format gets its own
-parser file (`junit_pytest`, `junit_jest`, `junit_dotnet`, `junit_go`,
-`junit_catch2`, `junit_playwright`, ...) so producer-specific extensions
-like pytest-benchmark's `<properties>` can be extracted properly. A
-separate `junit_vanilla` (or similarly named) parser handles raw Java
-JUnit / Maven Surefire and anything else we don't have a producer-specific
-parser for.
+Producers whose artifact carries information a plain junit reader would
+lose get their own parser file: `junit_pytest` (reads pytest-benchmark's
+`<properties>`) and `junit_go` (strips gotestsum's `Test` prefix).
+Everything else — jest-junit, Maven Surefire / vanilla Java JUnit,
+CTest, Catch2's junit reporter — produces junit XML that a single
+`junit_standard` parser reads verbatim. The framework registry maps
+`junit-jest`, `junit-vanilla`, `ctest`, and `catch2`'s `junit` format
+all at `junit_standard`.
 
 **Native JSON / structured outputs (preferred where they exist):**
 
@@ -387,14 +388,14 @@ GPU-equipped runners or more targeted workloads can pick them up.
   the input came from. CI integration lives in downstream consumers,
   not in benchzoo, so supporting any new CI is purely an ingest-layer
   change in the consuming project — not a benchzoo change.
-- **Junit XML — single parser or one per producer?** *Separate
-  per-producer parsers, clearly distinct.* Each producer that emits junit
-  XML gets its own parser file (`junit_pytest`, `junit_jest`,
-  `junit_dotnet`, `junit_go`, `junit_catch2`, ...) so producer-specific
-  extensions like pytest-benchmark's `<properties>` can be extracted
-  properly without hidden auto-detection logic. A separate `junit_vanilla`
-  (or similarly named) parser handles raw Java JUnit / Maven Surefire and
-  anything else we don't have a producer-specific parser for. The tradeoff
-  — more parser files, and the user / config has to indicate which
-  producer their output came from — is accepted in exchange for each
-  parser doing one thing clearly.
+- **Junit XML — single parser or one per producer?** *A parser per
+  distinguishable artifact, not per producer.* Producers whose artifact
+  carries extra information get their own parser (`junit_pytest` for
+  pytest-benchmark's `<properties>`, `junit_go` for gotestsum's
+  `Test`-prefixed names). Producers whose output is structurally
+  byte-equivalent to plain junit XML — jest-junit, Maven Surefire /
+  vanilla Java JUnit, CTest, Catch2's junit reporter — share one
+  `junit_standard` parser that reads `name` and `time` verbatim. The
+  registry still exposes `junit-jest` / `junit-vanilla` / `ctest` /
+  `catch2`(`junit`) as explicit framework keys; they all resolve to the
+  same module.

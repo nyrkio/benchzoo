@@ -2,7 +2,7 @@
   "name": "benchzoo-junit-jest-sample",
   "version": "0.0.0",
   "private": true,
-  "description": "Canonical sample benchmark expressed as Jest unit tests; fixture source for the junit_jest parser.",
+  "description": "Canonical sample benchmark expressed as Jest unit tests; fixture source for the shared junit_standard parser.",
   "scripts": {
     "test": "jest --reporters=default --reporters=jest-junit"
   },
