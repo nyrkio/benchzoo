@@ -27,7 +27,7 @@ require 'json'
 require 'date'
 require 'securerandom'
 
-month = Date.today.utc? ? Date.today.month : Time.now.utc.month
+month = Time.now.utc.month
 sleep_time_4 = 2.15 + ((month % 3) - 1)
 
 PAYLOAD_SIZE = 1_400_000
