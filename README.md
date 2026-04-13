@@ -1,21 +1,29 @@
-# benchzoo
+# Benchmark Zoo
 
-Parsers that convert benchmark-framework, load-tester, and unit-test-runner
-output into a uniform JSON shape — plus a self-testing corpus of the same
-canonical benchmark implemented in every supported framework.
+Benchmark Zoo is the definitive collection on every benchmark framework
+out there. We implemented the same simple dummy benchmark in
+42 different perf test frameworks, load testers, even unit testing frameworks.
 
-- **Design:** [`docs/design.md`](docs/design.md) — architecture, data model,
-  parser contract.
-- **Parser targets:** [`docs/parser-targets.md`](docs/parser-targets.md) —
-  what's in scope, what's shipped, what's long-tailed.
-- **Canonical sample benchmark:** [`docs/sample-benchmark.md`](docs/sample-benchmark.md) —
-  the four fixed tests every framework implements.
-- **Workflow conventions:** [`docs/workflow-conventions.md`](docs/workflow-conventions.md) —
-  CI / `act` conventions for the corpus.
+
+The outputs of each benchmarking tool are stored in [`tests/data`]('tests/data`).
+
+
+Finally, we used those outputs to generate a parser to go with each of the
+benchmark frameworks. Therefore if you need to extract benchmark results
+from a log file or from a separate artifact file, then the goal is that
+this repository should always have the parser you need.
+
+As a catch all, final parser, there's also a parser which evaluates the 
+output from any arbitrary benchmark and tries to extract the correct
+values using an LLM model. There are 4 different LLMs supported: 1)
+Use the Anthropic API, and locally 2) using the
+`qwen2.5-coder:3b` by default and a few other alternative models.
+Ollama is the common denominator for all the LLM parsers.
+ 
 
 ## Status
 
-**Working.** 42 frameworks end-to-end (sample benchmark + workflow +
+42 frameworks end-to-end (sample benchmark + workflow +
 real CI-captured fixture + parser + ground-truth tests); **250+
 passing parser tests**. The library is `pip install -e .`-able; the
 corpus runs on every push.
@@ -25,20 +33,31 @@ Pre-1.0: parser API may still move; not yet on PyPI.
 ## Install and use
 
 ```bash
-pip install -e .
+    pip install -e .
 
-python -c "
-from benchzoo.parsers import hyperfine_json
-import json
-# Parse whatever output your tool produced
-result = hyperfine_json.parse(open('output.json').read())
-print(json.dumps(result, indent=2))
+    python -c "
+    from benchzoo.parsers import hyperfine_json
+    import json
+
+    # Parse whatever output your tool produced
+    result = hyperfine_json.parse(open('output.json').read())
+    print(json.dumps(result, indent=2))
 "
 ```
 
 Every parser has the same contract: `parse(content: bytes | str) ->
 list[dict]`, returning the Nyrkiö JSON shape described in
 [`docs/design.md`](docs/design.md).
+
+## Running the tests
+
+```bash
+pip install -e ".[dev]"
+pytest
+```
+
+LLM parser tests skip by default; set `BENCHZOO_RUN_LLM_ANTHROPIC=1`
+(+ `ANTHROPIC_API_KEY`) or `BENCHZOO_RUN_LLM_LOCAL=1` to enable them.
 
 ## Supported frameworks
 
@@ -129,30 +148,6 @@ Both are **experimental** and non-deterministic. See each module's
 docstring and [`tests/parsers/test_llm.py`](tests/parsers/test_llm.py)
 for the evaluation harness against the real fixture corpus.
 
-## Layout
-
-```
-src/benchzoo/parsers/      Python parser modules, one per format.
-tests/parsers/             pytest tests, ground-truth assertions
-                           keyed off canonical sample benchmark.
-tests/data/                real CI-captured fixture outputs, one
-                           dir per framework.
-frameworks/<category>/     sample benchmark implementations, one
-                           dir per framework. Each has a README
-                           cross-linking everything.
-.github/workflows/         one <framework>.yml per framework.
-```
-
-## Running the tests
-
-```bash
-pip install -e ".[dev]"
-pytest
-```
-
-LLM parser tests skip by default; set `BENCHZOO_RUN_LLM_ANTHROPIC=1`
-(+ `ANTHROPIC_API_KEY`) or `BENCHZOO_RUN_LLM_LOCAL=1` to enable them.
-
 ## Adding a framework
 
 The process is documented in
@@ -167,3 +162,18 @@ under `frameworks/<category>/<name>/`, add a `.github/workflows/<name>.yml`
 that captures the output as an artifact, write the parser against the
 real captured fixture (grep for `2.15` in the output — that's test 1's
 wall time), and add ground-truth tests.
+
+
+
+## More Documentation
+
+- **Design:** [`docs/design.md`](docs/design.md) — architecture, data model,
+  parser contract.
+- **Parser targets:** [`docs/parser-targets.md`](docs/parser-targets.md) —
+  what's in scope, what's shipped, what's long-tailed.
+- **Canonical sample benchmark:** [`docs/sample-benchmark.md`](docs/sample-benchmark.md) —
+  the four fixed tests every framework implements.
+- **Workflow conventions:** [`docs/workflow-conventions.md`](docs/workflow-conventions.md) —
+  CI / `act` conventions for the corpus.
+
+
