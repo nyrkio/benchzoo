@@ -3,8 +3,9 @@
     "runner.path": "benchmarks",
     "runner.bootstrap": "vendor/autoload.php",
     "report.generators": {
-        "default": {
-            "generator": "default"
+        "bz_default": {
+            "generator": "expression",
+            "title": "benchzoo default"
         }
     }
 }

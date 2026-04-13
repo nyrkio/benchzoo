@@ -10,8 +10,11 @@ composer install --no-interaction --no-progress
 
 # Native XML dump: PHPBench's internal suite format, rich per-iteration.
 # Also keep the console default report as plain text alongside.
+# PHPBench has no built-in report named "default"; we use the
+# "aggregate" generator, which ships with phpbench and produces a
+# readable summary with per-subject mean/min/max/stddev.
 ./vendor/bin/phpbench run \
-    --report=default \
+    --report=aggregate \
     --dump-file=output.xml \
     --progress=none \
     2>&1 | tee output.txt
