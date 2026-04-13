@@ -79,10 +79,32 @@ bench('benchmark4', async () => {
 // verbatim — the parser is free to pick whichever fields it needs.
 const results = await run({ json: true });
 
+// Strip raw samples arrays before serializing. For sub-microsecond
+// benchmarks (test 2 is an empty-loop that runs millions of times)
+// the samples array can balloon the fixture to 30+ MB, which is
+// pointless for parser fixture purposes. Keep count + first few
+// values for reference; drop the rest.
+function stripSamples(obj) {
+  if (Array.isArray(obj)) return obj.map(stripSamples);
+  if (obj && typeof obj === 'object') {
+    const out = {};
+    for (const [k, v] of Object.entries(obj)) {
+      if (k === 'samples' && Array.isArray(v)) {
+        out.samples_count = v.length;
+        out.samples_head = v.slice(0, 3);
+      } else {
+        out[k] = stripSamples(v);
+      }
+    }
+    return out;
+  }
+  return obj;
+}
+
 const out = {
   framework: 'mitata',
   version: '1.0.34',
   month,
-  results,
+  results: stripSamples(results),
 };
 process.stdout.write(JSON.stringify(out, null, 2) + '\n');
