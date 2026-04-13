@@ -1,0 +1,68 @@
+name: cassandra-stress
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'frameworks/database/cassandra-stress/**'
+      - '.github/workflows/cassandra-stress.yml'
+  pull_request:
+    paths:
+      - 'frameworks/database/cassandra-stress/**'
+      - '.github/workflows/cassandra-stress.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cassandra-stress-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    services:
+      cassandra:
+        image: cassandra:5
+        ports:
+          - 9042:9042
+        env:
+          CASSANDRA_DC: dc1
+        # Cassandra's JVM startup is slow (30-60s on a warm image,
+        # longer on a cold pull), so the healthcheck is generous:
+        # a 2 min start-period before failures count, with retries
+        # and interval tuned to match. run.sh additionally gates on
+        # an explicit cqlsh wait loop before invoking stress.
+        options: >-
+          --health-cmd "cqlsh -e 'describe keyspaces'"
+          --health-interval 15s
+          --health-timeout 10s
+          --health-retries 20
+          --health-start-period 120s
+    defaults:
+      run:
+        working-directory: frameworks/database/cassandra-stress
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install cassandra-stress and cqlsh (cassandra-tools)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cassandra-tools cassandra
+          cassandra-stress version || true
+          cqlsh --version
+        working-directory: ${{ github.workspace }}
+
+      - name: Run sample benchmark
+        run: ./run.sh
+
+      - name: Upload output as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: cassandra-stress-output
+          path: |
+            frameworks/database/cassandra-stress/output-write.txt
+            frameworks/database/cassandra-stress/output-read.txt
+            frameworks/database/cassandra-stress/output-mixed.txt
+          if-no-files-found: error
