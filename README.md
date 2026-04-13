@@ -5,7 +5,7 @@ out there. We implemented the same simple dummy benchmark in
 42 different perf test frameworks, load testers, even unit testing frameworks.
 
 
-The outputs of each benchmarking tool are stored in [`tests/data`]('tests/data`).
+The outputs of each benchmarking tool are stored in [`tests/data`](tests/data).
 
 
 Finally, we used those outputs to generate a parser to go with each of the
