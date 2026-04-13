@@ -1,0 +1,23 @@
+{
+  "benchmark_ips_version": "2.14.0",
+  "ruby_version": "3.3.11",
+  "ruby_platform": "x86_64-linux",
+  "config": {
+    "time": 2,
+    "warmup": 1
+  },
+  "month_utc": 4,
+  "benchmark4_sleep_s": 2.15,
+  "benchmarks": [
+    {
+      "name": "benchmark1",
+      "ips": 0.46508852323566136,
+      "ips_stddev": 0,
+      "microseconds_per_iteration": 2150128.3090000004,
+      "seconds_per_iteration": 2.1501283090000007,
+      "iterations": 1,
+      "measurement_cycle": 1,
+      "stats_class": "Benchmark::IPS::Stats::SD"
+    }
+  ]
+}

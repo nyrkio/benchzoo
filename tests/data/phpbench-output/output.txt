@@ -1,0 +1,10 @@
+Dumped result to output.xml
++-------------+-----------------+-----+------+-----+-----------+---------+--------+
+| benchmark   | subject         | set | revs | its | mem_peak  | mode    | rstdev |
++-------------+-----------------+-----+------+-----+-----------+---------+--------+
+| SampleBench | benchBenchmark1 |     | 1    | 3   | 719.888kb | 2.150s  | ±0.00% |
+| SampleBench | benchBenchmark2 |     | 1000 | 5   | 719.888kb | 2.727μs | ±0.69% |
+| SampleBench | benchBenchmark3 |     | 10   | 5   | 1.933mb   | 3.384ms | ±0.05% |
+| SampleBench | benchBenchmark4 |     | 1    | 3   | 719.888kb | 2.150s  | ±0.00% |
++-------------+-----------------+-----+------+-----+-----------+---------+--------+
+

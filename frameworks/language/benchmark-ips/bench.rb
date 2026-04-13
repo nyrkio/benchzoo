@@ -53,13 +53,13 @@ report = Benchmark.ips do |x|
 
   x.report("benchmark4") { sleep(sleep_time_4) }
 
-  # Native benchmark-ips dump (Marshal-based). Not JSON; captured so
-  # downstream can decide whether a parser against the raw dump is
-  # valuable.
-  x.save! "output-raw.dump"
+  # NOTE: we deliberately do NOT call x.hold!/x.save! here. They are
+  # designed for cross-run persistence (running memory-heavy suites
+  # split across multiple ruby invocations) and interact poorly with
+  # our single-shot "run all four and emit JSON" flow — they cause
+  # only the first report's entry to appear in report.entries.
 
   x.compare!
-  x.hold! "output-raw.dump"
 end
 
 # Hand-rolled JSON emission. `report.entries` is the list of Report::Entry

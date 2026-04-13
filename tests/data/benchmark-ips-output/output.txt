@@ -1,0 +1,7 @@
+ruby 3.3.11 (2026-03-26 revision 1f2d15125a) [x86_64-linux]
+Warming up --------------------------------------
+          benchmark1     1.000 i/100ms
+Calculating -------------------------------------
+          benchmark1      0.465 (± 0.0%) i/s     (2.15 s/i) -      1.000 in   2.150128s
+
+Pausing here -- run Ruby again to measure the next benchmark...
