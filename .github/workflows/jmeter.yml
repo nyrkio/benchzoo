@@ -1,0 +1,78 @@
+name: jmeter
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'frameworks/loadtest/jmeter/**'
+      - '.github/workflows/jmeter.yml'
+  pull_request:
+    paths:
+      - 'frameworks/loadtest/jmeter/**'
+      - '.github/workflows/jmeter.yml'
+  workflow_dispatch:
+
+# No `schedule:` trigger — JMeter does not implement test 4 of the
+# canonical sample benchmark (see README for the deviation rationale),
+# so there is no change-detection time series for this framework to
+# accumulate.
+
+permissions:
+  contents: read
+
+concurrency:
+  group: jmeter-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frameworks/loadtest/jmeter
+    env:
+      JMETER_VERSION: 5.6.3
+      # JMeter is a Java Swing app even in -n mode; the default heap
+      # on Ubuntu runners is fine for 1000 samples but we set it
+      # explicitly so a future larger test plan does not silently
+      # OOM. Headless is mandatory — there is no DISPLAY on a CI
+      # runner.
+      JVM_ARGS: "-Xms512m -Xmx1024m -Djava.awt.headless=true"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Install nginx
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y nginx
+
+      - name: Install JMeter
+        # We deliberately download the official tarball from
+        # archive.apache.org rather than `apt-get install jmeter`:
+        # the apt package lags upstream and the exact version shipped
+        # depends on the Ubuntu point release, which makes captured
+        # fixtures non-reproducible. Pinning via JMETER_VERSION keeps
+        # the fixture a function of a known input.
+        run: |
+          curl -fsSL -o jmeter.tgz \
+            "https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-${JMETER_VERSION}.tgz"
+          tar -xzf jmeter.tgz -C "${RUNNER_TEMP}"
+          echo "${RUNNER_TEMP}/apache-jmeter-${JMETER_VERSION}/bin" >> "$GITHUB_PATH"
+
+      - name: Run sample benchmark
+        run: bash run.sh
+
+      - name: Upload output as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: jmeter-output
+          path: |
+            frameworks/loadtest/jmeter/output.csv
+            frameworks/loadtest/jmeter/jmeter.log
+          if-no-files-found: error

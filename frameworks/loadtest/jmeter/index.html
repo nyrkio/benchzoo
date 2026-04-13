@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>benchzoo / JMeter sample target</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body { font-family: system-ui, sans-serif; max-width: 720px; margin: 2em auto; padding: 0 1em; line-height: 1.5; color: #222; }
+h1 { border-bottom: 2px solid #444; padding-bottom: 0.25em; }
+code { background: #f4f4f4; padding: 0.1em 0.3em; border-radius: 3px; }
+</style>
+</head>
+<body>
+<h1>benchzoo / JMeter sample target</h1>
+
+<p>This page is a static HTTP target served by a minimal nginx
+instance on port 8080. It exists solely to give
+<a href="https://jmeter.apache.org/">Apache JMeter</a> a stable
+endpoint to benchmark while
+<a href="https://github.com/nyrkio/benchzoo">benchzoo</a> captures
+JMeter's CSV output for parser development.</p>
+
+<h2>Why this page exists</h2>
+
+<p>Unlike synthetic benchmarks that time a <code>sleep</code> or a
+CPU loop, JMeter fundamentally measures real HTTP request/response
+latency. It needs something to talk to. Rather than pointing JMeter at
+an external service (unstable, rate-limited, noisy), we stand up a
+minimal nginx container serving this page, hit it locally over the
+loopback interface, and record JMeter's CSV results file.</p>
+
+<h2>What JMeter actually measures here</h2>
+
+<p>Per-sample timings (one row per HTTP request) including elapsed
+time, latency, connect time, response code, and bytes transferred.
+Unlike wrk, JMeter does not pre-aggregate into percentiles — the
+parser does that, grouping by the sample <code>label</code>
+(&quot;homepage&quot; in our test plan).</p>
+
+<h2>What this page is not</h2>
+
+<p>This is not a meaningful web application. There are no scripts, no
+external assets, no cookies, no forms. A real web-performance
+benchmark would look completely different (and Lighthouse, not
+JMeter, is the right tool for that). This is an HTTP load-test
+target.</p>
+
+<h2>Further reading</h2>
+
+<ul>
+<li><a href="https://jmeter.apache.org/">Apache JMeter</a> — the load
+testing tool.</li>
+<li><a href="https://github.com/nyrkio/benchzoo">benchzoo</a> — the
+parser corpus this page is part of.</li>
+</ul>
+
+</body>
+</html>
