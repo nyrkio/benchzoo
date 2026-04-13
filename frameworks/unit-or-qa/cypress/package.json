@@ -1,0 +1,13 @@
+{
+  "name": "benchzoo-cypress-sample",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Canonical sample benchmark expressed as Cypress end-to-end tests; fixture source for the junit_cypress parser.",
+  "scripts": {
+    "test": "cypress run --headless --browser=electron"
+  },
+  "devDependencies": {
+    "cypress": "14.0.0",
+    "mocha-junit-reporter": "2.2.1"
+  }
+}

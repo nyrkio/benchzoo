@@ -1,0 +1,61 @@
+name: cypress
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'frameworks/unit-or-qa/cypress/**'
+      - '.github/workflows/cypress.yml'
+  pull_request:
+    paths:
+      - 'frameworks/unit-or-qa/cypress/**'
+      - '.github/workflows/cypress.yml'
+  workflow_dispatch:
+  schedule:
+    # Daily at 12:00 UTC for the test 4 change-detection showcase.
+    # Avoid 0 0 * * * — month boundary ambiguity.
+    - cron: '0 12 * * *'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cypress-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frameworks/unit-or-qa/cypress
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: frameworks/unit-or-qa/cypress/package.json
+
+      # cypress-io/github-action handles npm install, Cypress binary
+      # caching, and the required X / GTK system libraries for the
+      # headless Electron run. We pass `command:` instead of letting
+      # the action pick a default so the reporter config from
+      # cypress.config.js is honored and output.xml lands next to the
+      # config file.
+      - name: Run sample benchmark
+        uses: cypress-io/github-action@v6
+        with:
+          working-directory: frameworks/unit-or-qa/cypress
+          browser: electron
+          headed: false
+          command: npx cypress run --headless --browser=electron
+
+      - name: Upload output as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-output
+          path: frameworks/unit-or-qa/cypress/output.xml
+          if-no-files-found: error
