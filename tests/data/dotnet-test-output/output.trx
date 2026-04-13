@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="aeff68f9-a690-4261-ad39-b38c9b658a0a" name="@runnervm35a4x 2026-04-13 00:15:27" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-04-13T00:15:27.6724114+00:00" queuing="2026-04-13T00:15:27.6724114+00:00" start="2026-04-13T00:15:22.5854744+00:00" finish="2026-04-13T00:15:29.4227009+00:00" />
+  <TestSettings name="default" id="9e559198-d197-449e-b63d-0a53b8fd0ca5">
+    <Deployment runDeploymentRoot="_runnervm35a4x_2026-04-13_00_15_27" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="1287655b-cf9a-46ac-8c75-6ef765f9c6fc" testId="cf4086a5-f758-d8a5-8f7a-4e05dfbd3beb" testName="BenchzooSample.SampleTests.Benchmark4" computerName="runnervm35a4x" duration="00:00:02.1532708" startTime="2026-04-13T00:15:27.2044097+00:00" endTime="2026-04-13T00:15:27.2044345+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1287655b-cf9a-46ac-8c75-6ef765f9c6fc" />
+    <UnitTestResult executionId="cecac0f8-2ca8-4760-a1de-1cb9bc4c11c5" testId="d3fe1f22-8733-c72d-6bd1-3149f8ef051f" testName="BenchzooSample.SampleTests.Benchmark1" computerName="runnervm35a4x" duration="00:00:02.1501913" startTime="2026-04-13T00:15:29.3544471+00:00" endTime="2026-04-13T00:15:29.3544474+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="cecac0f8-2ca8-4760-a1de-1cb9bc4c11c5" />
+    <UnitTestResult executionId="05353ca7-76ea-481e-9bf8-109d22dafcf6" testId="10fb4d90-d16b-f196-d218-be7e18fd2cf2" testName="BenchzooSample.SampleTests.Benchmark3" computerName="runnervm35a4x" duration="00:00:00.0060232" startTime="2026-04-13T00:15:29.3620502+00:00" endTime="2026-04-13T00:15:29.3620503+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="05353ca7-76ea-481e-9bf8-109d22dafcf6" />
+    <UnitTestResult executionId="acd66367-45b6-4db1-af66-5c73aa7d7873" testId="28dac973-77d2-6412-2d05-d7ace6f55a8b" testName="BenchzooSample.SampleTests.Benchmark2" computerName="runnervm35a4x" duration="00:00:00.0014338" startTime="2026-04-13T00:15:29.3567877+00:00" endTime="2026-04-13T00:15:29.3567878+00:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="acd66367-45b6-4db1-af66-5c73aa7d7873" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="BenchzooSample.SampleTests.Benchmark3" storage="/home/runner/work/benchzoo/benchzoo/frameworks/unit-or-qa/dotnet-test/bin/debug/net8.0/sampletests.dll" id="10fb4d90-d16b-f196-d218-be7e18fd2cf2">
+      <Execution id="05353ca7-76ea-481e-9bf8-109d22dafcf6" />
+      <TestMethod codeBase="/home/runner/work/benchzoo/benchzoo/frameworks/unit-or-qa/dotnet-test/bin/Debug/net8.0/SampleTests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="BenchzooSample.SampleTests" name="Benchmark3" />
+    </UnitTest>
+    <UnitTest name="BenchzooSample.SampleTests.Benchmark1" storage="/home/runner/work/benchzoo/benchzoo/frameworks/unit-or-qa/dotnet-test/bin/debug/net8.0/sampletests.dll" id="d3fe1f22-8733-c72d-6bd1-3149f8ef051f">
+      <Execution id="cecac0f8-2ca8-4760-a1de-1cb9bc4c11c5" />
+      <TestMethod codeBase="/home/runner/work/benchzoo/benchzoo/frameworks/unit-or-qa/dotnet-test/bin/Debug/net8.0/SampleTests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="BenchzooSample.SampleTests" name="Benchmark1" />
+    </UnitTest>
+    <UnitTest name="BenchzooSample.SampleTests.Benchmark2" storage="/home/runner/work/benchzoo/benchzoo/frameworks/unit-or-qa/dotnet-test/bin/debug/net8.0/sampletests.dll" id="28dac973-77d2-6412-2d05-d7ace6f55a8b">
+      <Execution id="acd66367-45b6-4db1-af66-5c73aa7d7873" />
+      <TestMethod codeBase="/home/runner/work/benchzoo/benchzoo/frameworks/unit-or-qa/dotnet-test/bin/Debug/net8.0/SampleTests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="BenchzooSample.SampleTests" name="Benchmark2" />
+    </UnitTest>
+    <UnitTest name="BenchzooSample.SampleTests.Benchmark4" storage="/home/runner/work/benchzoo/benchzoo/frameworks/unit-or-qa/dotnet-test/bin/debug/net8.0/sampletests.dll" id="cf4086a5-f758-d8a5-8f7a-4e05dfbd3beb">
+      <Execution id="1287655b-cf9a-46ac-8c75-6ef765f9c6fc" />
+      <TestMethod codeBase="/home/runner/work/benchzoo/benchzoo/frameworks/unit-or-qa/dotnet-test/bin/Debug/net8.0/SampleTests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="BenchzooSample.SampleTests" name="Benchmark4" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="cf4086a5-f758-d8a5-8f7a-4e05dfbd3beb" executionId="1287655b-cf9a-46ac-8c75-6ef765f9c6fc" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d3fe1f22-8733-c72d-6bd1-3149f8ef051f" executionId="cecac0f8-2ca8-4760-a1de-1cb9bc4c11c5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="10fb4d90-d16b-f196-d218-be7e18fd2cf2" executionId="05353ca7-76ea-481e-9bf8-109d22dafcf6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="28dac973-77d2-6412-2d05-d7ace6f55a8b" executionId="acd66367-45b6-4db1-af66-5c73aa7d7873" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="4" executed="4" passed="4" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)
+[xUnit.net 00:00:00.16]   Discovering: SampleTests
+[xUnit.net 00:00:00.26]   Discovered:  SampleTests
+[xUnit.net 00:00:00.26]   Starting:    SampleTests
+[xUnit.net 00:00:04.62]   Finished:    SampleTests
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

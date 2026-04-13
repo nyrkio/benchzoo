@@ -1,0 +1,89 @@
+"""Ground-truth tests for batch 5 parsers.
+
+Covers mocha_json, dotnet_test_trx, junit_ctest, playwright_json.
+(cypress and ycsb parsers added separately once their CI stabilizes.)
+"""
+
+from __future__ import annotations
+
+import pathlib
+
+import pytest
+
+from benchzoo.parsers import (
+    dotnet_test_trx,
+    junit_ctest,
+    mocha_json,
+    playwright_json,
+)
+
+DATA = pathlib.Path(__file__).parent.parent / "data"
+
+
+def _metric(d, name):
+    for m in d["metrics"]:
+        if m["name"] == name:
+            return m
+    raise AssertionError(f"missing metric {name!r} in {d}")
+
+
+def _by_test(results):
+    return {d["attributes"]["test_name"]: d for d in results}
+
+
+def test_mocha_json():
+    r = mocha_json.parse((DATA / "mocha-output/output.json").read_text())
+    assert {d["attributes"]["test_name"] for d in r} == {
+        "benchmark1", "benchmark2", "benchmark3", "benchmark4"
+    }
+    by = _by_test(r)
+    dur = _metric(by["benchmark1"], "duration")
+    assert dur["unit"] == "ms"
+    assert 2000 <= dur["value"] <= 2300
+    for d in r:
+        assert d["timestamp"] == 0
+        assert d["passed"] is True
+
+
+def test_dotnet_test_trx():
+    r = dotnet_test_trx.parse((DATA / "dotnet-test-output/output.trx").read_text())
+    # Benchmark1..4 short names after stripping namespace + class.
+    names = {d["attributes"]["test_name"] for d in r}
+    assert {"benchmark1", "benchmark2", "benchmark3", "benchmark4"} <= names
+    by = _by_test(r)
+    dur = _metric(by["benchmark1"], "duration")
+    assert dur["unit"] == "s"
+    assert 2.0 <= dur["value"] <= 2.3, dur
+    for d in r:
+        assert d["timestamp"] == 0
+        assert d["passed"] is True
+
+
+def test_junit_ctest():
+    r = junit_ctest.parse((DATA / "ctest-output/output.xml").read_text())
+    assert {d["attributes"]["test_name"] for d in r} == {
+        "benchmark1", "benchmark2", "benchmark3", "benchmark4"
+    }
+    by = _by_test(r)
+    dur = _metric(by["benchmark1"], "duration")
+    assert dur["unit"] == "s"
+    assert 2.0 <= dur["value"] <= 2.3
+    for d in r:
+        assert d["timestamp"] == 0
+        assert d["passed"] is True
+
+
+def test_playwright_json():
+    r = playwright_json.parse((DATA / "playwright-output/output.json").read_text())
+    names = {d["attributes"]["test_name"] for d in r}
+    assert {"benchmark1", "benchmark2", "benchmark3", "benchmark4"} <= names
+    by = _by_test(r)
+    dur = _metric(by["benchmark1"], "duration")
+    assert dur["unit"] == "ms"
+    assert 2000 <= dur["value"] <= 2300
+    for d in r:
+        assert d["timestamp"] == 0
+        assert d["passed"] is True
+        # extra_info captures the browser project
+        if d.get("extra_info"):
+            assert d["extra_info"].get("project") in ("chromium", "")

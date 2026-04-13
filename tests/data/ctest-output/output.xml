@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="(empty)"
+	tests="4"
+	failures="0"
+	disabled="0"
+	skipped="0"
+	hostname=""
+	time="4"
+	timestamp="2026-04-13T00:15:08"
+	>
+	<testcase name="benchmark1" classname="benchmark1" time="2.15403" status="run">
+		<properties/>
+		<system-out>Starting benchmark1
+End of benchmark1
+</system-out>
+	</testcase>
+	<testcase name="benchmark2" classname="benchmark2" time="0.005573" status="run">
+		<properties/>
+		<system-out>Starting benchmark2
+End of benchmark2
+</system-out>
+	</testcase>
+	<testcase name="benchmark3" classname="benchmark3" time="0.00699852" status="run">
+		<properties/>
+		<system-out>Starting benchmark3
+End of benchmark3
+</system-out>
+	</testcase>
+	<testcase name="benchmark4" classname="benchmark4" time="2.15729" status="run">
+		<properties/>
+		<system-out>Starting benchmark4
+benchmark4: month=4, sleep=2.15s
+End of benchmark4
+</system-out>
+	</testcase>
+</testsuite>

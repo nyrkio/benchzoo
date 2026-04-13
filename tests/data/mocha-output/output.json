@@ -1,0 +1,90 @@
+{
+  "stats": {
+    "suites": 1,
+    "tests": 4,
+    "passes": 4,
+    "pending": 0,
+    "failures": 0,
+    "start": "2026-04-13T00:15:15.233Z",
+    "end": "2026-04-13T00:15:19.544Z",
+    "duration": 4311
+  },
+  "tests": [
+    {
+      "title": "benchmark1",
+      "fullTitle": "sample benchmark benchmark1",
+      "file": "/home/runner/work/benchzoo/benchzoo/frameworks/unit-or-qa/mocha/test/sample.test.js",
+      "duration": 2153,
+      "currentRetry": 0,
+      "speed": "slow",
+      "err": {}
+    },
+    {
+      "title": "benchmark2",
+      "fullTitle": "sample benchmark benchmark2",
+      "file": "/home/runner/work/benchzoo/benchzoo/frameworks/unit-or-qa/mocha/test/sample.test.js",
+      "duration": 0,
+      "currentRetry": 0,
+      "speed": "fast",
+      "err": {}
+    },
+    {
+      "title": "benchmark3",
+      "fullTitle": "sample benchmark benchmark3",
+      "file": "/home/runner/work/benchzoo/benchzoo/frameworks/unit-or-qa/mocha/test/sample.test.js",
+      "duration": 3,
+      "currentRetry": 0,
+      "speed": "fast",
+      "err": {}
+    },
+    {
+      "title": "benchmark4",
+      "fullTitle": "sample benchmark benchmark4",
+      "file": "/home/runner/work/benchzoo/benchzoo/frameworks/unit-or-qa/mocha/test/sample.test.js",
+      "duration": 2153,
+      "currentRetry": 0,
+      "speed": "slow",
+      "err": {}
+    }
+  ],
+  "pending": [],
+  "failures": [],
+  "passes": [
+    {
+      "title": "benchmark1",
+      "fullTitle": "sample benchmark benchmark1",
+      "file": "/home/runner/work/benchzoo/benchzoo/frameworks/unit-or-qa/mocha/test/sample.test.js",
+      "duration": 2153,
+      "currentRetry": 0,
+      "speed": "slow",
+      "err": {}
+    },
+    {
+      "title": "benchmark2",
+      "fullTitle": "sample benchmark benchmark2",
+      "file": "/home/runner/work/benchzoo/benchzoo/frameworks/unit-or-qa/mocha/test/sample.test.js",
+      "duration": 0,
+      "currentRetry": 0,
+      "speed": "fast",
+      "err": {}
+    },
+    {
+      "title": "benchmark3",
+      "fullTitle": "sample benchmark benchmark3",
+      "file": "/home/runner/work/benchzoo/benchzoo/frameworks/unit-or-qa/mocha/test/sample.test.js",
+      "duration": 3,
+      "currentRetry": 0,
+      "speed": "fast",
+      "err": {}
+    },
+    {
+      "title": "benchmark4",
+      "fullTitle": "sample benchmark benchmark4",
+      "file": "/home/runner/work/benchzoo/benchzoo/frameworks/unit-or-qa/mocha/test/sample.test.js",
+      "duration": 2153,
+      "currentRetry": 0,
+      "speed": "slow",
+      "err": {}
+    }
+  ]
+}
