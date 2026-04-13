@@ -1,0 +1,13 @@
+{
+  "name": "benchzoo-mitata-sample",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "benchzoo canonical sample benchmark implemented on mitata — a modern JS micro-benchmark library pitched as a faster / nicer-API tinybench alternative.",
+  "scripts": {
+    "start": "node sample-benchmark.js"
+  },
+  "dependencies": {
+    "mitata": "1.0.34"
+  }
+}
