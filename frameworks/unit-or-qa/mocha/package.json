@@ -1,0 +1,12 @@
+{
+  "name": "benchzoo-mocha-sample",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Canonical sample benchmark expressed as Mocha unit tests; fixture source for the mocha (native --reporter json) parser.",
+  "scripts": {
+    "test": "mocha test/sample.test.js --reporter json --timeout 10000"
+  },
+  "devDependencies": {
+    "mocha": "11.1.0"
+  }
+}
