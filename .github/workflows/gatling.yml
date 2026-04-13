@@ -1,0 +1,58 @@
+name: gatling
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'frameworks/loadtest/gatling/**'
+      - '.github/workflows/gatling.yml'
+  pull_request:
+    paths:
+      - 'frameworks/loadtest/gatling/**'
+      - '.github/workflows/gatling.yml'
+  workflow_dispatch:
+
+# No `schedule:` trigger — Gatling does not implement test 4 of the
+# canonical sample benchmark (see README for the deviation rationale),
+# so there is no change-detection time series for this framework to
+# accumulate.
+
+permissions:
+  contents: read
+
+concurrency:
+  group: gatling-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frameworks/loadtest/gatling
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+
+      - name: Install nginx
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y nginx
+
+      - name: Run sample benchmark
+        run: bash run.sh
+
+      - name: Upload output as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: gatling-output
+          path: |
+            frameworks/loadtest/gatling/output.log
+            frameworks/loadtest/gatling/target/gatling/**/index.html
+          if-no-files-found: error
