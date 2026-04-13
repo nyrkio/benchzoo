@@ -303,20 +303,19 @@ def _sniff_xml(stripped: str) -> str | None:
         # TRX: xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/..."
         return "dotnet-test"
 
-    # For <testsuite> / <testsuites> roots, we can't distinguish the
-    # producer without peeking inside. Try a narrow heuristic against
-    # the first ~8 KB.
+    # For <testsuite> / <testsuites> roots the producer (jest /
+    # gotestsum / Surefire / CTest / Catch2's junit reporter) is not
+    # reliably distinguishable from the XML alone. pytest-benchmark's
+    # junit is the one exception — its classnames use ".py::".
+    # gotestsum emits byte-identical structure to vanilla junit, but
+    # with a "TestX" name prefix the parser must strip — since we
+    # can't tell that apart from a Java test class named ``TestX``,
+    # we don't try. Everything else routes to junit-standard, whose
+    # parser reads name + time verbatim.
     if root in {"testsuite", "testsuites"}:
-        # pytest-benchmark's junit has classnames like
-        # "test_sample_benchmark.py" and uses the ".py::" separator.
         if ".py::" in stripped[:16384]:
             return "pytest-benchmark"
-        # jest-junit's classnames often contain leading spaces (a
-        # jest-junit quirk) and names without dot-path structure.
-        # These heuristics aren't reliable enough to return a name —
-        # return None and let the caller fall through to explicit
-        # selection.
-        return None
+        return "junit-standard"
 
     return None
 

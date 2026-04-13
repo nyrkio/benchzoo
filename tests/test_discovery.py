@@ -104,10 +104,10 @@ _FIXTURE_EXPECTATIONS: dict[str, str | None] = {
     "catch2-output":             "catch2",
     "phpbench-output":           "phpbench",
     "dotnet-test-output":        "dotnet-test",
-    "junit-jest-output":         None,              # plain junit, unknown producer
-    "junit-go-output":           None,
-    "junit-vanilla-output":      None,
-    "ctest-output":              None,
+    "junit-jest-output":         "junit-standard",
+    "junit-go-output":           None,              # byte-identical to vanilla junit
+    "junit-vanilla-output":      "junit-standard",
+    "ctest-output":              "junit-standard",
     # Tier 3 — CSV
     "custom-csv-output":         None,              # no distinctive header
     "redis-benchmark-output":    "redis-benchmark",
@@ -153,14 +153,19 @@ def test_sniff_fixture(fixture_dir: str, expected: str | None):
         # Read as bytes to exercise the bytes-path.
         content = path.read_bytes()
         result = benchzoo.sniff(content)
+        # Some fixture dirs bundle a plain-junit artifact alongside the
+        # framework's native output (e.g. catch2-output ships
+        # output.junit.xml). "junit-standard" is the honest answer for
+        # those files even when the dir's primary expected framework is
+        # different.
+        allowed = {None, expected, "junit-standard"} if "junit" in path.name.lower() else {None, expected}
         if expected is None:
             # No claim either way — but we must not fabricate.
             assert result in (None,) or result in PARSERS, (
                 f"{path.name}: sniff returned unknown framework {result!r}"
             )
         else:
-            # Either the expected framework, or None. Never something else.
-            assert result in (None, expected), (
+            assert result in allowed, (
                 f"{path.name}: expected {expected!r} or None, got {result!r}"
             )
             if result == expected:

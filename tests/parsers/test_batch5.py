@@ -1,6 +1,6 @@
 """Ground-truth tests for batch 5 parsers.
 
-Covers mocha_json, dotnet_test_trx, junit_ctest, playwright_json.
+Covers mocha_json, dotnet_test_trx, junit_standard (ctest fixture), playwright_json.
 (cypress and ycsb parsers added separately once their CI stabilizes.)
 """
 
@@ -12,7 +12,7 @@ import pytest
 
 from benchzoo.parsers import (
     dotnet_test_trx,
-    junit_ctest,
+    junit_standard,
     mocha_json,
     playwright_json,
 )
@@ -59,8 +59,8 @@ def test_dotnet_test_trx():
         assert d["passed"] is True
 
 
-def test_junit_ctest():
-    r = junit_ctest.parse((DATA / "ctest-output/output.xml").read_text())
+def test_junit_standard_ctest():
+    r = junit_standard.parse((DATA / "ctest-output/output.xml").read_text())
     assert {d["attributes"]["test_name"] for d in r} == {
         "benchmark1", "benchmark2", "benchmark3", "benchmark4"
     }

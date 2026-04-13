@@ -1,7 +1,7 @@
 """Ground-truth tests for batch 2 parsers.
 
 One file covering cargo_bench_libtest, benchmark_js, vitest_bench,
-wrk, junit_jest, junit_go, junit_vanilla, catch2_xml. All fixtures
+wrk, junit_standard (jest + vanilla fixtures), junit_go, catch2_xml. All fixtures
 come from real GitHub Actions runs; all parsers verify that
 benchmark1 represents ~2.15 s of work.
 """
@@ -18,8 +18,7 @@ from benchzoo.parsers import (
     cargo_bench_libtest,
     catch2_xml,
     junit_go,
-    junit_jest,
-    junit_vanilla,
+    junit_standard,
     vitest_bench,
     wrk,
 )
@@ -123,11 +122,11 @@ def test_wrk():
 
 
 # ---------------------------------------------------------------------------
-# junit_jest — 4 tests with time attribute
+# junit_standard against the jest-junit fixture — 4 tests with time attribute
 # ---------------------------------------------------------------------------
 
-def test_junit_jest():
-    results = junit_jest.parse((DATA / "junit-jest-output/output.xml").read_text())
+def test_junit_standard_jest():
+    results = junit_standard.parse((DATA / "junit-jest-output/output.xml").read_text())
     assert {d["attributes"]["test_name"] for d in results} == {
         "benchmark1", "benchmark2", "benchmark3", "benchmark4"
     }
@@ -159,11 +158,11 @@ def test_junit_go():
 
 
 # ---------------------------------------------------------------------------
-# junit_vanilla — no name transformation
+# junit_standard against the Maven Surefire fixture — no name transformation
 # ---------------------------------------------------------------------------
 
-def test_junit_vanilla():
-    results = junit_vanilla.parse((DATA / "junit-vanilla-output/output.xml").read_text())
+def test_junit_standard_vanilla():
+    results = junit_standard.parse((DATA / "junit-vanilla-output/output.xml").read_text())
     names = {d["attributes"]["test_name"] for d in results}
     # Vanilla preserves names verbatim — benchmark1 etc.
     assert "benchmark1" in names
