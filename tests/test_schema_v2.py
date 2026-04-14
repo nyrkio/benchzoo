@@ -12,6 +12,9 @@ import pathlib
 import pytest
 from jsonschema import Draft202012Validator
 
+from benchzoo.parsers import pytest_benchmark_json
+
+
 ROOT = pathlib.Path(__file__).parent.parent
 SCHEMA = json.loads((ROOT / "docs" / "schema-v2.schema.json").read_text())
 DATA = ROOT / "tests" / "data"
@@ -19,7 +22,9 @@ DATA = ROOT / "tests" / "data"
 
 # Parsers converted to v2 are listed here as (module, fixture_path) pairs.
 # Adding a parser to this list is the signal that it now emits v2.
-V2_PARSERS: list = []
+V2_PARSERS = [
+    (pytest_benchmark_json, DATA / "pytest-benchmark-output" / "output.json"),
+]
 
 
 def test_schema_is_itself_valid():
