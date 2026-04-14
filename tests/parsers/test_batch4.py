@@ -78,7 +78,8 @@ def test_wrk2():
     results = wrk2.parse((DATA / "wrk2-output/output.txt").read_text())
     assert len(results) == 1
     d = results[0]
-    assert d["attributes"]["test_name"] == "homepage"
+    assert d["test"]["test_name"] == "homepage"
+    assert d["env"]["framework"]["name"] == "wrk2"
     avg = _metric(d, "latency_avg")
     assert avg["unit"] == "ms"
     assert 0 < avg["value"] < 100
@@ -88,7 +89,7 @@ def test_wrk2():
     assert "latency_p99" in names
     assert "latency_p999" in names     # 99.900 → p999
     assert "latency_p9999" in names    # 99.990
-    assert d["timestamp"] == 0
+    assert d["run"]["passed"] is True
 
 
 # ---------------------------------------------------------------------------
