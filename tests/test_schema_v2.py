@@ -18,6 +18,8 @@ from benchzoo.parsers import (
     cargo_bench_libtest,
     criterion_bencher,
     criterion_estimates,
+    custom_bigger_is_better,
+    custom_smaller_is_better,
     gatling_log,
     go_bench_json,
     go_bench_text,
@@ -80,6 +82,8 @@ V2_PARSERS = [
     (vitest_bench,          DATA / "vitest-bench-output" / "output.json"),
     (phpbench_xml,          DATA / "phpbench-output" / "output.xml"),
     (criterion_estimates,   DATA / "criterion-output" / "output" / "benchmark1.json"),
+    (custom_bigger_is_better,  DATA / "custom-json-output" / "output-bigger.json"),
+    (custom_smaller_is_better, DATA / "custom-json-output" / "output-smaller.json"),
 ]
 
 

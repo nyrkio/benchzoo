@@ -25,10 +25,10 @@ def parse_custom_json(content: bytes | str, *, direction: str) -> list[dict]:
             "direction": direction,
         }
         d: dict = {
-            "timestamp": 0,
-            "attributes": {"test_name": name},
+            "test": {"test_name": name},
+            "run": {"passed": True},
+            "env": {"framework": {"name": "custom-json"}},
             "metrics": [metric],
-            "passed": True,
         }
         if "extra" in entry:
             d["extra_info"] = {"extra": entry["extra"]}
