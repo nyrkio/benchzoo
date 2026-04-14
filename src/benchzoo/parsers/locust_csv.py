@@ -99,10 +99,10 @@ def parse(content: bytes | str) -> list[dict]:
         failures = int(row.get("Failure Count") or 0)
 
         result = {
-            "timestamp": 0,
-            "attributes": {"test_name": test_name},
+            "test": {"test_name": test_name},
+            "run": {"passed": failures == 0},
+            "env": {"framework": {"name": "locust"}},
             "metrics": metrics,
-            "passed": failures == 0,
         }
         if extra_info:
             result["extra_info"] = extra_info

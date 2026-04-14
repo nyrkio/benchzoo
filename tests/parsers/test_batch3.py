@@ -89,7 +89,8 @@ def test_locust_csv():
     # Sample had one real request (GET /) + Aggregated; aggregated should be skipped.
     assert len(results) == 1
     d = results[0]
-    assert d["attributes"]["test_name"] == "GET /"
+    assert d["test"]["test_name"] == "GET /"
+    assert d["env"]["framework"]["name"] == "locust"
     names = {m["name"] for m in d["metrics"]}
     assert "latency_p50" in names
     assert "latency_p99" in names
@@ -97,8 +98,7 @@ def test_locust_csv():
     rps = _metric(d, "requests_per_sec")
     assert rps["value"] > 0
     assert d["extra_info"]["request_count"] > 0
-    assert d["passed"] is True
-    assert d["timestamp"] == 0
+    assert d["run"]["passed"] is True
 
 
 # ---------------------------------------------------------------------------
