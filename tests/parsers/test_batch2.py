@@ -33,10 +33,6 @@ def _metric(d, name):
     raise AssertionError(f"missing metric {name!r} in {d}")
 
 
-def _by_test(results):
-    return {d["attributes"]["test_name"]: d for d in results}
-
-
 # ---------------------------------------------------------------------------
 # cargo bench (libtest) — delegates to criterion_bencher
 # ---------------------------------------------------------------------------

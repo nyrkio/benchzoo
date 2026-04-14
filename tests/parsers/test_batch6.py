@@ -22,10 +22,6 @@ def _metric(d, name):
     raise AssertionError(f"missing metric {name!r} in {d}")
 
 
-def _by_test(results):
-    return {d["attributes"]["test_name"]: d for d in results}
-
-
 def test_mitata():
     r = mitata.parse((DATA / "mitata-output/output.json").read_text())
     names = {d["test"]["test_name"] for d in r}
