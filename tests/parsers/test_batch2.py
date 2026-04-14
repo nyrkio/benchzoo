@@ -43,16 +43,16 @@ def _by_test(results):
 
 def test_cargo_bench_libtest():
     results = cargo_bench_libtest.parse((DATA / "cargo-bench-output/output.txt").read_text())
-    assert {d["attributes"]["test_name"] for d in results} == {
+    assert {d["test"]["test_name"] for d in results} == {
         "benchmark1", "benchmark2", "benchmark3", "benchmark4"
     }
-    by_test = _by_test(results)
+    by_test = {d["test"]["test_name"]: d for d in results}
     nsi = _metric(by_test["benchmark1"], "ns_per_iter")
     assert 2.0e9 <= nsi["value"] <= 2.3e9, nsi
     assert nsi["unit"] == "ns"
     for d in results:
-        assert d["timestamp"] == 0
-        assert "git_commit" not in d["attributes"]
+        assert d["env"]["framework"]["name"] == "cargo-bench"
+        assert d["run"]["passed"] is True
 
 
 # ---------------------------------------------------------------------------

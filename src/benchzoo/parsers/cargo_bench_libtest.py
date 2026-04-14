@@ -19,4 +19,4 @@ from benchzoo.parsers import criterion_bencher
 
 def parse(content: bytes | str) -> list[dict]:
     """Delegate to :func:`benchzoo.parsers.criterion_bencher.parse`."""
-    return criterion_bencher.parse(content)
+    return criterion_bencher.parse(content, framework_name="cargo-bench")

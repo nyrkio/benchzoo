@@ -15,6 +15,8 @@ from jsonschema import Draft202012Validator
 from benchzoo.parsers import (
     benchmark_ips,
     benchmark_js,
+    cargo_bench_libtest,
+    criterion_bencher,
     gatling_log,
     go_bench_json,
     go_bench_text,
@@ -70,6 +72,8 @@ V2_PARSERS = [
     (playwright_json,       DATA / "playwright-output" / "output.json"),
     (go_bench_text,         DATA / "go-test-bench-output" / "output.txt"),
     (go_bench_json,         DATA / "go-test-bench-output" / "output.json"),
+    (criterion_bencher,     DATA / "criterion-output" / "output-bencher.txt"),
+    (cargo_bench_libtest,   DATA / "cargo-bench-output" / "output.txt"),
 ]
 
 

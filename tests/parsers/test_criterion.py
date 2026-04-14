@@ -33,52 +33,75 @@ def _metric(d: dict, name: str) -> dict:
     raise AssertionError(f"missing metric {name!r} in {d}")
 
 
-def _by_test(results: list[dict]) -> dict[str, dict]:
-    return {d["attributes"]["test_name"]: d for d in results}
+# ---------------------------------------------------------------------------
+# criterion_bencher (v2 schema)
+# ---------------------------------------------------------------------------
+
+def _b_by_test(results):
+    return {d["test"]["test_name"]: d for d in results}
 
 
-@pytest.mark.parametrize("results", ["estimates_results", "bencher_results"])
-def test_has_four_runs_named_benchmark1_through_4(results, request):
-    r = request.getfixturevalue(results)
-    assert len(r) == 4
-    assert sorted(d["attributes"]["test_name"] for d in r) == [
+def test_bencher_has_four(bencher_results):
+    assert len(bencher_results) == 4
+    assert sorted(d["test"]["test_name"] for d in bencher_results) == [
         "benchmark1", "benchmark2", "benchmark3", "benchmark4"
     ]
 
 
-@pytest.mark.parametrize("results", ["estimates_results", "bencher_results"])
-def test_timestamp_is_zero(results, request):
-    for d in request.getfixturevalue(results):
+def test_bencher_framework_name(bencher_results):
+    for d in bencher_results:
+        assert d["env"]["framework"]["name"] == "criterion"
+
+
+def test_bencher_benchmark1_ns_per_iter_is_2_15_seconds(bencher_results):
+    r = _b_by_test(bencher_results)
+    nsi = _metric(r["benchmark1"], "ns_per_iter")
+    assert 2.0e9 <= nsi["value"] <= 2.3e9, nsi
+
+
+def test_bencher_benchmark4_in_sleep_range(bencher_results):
+    r = _b_by_test(bencher_results)
+    duration = _metric(r["benchmark4"], "ns_per_iter")
+    assert 1.0e9 <= duration["value"] <= 3.3e9, duration
+
+
+# ---------------------------------------------------------------------------
+# criterion_estimates (still v1; migrated in a separate commit)
+# ---------------------------------------------------------------------------
+
+def _e_by_test(results):
+    return {d["attributes"]["test_name"]: d for d in results}
+
+
+def test_estimates_has_four(estimates_results):
+    assert len(estimates_results) == 4
+    assert sorted(d["attributes"]["test_name"] for d in estimates_results) == [
+        "benchmark1", "benchmark2", "benchmark3", "benchmark4"
+    ]
+
+
+def test_estimates_timestamp_is_zero(estimates_results):
+    for d in estimates_results:
         assert d["timestamp"] == 0
 
 
-@pytest.mark.parametrize("results", ["estimates_results", "bencher_results"])
-def test_git_attributes_absent(results, request):
-    for d in request.getfixturevalue(results):
+def test_estimates_git_attributes_absent(estimates_results):
+    for d in estimates_results:
         for key in ("git_repo", "branch", "git_commit"):
             assert key not in d["attributes"]
 
 
 def test_estimates_benchmark1_mean_is_2_15_seconds(estimates_results):
-    r = _by_test(estimates_results)
+    r = _e_by_test(estimates_results)
     mean = _metric(r["benchmark1"], "mean")
     assert 2.0e9 <= mean["value"] <= 2.3e9, mean
     assert mean["unit"] == "ns"
     assert mean["direction"] == "lower_is_better"
 
 
-def test_bencher_benchmark1_ns_per_iter_is_2_15_seconds(bencher_results):
-    r = _by_test(bencher_results)
-    nsi = _metric(r["benchmark1"], "ns_per_iter")
-    assert 2.0e9 <= nsi["value"] <= 2.3e9, nsi
-
-
-@pytest.mark.parametrize("results", ["estimates_results", "bencher_results"])
-def test_benchmark4_in_sleep_range(results, request):
-    r = _by_test(request.getfixturevalue(results))
-    # Different metric name in each parser; check any duration metric.
-    metric_name = "mean" if "mean" in {m["name"] for m in r["benchmark4"]["metrics"]} else "ns_per_iter"
-    duration = _metric(r["benchmark4"], metric_name)
+def test_estimates_benchmark4_in_sleep_range(estimates_results):
+    r = _e_by_test(estimates_results)
+    duration = _metric(r["benchmark4"], "mean")
     assert 1.0e9 <= duration["value"] <= 3.3e9, duration
 
 

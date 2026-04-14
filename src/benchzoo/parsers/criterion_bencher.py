@@ -40,7 +40,7 @@ def _parse_ns(raw: str) -> float:
     return float(raw.replace(",", ""))
 
 
-def parse(content: bytes | str) -> list[dict]:
+def parse(content: bytes | str, *, framework_name: str = "criterion") -> list[dict]:
     if isinstance(content, bytes):
         content = content.decode("utf-8")
 
@@ -54,8 +54,9 @@ def parse(content: bytes | str) -> list[dict]:
         ns_per_iter = _parse_ns(m.group(2))
         deviation = _parse_ns(m.group(3))
         out.append({
-            "timestamp": 0,
-            "attributes": {"test_name": name},
+            "test": {"test_name": name},
+            "run": {"passed": True},
+            "env": {"framework": {"name": framework_name}},
             "metrics": [
                 {
                     "name": "ns_per_iter",
@@ -70,7 +71,6 @@ def parse(content: bytes | str) -> list[dict]:
                     "direction": "lower_is_better",
                 },
             ],
-            "passed": True,
         })
 
     return out
