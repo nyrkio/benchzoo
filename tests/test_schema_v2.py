@@ -25,6 +25,7 @@ from benchzoo.parsers import (
     mocha_json,
     perf_stat_text,
     pgbench,
+    playwright_json,
     pytest_benchmark_json,
     redis_benchmark_csv,
     sysbench,
@@ -64,6 +65,7 @@ V2_PARSERS = [
     (benchmark_js,          DATA / "benchmark-js-output" / "output.json"),
     (benchmark_ips,         DATA / "benchmark-ips-output" / "output.json"),
     (mocha_json,            DATA / "mocha-output" / "output.json"),
+    (playwright_json,       DATA / "playwright-output" / "output.json"),
 ]
 
 

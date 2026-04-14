@@ -83,19 +83,25 @@ def parse(content: bytes | str) -> list[dict]:
             "direction": "lower_is_better",
         }]
 
-        extra_info: dict = {}
+        params: dict = {}
         if project:
-            extra_info["project"] = project
+            params["project"] = project
+
+        extra_info: dict = {}
         if test.get("expectedStatus"):
             extra_info["expected_status"] = test["expectedStatus"]
         if len(results) > 1:
             extra_info["retries"] = len(results) - 1
 
+        test_doc: dict = {"test_name": title}
+        if params:
+            test_doc["params"] = params
+
         result_dict = {
-            "timestamp": 0,
-            "attributes": {"test_name": title},
+            "test": test_doc,
+            "run": {"passed": passed},
+            "env": {"framework": {"name": "playwright"}},
             "metrics": metrics,
-            "passed": passed,
         }
         if extra_info:
             result_dict["extra_info"] = extra_info

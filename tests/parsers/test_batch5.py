@@ -75,15 +75,15 @@ def test_junit_standard_ctest():
 
 def test_playwright_json():
     r = playwright_json.parse((DATA / "playwright-output/output.json").read_text())
-    names = {d["attributes"]["test_name"] for d in r}
+    names = {d["test"]["test_name"] for d in r}
     assert {"benchmark1", "benchmark2", "benchmark3", "benchmark4"} <= names
-    by = _by_test(r)
+    by = {d["test"]["test_name"]: d for d in r}
     dur = _metric(by["benchmark1"], "duration")
     assert dur["unit"] == "ms"
     assert 2000 <= dur["value"] <= 2300
     for d in r:
-        assert d["timestamp"] == 0
-        assert d["passed"] is True
-        # extra_info captures the browser project
-        if d.get("extra_info"):
-            assert d["extra_info"].get("project") in ("chromium", "")
+        assert d["env"]["framework"]["name"] == "playwright"
+        assert d["run"]["passed"] is True
+        # test.params captures the browser project
+        params = d["test"].get("params", {})
+        assert params.get("project") in ("chromium", None)
