@@ -12,7 +12,7 @@ import pathlib
 import pytest
 from jsonschema import Draft202012Validator
 
-from benchzoo.parsers import pytest_benchmark_json
+from benchzoo.parsers import hyperfine_json, pytest_benchmark_json
 
 
 ROOT = pathlib.Path(__file__).parent.parent
@@ -24,6 +24,7 @@ DATA = ROOT / "tests" / "data"
 # Adding a parser to this list is the signal that it now emits v2.
 V2_PARSERS = [
     (pytest_benchmark_json, DATA / "pytest-benchmark-output" / "output.json"),
+    (hyperfine_json,        DATA / "hyperfine-output" / "output.json"),
 ]
 
 
