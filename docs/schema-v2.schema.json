@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nyrkio.com/schema/benchzoo-result-v2.json",
+  "title": "Benchzoo result v2",
+  "description": "One test-run dict emitted by a benchzoo parser. See docs/schema-v2.md.",
+  "type": "object",
+  "properties": {
+    "commit": {
+      "type": "object",
+      "description": "VCS / source context.",
+      "properties": {
+        "repo": {"type": "string"},
+        "sha": {"type": "string"},
+        "ref": {"type": "string"},
+        "commit_time": {"type": "integer", "description": "Epoch seconds."}
+      }
+    },
+    "run": {
+      "type": "object",
+      "description": "This specific execution of the benchmark.",
+      "properties": {
+        "run_id": {"type": "string"},
+        "build_time": {"type": "integer", "description": "Epoch seconds."},
+        "test_time": {"type": "integer", "description": "Epoch seconds."},
+        "passed": {"type": "boolean", "default": true, "description": "Pass/fail of this run. Absent means passed."}
+      }
+    },
+    "test": {
+      "type": "object",
+      "description": "What was measured.",
+      "required": ["test_name"],
+      "properties": {
+        "test_name": {"type": "string", "minLength": 1},
+        "group": {"type": "string"},
+        "params": {"type": "object"}
+      }
+    },
+    "sut": {
+      "type": "object",
+      "description": "System under test — what is being benchmarked.",
+      "properties": {
+        "name": {"type": "string"},
+        "version": {"type": "string"},
+        "binary_sha": {"type": "string"},
+        "config_hash": {"type": "string"}
+      }
+    },
+    "env": {
+      "type": "object",
+      "description": "Environment that ran the benchmark.",
+      "properties": {
+        "os": {"type": "string"},
+        "arch": {"type": "string"},
+        "cpu": {"type": "string"},
+        "cpu_count": {"type": "integer", "minimum": 1},
+        "memory_gb": {"type": "number", "minimum": 0},
+        "runtime": {"type": "string"},
+        "runner": {"type": "string"},
+        "framework": {
+          "type": "object",
+          "properties": {
+            "name": {"type": "string"},
+            "version": {"type": "string"}
+          }
+        }
+      }
+    },
+    "metrics": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["name", "value"],
+        "properties": {
+          "name": {"type": "string", "minLength": 1},
+          "value": {"type": "number"},
+          "unit": {"type": "string"},
+          "direction": {
+            "type": "string",
+            "enum": ["lower_is_better", "higher_is_better"]
+          }
+        }
+      }
+    },
+    "extra_info": {
+      "type": "object",
+      "description": "Escape hatch for anything that doesn't fit in the named sub-documents. Free-form; consumers should treat it as opaque."
+    }
+  },
+  "required": ["test", "metrics"],
+  "additionalProperties": false
+}
