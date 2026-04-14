@@ -95,10 +95,10 @@ def parse(content: bytes | str) -> list[dict]:
         extra_info["size_per_request_bytes"] = int(m.group(1))
 
     result = {
-        "timestamp": 0,
-        "attributes": {"test_name": "homepage"},
+        "test": {"test_name": "homepage"},
+        "run": {"passed": True},
+        "env": {"framework": {"name": "hey"}},
         "metrics": metrics,
-        "passed": True,
     }
     if extra_info:
         result["extra_info"] = extra_info

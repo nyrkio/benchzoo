@@ -41,7 +41,8 @@ def test_hey():
     results = hey.parse((DATA / "hey-output/output.txt").read_text())
     assert len(results) == 1
     d = results[0]
-    assert d["attributes"]["test_name"] == "homepage"
+    assert d["test"]["test_name"] == "homepage"
+    assert d["env"]["framework"]["name"] == "hey"
     avg = _metric(d, "latency_avg")
     # Localhost avg is well under 100 ms
     assert avg["unit"] == "ms"
@@ -52,7 +53,7 @@ def test_hey():
     rps = _metric(d, "requests_per_sec")
     assert rps["direction"] == "higher_is_better"
     assert rps["value"] > 100
-    assert d["timestamp"] == 0
+    assert d["run"]["passed"] is True
 
 
 # ---------------------------------------------------------------------------
