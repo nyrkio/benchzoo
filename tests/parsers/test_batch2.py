@@ -84,16 +84,16 @@ def test_benchmark_js():
 def test_vitest_bench():
     results = vitest_bench.parse((DATA / "vitest-bench-output/output.json").read_text())
     assert len(results) == 4
-    by_test = _by_test(results)
+    by_test = {d["test"]["test_name"]: d for d in results}
     mean = _metric(by_test["benchmark1"], "mean")
     # tinybench reports milliseconds
     assert 2000 <= mean["value"] <= 2300, mean
     assert mean["unit"] == "ms"
-    # describe() block ends up in extra_info["group"]
-    assert "group" in by_test["benchmark1"]["extra_info"]
+    # describe() block ends up in test.group
+    assert by_test["benchmark1"]["test"].get("group")
     for d in results:
-        assert d["timestamp"] == 0
-        assert "git_commit" not in d["attributes"]
+        assert d["env"]["framework"]["name"] == "vitest-bench"
+        assert d["run"]["passed"] is True
 
 
 # ---------------------------------------------------------------------------

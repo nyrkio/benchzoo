@@ -36,6 +36,7 @@ from benchzoo.parsers import (
     time_builtin,
     time_gnu,
     tinybench,
+    vitest_bench,
     wrk,
     wrk2,
 )
@@ -74,6 +75,7 @@ V2_PARSERS = [
     (go_bench_json,         DATA / "go-test-bench-output" / "output.json"),
     (criterion_bencher,     DATA / "criterion-output" / "output-bencher.txt"),
     (cargo_bench_libtest,   DATA / "cargo-bench-output" / "output.txt"),
+    (vitest_bench,          DATA / "vitest-bench-output" / "output.json"),
 ]
 
 

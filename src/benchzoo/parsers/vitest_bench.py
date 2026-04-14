@@ -65,14 +65,15 @@ def parse(content: bytes | str) -> list[dict]:
                 extra_info = {
                     "samples": len(bench.get("samples", [])),
                 }
+                test_doc: dict = {"test_name": bench["name"]}
                 if group_name:
-                    extra_info["group"] = group_name
+                    test_doc["group"] = group_name
                 out.append({
-                    "timestamp": 0,
-                    "attributes": {"test_name": bench["name"]},
+                    "test": test_doc,
+                    "run": {"passed": True},
+                    "env": {"framework": {"name": "vitest-bench"}},
                     "metrics": metrics,
                     "extra_info": extra_info,
-                    "passed": True,
                 })
 
     return out
