@@ -24,4 +24,4 @@ def _normalize(name: str) -> str:
 
 
 def parse(content: bytes | str) -> list[dict]:
-    return parse_junit(content, normalize_name=_normalize)
+    return parse_junit(content, framework_name="junit-go", normalize_name=_normalize)

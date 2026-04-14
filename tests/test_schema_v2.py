@@ -28,6 +28,9 @@ from benchzoo.parsers import (
     hyperfine_csv,
     hyperfine_json,
     jmeter_csv,
+    junit_go,
+    junit_pytest,
+    junit_standard,
     locust_csv,
     memtier_json,
     mitata,
@@ -88,6 +91,11 @@ V2_PARSERS = [
     (custom_smaller_is_better, DATA / "custom-json-output" / "output-smaller.json"),
     (custom_csv,            DATA / "custom-csv-output" / "output.csv"),
     (hyperfine_csv,         DATA / "hyperfine-output" / "output.csv"),
+    (junit_standard,        DATA / "junit-vanilla-output" / "output.xml"),
+    (junit_standard,        DATA / "junit-jest-output" / "output.xml"),
+    (junit_standard,        DATA / "ctest-output" / "output.xml"),
+    (junit_go,              DATA / "junit-go-output" / "output.xml"),
+    (junit_pytest,          DATA / "pytest-benchmark-output" / "output-junit.xml"),
 ]
 
 

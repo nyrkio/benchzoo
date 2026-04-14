@@ -128,16 +128,16 @@ def test_wrk():
 
 def test_junit_standard_jest():
     results = junit_standard.parse((DATA / "junit-jest-output/output.xml").read_text())
-    assert {d["attributes"]["test_name"] for d in results} == {
+    assert {d["test"]["test_name"] for d in results} == {
         "benchmark1", "benchmark2", "benchmark3", "benchmark4"
     }
-    by_test = _by_test(results)
+    by_test = {d["test"]["test_name"]: d for d in results}
     duration = _metric(by_test["benchmark1"], "duration")
     assert 2.0 <= duration["value"] <= 2.3, duration
     assert duration["unit"] == "s"
     for d in results:
-        assert d["timestamp"] == 0
-        assert d["passed"] is True
+        assert d["env"]["framework"]["name"] == "junit-standard"
+        assert d["run"]["passed"] is True
 
 
 # ---------------------------------------------------------------------------
@@ -146,16 +146,16 @@ def test_junit_standard_jest():
 
 def test_junit_go():
     results = junit_go.parse((DATA / "junit-go-output/output.xml").read_text())
-    names = {d["attributes"]["test_name"] for d in results}
+    names = {d["test"]["test_name"] for d in results}
     # Expect our 4 tests after stripping "Test" prefix
     assert "benchmark1" in names
     assert "benchmark4" in names
-    by_test = _by_test(results)
+    by_test = {d["test"]["test_name"]: d for d in results}
     duration = _metric(by_test["benchmark1"], "duration")
     assert 2.0 <= duration["value"] <= 2.3, duration
     assert duration["unit"] == "s"
     for d in results:
-        assert d["timestamp"] == 0
+        assert d["env"]["framework"]["name"] == "junit-go"
 
 
 # ---------------------------------------------------------------------------
@@ -164,15 +164,17 @@ def test_junit_go():
 
 def test_junit_standard_vanilla():
     results = junit_standard.parse((DATA / "junit-vanilla-output/output.xml").read_text())
-    names = {d["attributes"]["test_name"] for d in results}
+    names = {d["test"]["test_name"] for d in results}
     # Vanilla preserves names verbatim — benchmark1 etc.
     assert "benchmark1" in names
-    by_test = _by_test(results)
+    by_test = {d["test"]["test_name"]: d for d in results}
     duration = _metric(by_test["benchmark1"], "duration")
     assert 2.0 <= duration["value"] <= 2.3, duration
     assert duration["unit"] == "s"
+    # classname → test.group: Surefire uses the fully-qualified class
+    assert "SampleTest" in by_test["benchmark1"]["test"]["group"]
     for d in results:
-        assert d["timestamp"] == 0
+        assert d["env"]["framework"]["name"] == "junit-standard"
 
 
 # ---------------------------------------------------------------------------

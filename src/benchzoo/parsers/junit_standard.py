@@ -19,4 +19,4 @@ from benchzoo.parsers._junit_common import parse_junit
 
 
 def parse(content: bytes | str) -> list[dict]:
-    return parse_junit(content)
+    return parse_junit(content, framework_name="junit-standard")

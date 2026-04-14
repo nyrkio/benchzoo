@@ -44,6 +44,8 @@ def parse(content: bytes | str) -> list[dict]:
         # what other pytest-benchmark parsers emit.
         test_name = name[len("test_"):] if name.startswith("test_") else name
 
+        classname = (testcase.get("classname") or "").strip()
+
         passed = (
             testcase.find("failure") is None
             and testcase.find("error") is None
@@ -97,11 +99,15 @@ def parse(content: bytes | str) -> list[dict]:
                     "direction": "lower_is_better",
                 })
 
+        test: dict = {"test_name": test_name}
+        if classname:
+            test["group"] = classname
+
         result: dict = {
-            "timestamp": 0,
-            "attributes": {"test_name": test_name},
+            "test": test,
+            "run": {"passed": passed},
+            "env": {"framework": {"name": "pytest-benchmark"}},
             "metrics": metrics,
-            "passed": passed,
         }
         if extra_info:
             result["extra_info"] = extra_info

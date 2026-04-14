@@ -61,16 +61,16 @@ def test_dotnet_test_trx():
 
 def test_junit_standard_ctest():
     r = junit_standard.parse((DATA / "ctest-output/output.xml").read_text())
-    assert {d["attributes"]["test_name"] for d in r} == {
+    assert {d["test"]["test_name"] for d in r} == {
         "benchmark1", "benchmark2", "benchmark3", "benchmark4"
     }
-    by = _by_test(r)
+    by = {d["test"]["test_name"]: d for d in r}
     dur = _metric(by["benchmark1"], "duration")
     assert dur["unit"] == "s"
     assert 2.0 <= dur["value"] <= 2.3
     for d in r:
-        assert d["timestamp"] == 0
-        assert d["passed"] is True
+        assert d["env"]["framework"]["name"] == "junit-standard"
+        assert d["run"]["passed"] is True
 
 
 def test_playwright_json():

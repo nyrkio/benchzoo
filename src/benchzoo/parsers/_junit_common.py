@@ -8,6 +8,8 @@ Three benchzoo parsers layer on top of this helper:
 - :mod:`junit_go` — strips gotestsum's ``Test`` prefix and lowercases.
 - :mod:`junit_pytest` — reads pytest-benchmark's ``<properties>`` for
   richer metrics when present.
+
+Emits the v2 result schema (see ``docs/schema-v2.md``).
 """
 
 from __future__ import annotations
@@ -19,13 +21,23 @@ from typing import Callable
 def parse_junit(
     content: bytes | str,
     *,
+    framework_name: str,
     normalize_name: Callable[[str], str] = lambda s: s,
 ) -> list[dict]:
-    """Parse junit XML, returning one Nyrkiö dict per ``<testcase>``.
+    """Parse junit XML, returning one Nyrkiö v2 dict per ``<testcase>``.
+
+    ``framework_name`` is the kebab-case registry name to stamp at
+    ``env.framework.name`` (e.g. ``"junit-standard"``, ``"junit-go"``,
+    ``"pytest-benchmark"``).
 
     ``normalize_name`` transforms the testcase's ``name`` attribute
-    into the canonical Nyrkiö ``attributes["test_name"]``. Defaults to
-    the identity transform.
+    into the canonical Nyrkiö ``test.test_name``. Defaults to the
+    identity transform.
+
+    The testcase's ``classname`` attribute — when present and
+    non-empty — becomes ``test.group``. For benchmark contexts this
+    is the honest mapping: suite / test-class / file-path grouping,
+    not a description of the system under test.
     """
     if isinstance(content, bytes):
         content = content.decode("utf-8")
@@ -50,9 +62,15 @@ def parse_junit(
                 or testcase.find("error") is not None
             )
 
+            test: dict = {"test_name": test_name}
+            classname = (testcase.get("classname") or "").strip()
+            if classname:
+                test["group"] = classname
+
             out.append({
-                "timestamp": 0,
-                "attributes": {"test_name": test_name},
+                "test": test,
+                "run": {"passed": not failed},
+                "env": {"framework": {"name": framework_name}},
                 "metrics": [
                     {
                         "name": "duration",
@@ -61,7 +79,6 @@ def parse_junit(
                         "direction": "lower_is_better",
                     }
                 ],
-                "passed": not failed,
             })
 
     return out
