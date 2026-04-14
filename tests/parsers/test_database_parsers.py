@@ -125,34 +125,27 @@ def test_pgbench_missing_metrics_marks_failed():
 
 
 # ---------------------------------------------------------------------------
-# sysbench (still v1; migrated in a separate commit).
+# sysbench (v2 schema).
 # ---------------------------------------------------------------------------
 
 def _sb_by_test(results: list[dict]) -> dict[str, dict]:
-    return {d["attributes"]["test_name"]: d for d in results}
+    return {d["test"]["test_name"]: d for d in results}
 
 
 def test_sysbench_four_test_runs(sysbench_results):
     assert len(sysbench_results) == 4
-    names = [d["attributes"]["test_name"] for d in sysbench_results]
+    names = [d["test"]["test_name"] for d in sysbench_results]
     assert names == ["benchmark1", "benchmark2", "benchmark3", "benchmark4"]
 
 
-def test_sysbench_timestamp_is_zero(sysbench_results):
+def test_sysbench_framework_name(sysbench_results):
     for d in sysbench_results:
-        assert d["timestamp"] == 0
-
-
-def test_sysbench_git_attributes_absent(sysbench_results):
-    for d in sysbench_results:
-        assert "git_repo" not in d["attributes"]
-        assert "branch" not in d["attributes"]
-        assert "git_commit" not in d["attributes"]
+        assert d["env"]["framework"]["name"] == "sysbench"
 
 
 def test_sysbench_test_name_set(sysbench_results):
     for d in sysbench_results:
-        assert d["attributes"]["test_name"]
+        assert d["test"]["test_name"]
 
 
 def test_sysbench_benchmark1_latency_near_2150ms(sysbench_results):
@@ -193,7 +186,7 @@ def test_sysbench_all_metrics_present(sysbench_results):
             "latency_sum",
             "total_time",
         ):
-            assert n in names, (d["attributes"]["test_name"], names)
+            assert n in names, (d["test"]["test_name"], names)
 
 
 def test_sysbench_extra_info_events(sysbench_results):
@@ -203,4 +196,4 @@ def test_sysbench_extra_info_events(sysbench_results):
 
 def test_sysbench_all_passed(sysbench_results):
     for d in sysbench_results:
-        assert d["passed"] is True
+        assert d["run"]["passed"] is True

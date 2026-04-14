@@ -91,10 +91,10 @@ def parse(content: bytes | str) -> list[dict]:
             extra_info["number_of_events"] = int(m.group(1))
 
         result: dict = {
-            "timestamp": 0,
-            "attributes": {"test_name": marker_name},
+            "test": {"test_name": marker_name},
+            "run": {"passed": True},
+            "env": {"framework": {"name": "sysbench"}},
             "metrics": metrics,
-            "passed": True,
         }
         if extra_info:
             result["extra_info"] = extra_info

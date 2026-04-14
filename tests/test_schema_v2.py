@@ -12,7 +12,15 @@ import pathlib
 import pytest
 from jsonschema import Draft202012Validator
 
-from benchzoo.parsers import hey, hyperfine_json, pgbench, pytest_benchmark_json, wrk, wrk2
+from benchzoo.parsers import (
+    hey,
+    hyperfine_json,
+    pgbench,
+    pytest_benchmark_json,
+    sysbench,
+    wrk,
+    wrk2,
+)
 
 
 ROOT = pathlib.Path(__file__).parent.parent
@@ -29,6 +37,7 @@ V2_PARSERS = [
     (wrk2,                  DATA / "wrk2-output" / "output.txt"),
     (hey,                   DATA / "hey-output" / "output.txt"),
     (pgbench,               DATA / "pgbench-output" / "output.txt"),
+    (sysbench,              DATA / "sysbench-output" / "output.txt"),
 ]
 
 
