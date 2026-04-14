@@ -92,11 +92,11 @@ def parse(content: bytes | str) -> list[dict]:
         }
 
         out.append({
-            "timestamp": 0,
-            "attributes": {"test_name": label},
+            "test": {"test_name": label},
+            "run": {"passed": failures.get(label, 0) == 0},
+            "env": {"framework": {"name": "jmeter"}},
             "metrics": metrics,
             "extra_info": extra_info,
-            "passed": failures.get(label, 0) == 0,
         })
 
     return out

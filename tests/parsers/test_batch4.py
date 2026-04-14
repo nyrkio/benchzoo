@@ -40,7 +40,8 @@ def test_jmeter_csv():
     results = jmeter_csv.parse((DATA / "jmeter-output/output.csv").read_text())
     assert len(results) == 1
     d = results[0]
-    assert d["attributes"]["test_name"] == "homepage"
+    assert d["test"]["test_name"] == "homepage"
+    assert d["env"]["framework"]["name"] == "jmeter"
     mean = _metric(d, "elapsed_mean")
     assert mean["unit"] == "ms"
     # localhost nginx — per-request elapsed well under 100 ms
@@ -49,8 +50,7 @@ def test_jmeter_csv():
     assert "elapsed_p50" not in names  # we emit p90/p95/p99, not p50
     assert "elapsed_p99" in names
     assert d["extra_info"]["samples"] == 1000  # 10 threads × 100 loops
-    assert d["passed"] is True
-    assert d["timestamp"] == 0
+    assert d["run"]["passed"] is True
 
 
 # ---------------------------------------------------------------------------
