@@ -78,6 +78,10 @@ def parse(content: bytes | str) -> list[dict]:
 
     doc = _extract_json_envelope(content)
 
+    framework: dict = {"name": "mitata"}
+    if doc.get("version"):
+        framework["version"] = doc["version"]
+
     out: list[dict] = []
     results = doc.get("results", {})
     benchmarks = results.get("benchmarks", []) if isinstance(results, dict) else []
@@ -122,11 +126,11 @@ def parse(content: bytes | str) -> list[dict]:
             extra_info["ticks"] = stats["ticks"]
 
         out.append({
-            "timestamp": 0,
-            "attributes": {"test_name": test_name},
+            "test": {"test_name": test_name},
+            "run": {"passed": True},
+            "env": {"framework": framework},
             "metrics": metrics,
             "extra_info": extra_info,
-            "passed": True,
         })
 
     return out

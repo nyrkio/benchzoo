@@ -28,9 +28,9 @@ def _by_test(results):
 
 def test_mitata():
     r = mitata.parse((DATA / "mitata-output/output.json").read_text())
-    names = {d["attributes"]["test_name"] for d in r}
+    names = {d["test"]["test_name"] for d in r}
     assert {"benchmark1", "benchmark2", "benchmark3", "benchmark4"} <= names
-    by = _by_test(r)
+    by = {d["test"]["test_name"]: d for d in r}
     mean = _metric(by["benchmark1"], "mean")
     # mitata stats are in nanoseconds
     assert 2.0e9 <= mean["value"] <= 2.3e9, mean
@@ -39,8 +39,8 @@ def test_mitata():
     names_b1 = {m["name"] for m in by["benchmark1"]["metrics"]}
     assert "p99" in names_b1
     for d in r:
-        assert d["timestamp"] == 0
-        assert d["passed"] is True
+        assert d["env"]["framework"]["name"] == "mitata"
+        assert d["run"]["passed"] is True
 
 
 def test_benchmark_ips():

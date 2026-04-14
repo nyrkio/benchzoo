@@ -19,6 +19,7 @@ from benchzoo.parsers import (
     jmeter_csv,
     locust_csv,
     memtier_json,
+    mitata,
     perf_stat_text,
     pgbench,
     pytest_benchmark_json,
@@ -56,6 +57,7 @@ V2_PARSERS = [
     (jmeter_csv,            DATA / "jmeter-output" / "output.csv"),
     (gatling_log,           DATA / "gatling-output" / "output.log"),
     (tinybench,             DATA / "tinybench-output" / "output.json"),
+    (mitata,                DATA / "mitata-output" / "output.json"),
 ]
 
 
