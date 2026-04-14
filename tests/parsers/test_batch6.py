@@ -45,9 +45,9 @@ def test_mitata():
 
 def test_benchmark_ips():
     r = benchmark_ips.parse((DATA / "benchmark-ips-output/output.json").read_text())
-    names = {d["attributes"]["test_name"] for d in r}
+    names = {d["test"]["test_name"] for d in r}
     assert {"benchmark1", "benchmark2", "benchmark3", "benchmark4"} <= names
-    by = _by_test(r)
+    by = {d["test"]["test_name"]: d for d in r}
     mean = _metric(by["benchmark1"], "mean")
     assert mean["unit"] == "s"
     assert mean["direction"] == "lower_is_better"
@@ -61,8 +61,8 @@ def test_benchmark_ips():
     ips2 = _metric(by["benchmark2"], "ips")
     assert ips2["value"] > 100
     for d in r:
-        assert d["timestamp"] == 0
-        assert d["passed"] is True
+        assert d["env"]["framework"]["name"] == "benchmark-ips"
+        assert d["run"]["passed"] is True
 
 
 def test_phpbench_xml():

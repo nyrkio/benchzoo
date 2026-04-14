@@ -13,6 +13,7 @@ import pytest
 from jsonschema import Draft202012Validator
 
 from benchzoo.parsers import (
+    benchmark_ips,
     benchmark_js,
     gatling_log,
     hey,
@@ -60,6 +61,7 @@ V2_PARSERS = [
     (tinybench,             DATA / "tinybench-output" / "output.json"),
     (mitata,                DATA / "mitata-output" / "output.json"),
     (benchmark_js,          DATA / "benchmark-js-output" / "output.json"),
+    (benchmark_ips,         DATA / "benchmark-ips-output" / "output.json"),
 ]
 
 

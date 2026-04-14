@@ -42,6 +42,14 @@ def parse(content: bytes | str) -> list[dict]:
         content = content.decode("utf-8")
     doc = json.loads(content)
 
+    framework: dict = {"name": "benchmark-ips"}
+    if doc.get("benchmark_ips_version"):
+        framework["version"] = doc["benchmark_ips_version"]
+
+    env: dict = {"framework": framework}
+    if doc.get("ruby_version"):
+        env["runtime"] = f"ruby {doc['ruby_version']}"
+
     out: list[dict] = []
     for entry in doc.get("benchmarks", []):
         name = entry.get("name", "").strip()
@@ -65,11 +73,11 @@ def parse(content: bytes | str) -> list[dict]:
             extra_info["stats_class"] = entry["stats_class"]
 
         out.append({
-            "timestamp": 0,
-            "attributes": {"test_name": name},
+            "test": {"test_name": name},
+            "run": {"passed": True},
+            "env": env,
             "metrics": metrics,
             "extra_info": extra_info,
-            "passed": True,
         })
 
     return out
