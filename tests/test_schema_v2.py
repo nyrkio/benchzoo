@@ -26,6 +26,7 @@ from benchzoo.parsers import (
     sysbench,
     time_builtin,
     time_gnu,
+    tinybench,
     wrk,
     wrk2,
 )
@@ -54,6 +55,7 @@ V2_PARSERS = [
     (locust_csv,            DATA / "locust-output" / "output_stats.csv"),
     (jmeter_csv,            DATA / "jmeter-output" / "output.csv"),
     (gatling_log,           DATA / "gatling-output" / "output.log"),
+    (tinybench,             DATA / "tinybench-output" / "output.json"),
 ]
 
 

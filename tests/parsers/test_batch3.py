@@ -108,7 +108,7 @@ def test_locust_csv():
 def test_tinybench():
     results = tinybench.parse((DATA / "tinybench-output/output.json").read_text())
     assert len(results) == 4
-    by_test = _by_test(results)
+    by_test = {d["test"]["test_name"]: d for d in results}
     mean = _metric(by_test["benchmark1"], "mean")
     # Milliseconds
     assert 2000 <= mean["value"] <= 2300, mean
@@ -116,7 +116,8 @@ def test_tinybench():
     hz = _metric(by_test["benchmark1"], "hz")
     assert hz["direction"] == "higher_is_better"
     for d in results:
-        assert d["timestamp"] == 0
+        assert d["env"]["framework"]["name"] == "tinybench"
+        assert d["run"]["passed"] is True
 
 
 # ---------------------------------------------------------------------------

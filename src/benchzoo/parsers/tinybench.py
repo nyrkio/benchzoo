@@ -52,6 +52,10 @@ def parse(content: bytes | str) -> list[dict]:
         content = content.decode("utf-8")
     doc = json.loads(content)
 
+    framework: dict = {"name": "tinybench"}
+    if doc.get("version"):
+        framework["version"] = doc["version"]
+
     out: list[dict] = []
     for entry in doc.get("results", []):
         latency = entry.get("latency", {})
@@ -76,11 +80,11 @@ def parse(content: bytes | str) -> list[dict]:
             or len(latency.get("samples", []))
         )
         out.append({
-            "timestamp": 0,
-            "attributes": {"test_name": entry["name"]},
+            "test": {"test_name": entry["name"]},
+            "run": {"passed": True},
+            "env": {"framework": framework},
             "metrics": metrics,
             "extra_info": {"samples": samples_count},
-            "passed": True,
         })
 
     return out
