@@ -17,6 +17,7 @@ from benchzoo.parsers import (
     benchmark_js,
     cargo_bench_libtest,
     criterion_bencher,
+    criterion_estimates,
     gatling_log,
     go_bench_json,
     go_bench_text,
@@ -78,6 +79,7 @@ V2_PARSERS = [
     (cargo_bench_libtest,   DATA / "cargo-bench-output" / "output.txt"),
     (vitest_bench,          DATA / "vitest-bench-output" / "output.json"),
     (phpbench_xml,          DATA / "phpbench-output" / "output.xml"),
+    (criterion_estimates,   DATA / "criterion-output" / "output" / "benchmark1.json"),
 ]
 
 

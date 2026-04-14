@@ -66,29 +66,23 @@ def test_bencher_benchmark4_in_sleep_range(bencher_results):
 
 
 # ---------------------------------------------------------------------------
-# criterion_estimates (still v1; migrated in a separate commit)
+# criterion_estimates (v2 schema)
 # ---------------------------------------------------------------------------
 
 def _e_by_test(results):
-    return {d["attributes"]["test_name"]: d for d in results}
+    return {d["test"]["test_name"]: d for d in results}
 
 
 def test_estimates_has_four(estimates_results):
     assert len(estimates_results) == 4
-    assert sorted(d["attributes"]["test_name"] for d in estimates_results) == [
+    assert sorted(d["test"]["test_name"] for d in estimates_results) == [
         "benchmark1", "benchmark2", "benchmark3", "benchmark4"
     ]
 
 
-def test_estimates_timestamp_is_zero(estimates_results):
+def test_estimates_framework_name(estimates_results):
     for d in estimates_results:
-        assert d["timestamp"] == 0
-
-
-def test_estimates_git_attributes_absent(estimates_results):
-    for d in estimates_results:
-        for key in ("git_repo", "branch", "git_commit"):
-            assert key not in d["attributes"]
+        assert d["env"]["framework"]["name"] == "criterion"
 
 
 def test_estimates_benchmark1_mean_is_2_15_seconds(estimates_results):
@@ -118,4 +112,4 @@ def test_estimates_emits_median_and_stddev(estimates_results):
 def test_parse_without_filename_yields_unknown_test_name():
     sample = '{"mean":{"point_estimate":1000,"standard_error":1,"confidence_interval":{"confidence_level":0.95,"lower_bound":1,"upper_bound":1}}}'
     result = criterion_estimates.parse(sample)
-    assert result[0]["attributes"]["test_name"] == "<unknown>"
+    assert result[0]["test"]["test_name"] == "<unknown>"

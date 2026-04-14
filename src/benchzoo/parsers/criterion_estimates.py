@@ -62,10 +62,10 @@ def _parse_one(obj: dict, test_name: str) -> dict:
         })
 
     return {
-        "timestamp": 0,
-        "attributes": {"test_name": test_name},
+        "test": {"test_name": test_name},
+        "run": {"passed": True},
+        "env": {"framework": {"name": "criterion"}},
         "metrics": metrics,
-        "passed": True,
     }
 
 
