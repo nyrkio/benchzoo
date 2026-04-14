@@ -147,27 +147,27 @@ def test_smaller_extra_is_routed_to_extra_info(smaller_results):
 
 
 # ---------------------------------------------------------------------------
-# CSV (still v1; migrated in a separate commit).
+# CSV (v2 schema).
 # ---------------------------------------------------------------------------
 
 def _csv_by_test(results):
-    return {d["attributes"]["test_name"]: d for d in results}
+    return {d["test"]["test_name"]: d for d in results}
 
 
 def test_csv_has_four_test_runs(csv_results):
     assert len(csv_results) == 4
-    names = [d["attributes"]["test_name"] for d in csv_results]
+    names = [d["test"]["test_name"] for d in csv_results]
     assert names == ["benchmark1", "benchmark2", "benchmark3", "benchmark4"]
 
 
-def test_csv_timestamp_is_zero(csv_results):
+def test_csv_framework_name(csv_results):
     for d in csv_results:
-        assert d["timestamp"] == 0
+        assert d["env"]["framework"]["name"] == "custom-csv"
 
 
 def test_csv_passed_defaults_true(csv_results):
     for d in csv_results:
-        assert d["passed"] is True
+        assert d["run"]["passed"] is True
 
 
 def test_csv_benchmark1_groups_four_metrics(csv_results):

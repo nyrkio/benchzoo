@@ -19,6 +19,7 @@ from benchzoo.parsers import (
     criterion_bencher,
     criterion_estimates,
     custom_bigger_is_better,
+    custom_csv,
     custom_smaller_is_better,
     gatling_log,
     go_bench_json,
@@ -84,6 +85,7 @@ V2_PARSERS = [
     (criterion_estimates,   DATA / "criterion-output" / "output" / "benchmark1.json"),
     (custom_bigger_is_better,  DATA / "custom-json-output" / "output-bigger.json"),
     (custom_smaller_is_better, DATA / "custom-json-output" / "output-smaller.json"),
+    (custom_csv,            DATA / "custom-csv-output" / "output.csv"),
 ]
 
 

@@ -43,10 +43,10 @@ def parse(content: bytes | str) -> list[dict]:
 
         if test_name not in by_test:
             by_test[test_name] = {
-                "timestamp": 0,
-                "attributes": {"test_name": test_name},
+                "test": {"test_name": test_name},
+                "run": {"passed": True},
+                "env": {"framework": {"name": "custom-csv"}},
                 "metrics": [],
-                "passed": True,
             }
             order.append(test_name)
         by_test[test_name]["metrics"].append(metric)
