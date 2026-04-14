@@ -13,6 +13,7 @@ import pytest
 from jsonschema import Draft202012Validator
 
 from benchzoo.parsers import (
+    gatling_log,
     hey,
     hyperfine_json,
     jmeter_csv,
@@ -52,6 +53,7 @@ V2_PARSERS = [
     (memtier_json,          DATA / "memtier-output" / "output.json"),
     (locust_csv,            DATA / "locust-output" / "output_stats.csv"),
     (jmeter_csv,            DATA / "jmeter-output" / "output.csv"),
+    (gatling_log,           DATA / "gatling-output" / "output.log"),
 ]
 
 

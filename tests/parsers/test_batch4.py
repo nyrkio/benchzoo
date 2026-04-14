@@ -62,12 +62,13 @@ def test_gatling_log():
     # At least one test name (whatever the request was named in the simulation)
     assert len(results) >= 1
     d = results[0]
+    assert d["env"]["framework"]["name"] == "gatling"
     mean = _metric(d, "latency_mean")
     assert mean["unit"] == "ms"
     # Localhost — single-digit ms typical
     assert 0 <= mean["value"] < 100
     assert d["extra_info"]["samples"] > 0
-    assert d["passed"] is True
+    assert d["run"]["passed"] is True
 
 
 # ---------------------------------------------------------------------------

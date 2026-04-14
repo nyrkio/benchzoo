@@ -90,14 +90,14 @@ def parse(content: bytes | str) -> list[dict]:
             {"name": "latency_p99",    "unit": "ms", "value": _percentile(srt, 99),            "direction": "lower_is_better"},
         ]
         out.append({
-            "timestamp": 0,
-            "attributes": {"test_name": name},
+            "test": {"test_name": name},
+            "run": {"passed": failures.get(name, 0) == 0},
+            "env": {"framework": {"name": "gatling"}},
             "metrics": metrics,
             "extra_info": {
                 "samples": counts[name],
                 "failures": failures.get(name, 0),
             },
-            "passed": failures.get(name, 0) == 0,
         })
 
     return out
