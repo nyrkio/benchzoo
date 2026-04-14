@@ -25,6 +25,7 @@ from benchzoo.parsers import (
     go_bench_json,
     go_bench_text,
     hey,
+    hyperfine_csv,
     hyperfine_json,
     jmeter_csv,
     locust_csv,
@@ -86,6 +87,7 @@ V2_PARSERS = [
     (custom_bigger_is_better,  DATA / "custom-json-output" / "output-bigger.json"),
     (custom_smaller_is_better, DATA / "custom-json-output" / "output-smaller.json"),
     (custom_csv,            DATA / "custom-csv-output" / "output.csv"),
+    (hyperfine_csv,         DATA / "hyperfine-output" / "output.csv"),
 ]
 
 

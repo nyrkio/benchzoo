@@ -1,11 +1,7 @@
-"""Ground-truth tests for the hyperfine JSON (v2) and CSV (v1) parsers.
+"""Ground-truth tests for the hyperfine JSON and CSV parsers (both v2).
 
 The fixtures at ``tests/data/hyperfine-output/`` are real captured
 output from a GitHub Actions run of ``frameworks/generic/hyperfine``.
-
-Note: hyperfine_json has been converted to the v2 schema as a demo;
-hyperfine_csv is still v1. The two test groups below assert against
-their respective shapes.
 """
 
 from __future__ import annotations
@@ -84,23 +80,23 @@ def test_json_all_passed(json_results):
 
 
 # ---------------------------------------------------------------------------
-# v1 schema — hyperfine_csv (unconverted)
+# v2 schema — hyperfine_csv
 # ---------------------------------------------------------------------------
 
 
 def test_csv_has_four_test_runs(csv_results):
     assert len(csv_results) == 4
-    names = [d["attributes"]["test_name"] for d in csv_results]
+    names = [d["test"]["test_name"] for d in csv_results]
     assert names == ["benchmark1", "benchmark2", "benchmark3", "benchmark4"]
 
 
-def test_csv_timestamp_is_zero(csv_results):
+def test_csv_framework_stamped(csv_results):
     for d in csv_results:
-        assert d["timestamp"] == 0
+        assert d["env"]["framework"]["name"] == "hyperfine"
 
 
 def test_csv_benchmark1_wall_time_is_215s(csv_results):
-    r = {d["attributes"]["test_name"]: d for d in csv_results}
+    r = {d["test"]["test_name"]: d for d in csv_results}
     mean = _metric(r["benchmark1"], "mean")
     assert 2.0 < mean["value"] < 2.3
     assert mean["unit"] == "s"
@@ -108,4 +104,4 @@ def test_csv_benchmark1_wall_time_is_215s(csv_results):
 
 def test_csv_all_passed(csv_results):
     for d in csv_results:
-        assert d["passed"] is True
+        assert d["run"]["passed"] is True

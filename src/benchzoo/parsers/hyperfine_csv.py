@@ -40,10 +40,10 @@ def parse(content: bytes | str) -> list[dict]:
             {"name": "system", "unit": "s", "value": float(row["system"]), "direction": "lower_is_better"},
         ]
         out.append({
-            "timestamp": 0,
-            "attributes": {"test_name": row["command"]},
+            "test": {"test_name": row["command"]},
+            "run": {"passed": True},  # CSV lacks exit_codes — see module docstring.
+            "env": {"framework": {"name": "hyperfine"}},
             "metrics": metrics,
-            "passed": True,  # CSV lacks exit_codes — see module docstring.
         })
 
     return out
