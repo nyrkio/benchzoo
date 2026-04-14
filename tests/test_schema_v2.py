@@ -13,6 +13,7 @@ import pytest
 from jsonschema import Draft202012Validator
 
 from benchzoo.parsers import (
+    asv,
     benchmark_ips,
     benchmark_js,
     benchmarkdotnet_csv,
@@ -108,6 +109,7 @@ V2_PARSERS = [
     (jmh_csv,               DATA / "jmh-output" / "output.csv"),
     (google_benchmark_json, DATA / "google-benchmark-output" / "output.json"),
     (google_benchmark_csv,  DATA / "google-benchmark-output" / "output.csv"),
+    (asv,                   DATA / "asv-output" / "output.json"),
 ]
 
 

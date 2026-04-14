@@ -66,6 +66,40 @@ def parse(content: bytes | str) -> list[dict]:
     columns = doc.get("result_columns", [])
     results = doc.get("results", {})
 
+    machine = doc.get("params") or {}
+    env: dict = {"framework": {"name": "asv"}}
+    if machine.get("os"):
+        env["os"] = machine["os"]
+    if machine.get("arch"):
+        env["arch"] = machine["arch"]
+    if machine.get("cpu"):
+        env["cpu"] = machine["cpu"]
+    if machine.get("num_cpu"):
+        try:
+            env["cpu_count"] = int(machine["num_cpu"])
+        except (TypeError, ValueError):
+            pass
+    if machine.get("ram"):
+        try:
+            # asv stores RAM in kB (integer as string)
+            env["memory_gb"] = int(machine["ram"]) / (1024 * 1024)
+        except (TypeError, ValueError):
+            pass
+    if machine.get("python"):
+        env["runtime"] = f"Python {machine['python']}"
+
+    commit: dict = {}
+    if doc.get("commit_hash"):
+        commit["sha"] = doc["commit_hash"]
+
+    run_base: dict = {"passed": True}
+    if doc.get("date") is not None:
+        # asv's date is milliseconds since epoch
+        try:
+            run_base["test_time"] = int(doc["date"] // 1000)
+        except (TypeError, ValueError):
+            pass
+
     out: list[dict] = []
     for fq_name, values in results.items():
         # Zip against truncated column list.
@@ -106,12 +140,16 @@ def parse(content: bytes | str) -> list[dict]:
         if "stats_repeat" in row and row["stats_repeat"]:
             extra_info["stats_repeat"] = row["stats_repeat"][0]
 
-        out.append({
-            "timestamp": 0,
-            "attributes": {"test_name": _normalize_name(fq_name)},
+        result: dict = {
+            "test": {"test_name": _normalize_name(fq_name)},
+            "run": dict(run_base),
+            "env": env,
             "metrics": metrics,
-            "extra_info": extra_info,
-            "passed": True,
-        })
+        }
+        if commit:
+            result["commit"] = commit
+        if extra_info:
+            result["extra_info"] = extra_info
+        out.append(result)
 
     return out

@@ -183,17 +183,24 @@ def test_junit_standard_vanilla():
 
 def test_asv():
     results = asv.parse((DATA / "asv-output/output.json").read_text())
-    assert {d["attributes"]["test_name"] for d in results} == {
+    assert {d["test"]["test_name"] for d in results} == {
         "benchmark1", "benchmark2", "benchmark3", "benchmark4"
     }
-    by_test = _by_test(results)
+    by_test = {d["test"]["test_name"]: d for d in results}
     mean = _metric(by_test["benchmark1"], "mean")
     # asv reports mean in seconds
     assert 2.0 <= mean["value"] <= 2.3, mean
     assert mean["unit"] == "s"
     for d in results:
-        assert d["timestamp"] == 0
-        assert "git_commit" not in d["attributes"]
+        assert d["env"]["framework"]["name"] == "asv"
+        assert d["run"]["passed"] is True
+    # machine info + commit
+    d = results[0]
+    assert d["env"]["arch"] == "x86_64"
+    assert "AMD EPYC" in d["env"]["cpu"]
+    assert d["env"]["cpu_count"] == 2
+    assert d["commit"]["sha"] == "dc78c1b04293679736c1ec100d57c2c31c673062"
+    assert "test_time" in d["run"]
 
 
 # ---------------------------------------------------------------------------
