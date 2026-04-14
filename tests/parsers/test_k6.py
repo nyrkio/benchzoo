@@ -36,7 +36,7 @@ def _metric(d: dict, name: str) -> dict:
 
 
 def _by_test(results: list[dict]) -> dict[str, dict]:
-    return {d["attributes"]["test_name"]: d for d in results}
+    return {d["test"]["test_name"]: d for d in results}
 
 
 # Structural
@@ -44,29 +44,22 @@ def _by_test(results: list[dict]) -> dict[str, dict]:
 def test_has_four_benchmark_runs(results, request):
     r = request.getfixturevalue(results)
     assert len(r) == 4
-    assert [d["attributes"]["test_name"] for d in r] == [
+    assert [d["test"]["test_name"] for d in r] == [
         "benchmark1", "benchmark2", "benchmark3", "benchmark4"
     ]
 
 
 @pytest.mark.parametrize("results", ["summary_results", "ndjson_results"])
-def test_timestamp_is_zero(results, request):
+def test_framework_name(results, request):
     for d in request.getfixturevalue(results):
-        assert d["timestamp"] == 0
-
-
-@pytest.mark.parametrize("results", ["summary_results", "ndjson_results"])
-def test_git_attributes_absent(results, request):
-    for d in request.getfixturevalue(results):
-        for key in ("git_repo", "branch", "git_commit"):
-            assert key not in d["attributes"]
+        assert d["env"]["framework"]["name"] == "k6"
 
 
 @pytest.mark.parametrize("results", ["summary_results", "ndjson_results"])
 def test_only_custom_trends(results, request):
     """Parsers must skip k6's built-in metrics (vus, iterations, ...)."""
     for d in request.getfixturevalue(results):
-        assert d["attributes"]["test_name"].startswith("benchmark")
+        assert d["test"]["test_name"].startswith("benchmark")
 
 
 # Ground truth
@@ -106,7 +99,7 @@ def test_benchmark4_in_range(results, request):
 @pytest.mark.parametrize("results", ["summary_results", "ndjson_results"])
 def test_all_passed(results, request):
     for d in request.getfixturevalue(results):
-        assert d["passed"] is True
+        assert d["run"]["passed"] is True
 
 
 # Summary-only: p90/p95 present

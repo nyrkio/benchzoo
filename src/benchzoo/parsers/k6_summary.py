@@ -32,6 +32,16 @@ def parse(content: bytes | str) -> list[dict]:
         content = content.decode("utf-8")
     doc = json.loads(content)
 
+    env = {"framework": {"name": "k6"}}
+    options = doc.get("options") or {}
+    thresholds = options.get("thresholds") or {}
+    params: dict = {}
+    if thresholds:
+        params["thresholds"] = thresholds
+
+    root_group = doc.get("root_group") or doc.get("rootGroup") or {}
+    group_name = root_group.get("name") or None
+
     out: list[dict] = []
     metrics_dict = doc.get("metrics", {})
     # Sort by test_name so the returned list order is stable and
@@ -48,11 +58,16 @@ def parse(content: bytes | str) -> list[dict]:
             {"name": "p90",    "unit": "ms", "value": stats["p(90)"], "direction": "lower_is_better"},
             {"name": "p95",    "unit": "ms", "value": stats["p(95)"], "direction": "lower_is_better"},
         ]
+        test: dict = {"test_name": name}
+        if group_name:
+            test["group"] = group_name
+        if params:
+            test["params"] = dict(params)
         out.append({
-            "timestamp": 0,
-            "attributes": {"test_name": name},
+            "test": test,
+            "run": {"passed": True},
+            "env": env,
             "metrics": metrics,
-            "passed": True,
         })
 
     return out

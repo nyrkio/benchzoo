@@ -42,6 +42,8 @@ from benchzoo.parsers import (
     junit_go,
     junit_pytest,
     junit_standard,
+    k6_ndjson,
+    k6_summary,
     locust_csv,
     memtier_json,
     mitata,
@@ -120,6 +122,8 @@ V2_PARSERS = [
     (lighthouse,            DATA / "lighthouse-output" / "output.json"),
     (catch2_xml,            DATA / "catch2-output" / "output.xml"),
     (vegeta_json,           DATA / "vegeta-output" / "output.json"),
+    (k6_summary,            DATA / "k6-output" / "summary.json"),
+    (k6_ndjson,             DATA / "k6-output" / "output.json"),
 ]
 
 

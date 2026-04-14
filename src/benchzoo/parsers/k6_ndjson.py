@@ -64,11 +64,11 @@ def parse(content: bytes | str) -> list[dict]:
             {"name": "max",    "unit": "ms", "value": max(samples),    "direction": "lower_is_better"},
         ]
         out.append({
-            "timestamp": 0,
-            "attributes": {"test_name": name},
+            "test": {"test_name": name},
+            "run": {"passed": True},
+            "env": {"framework": {"name": "k6"}},
             "metrics": metrics,
             "extra_info": {"samples": len(samples)},
-            "passed": True,
         })
 
     return out
