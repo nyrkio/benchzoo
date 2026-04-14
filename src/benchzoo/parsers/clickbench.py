@@ -41,6 +41,7 @@ See ``frameworks/database/clickbench/README.md``.
 
 from __future__ import annotations
 
+import datetime as _dt
 import json
 import math
 
@@ -60,15 +61,35 @@ def parse(content: bytes | str) -> list[dict]:
         content = content.decode("utf-8")
     doc = json.loads(content)
 
-    extra_info_shared = {
-        "system": doc.get("system", ""),
-        "machine": doc.get("machine", ""),
-        "cluster_size": doc.get("cluster_size", 1),
-        "load_time_s": doc.get("load_time", 0),
-        "data_size_bytes": doc.get("data_size", 0),
-    }
+    env: dict = {"framework": {"name": "clickbench"}}
+    if doc.get("machine"):
+        env["cpu"] = doc["machine"]
+    if doc.get("cluster_size"):
+        env["cpu_count"] = doc["cluster_size"]
+
+    sut: dict = {}
+    if doc.get("system"):
+        sut["name"] = doc["system"]
+
+    run_base: dict = {"passed": True}
+    date_str = doc.get("date")
+    if date_str:
+        try:
+            run_base["test_time"] = int(_dt.datetime.fromisoformat(date_str).timestamp())
+        except ValueError:
+            pass
+
+    shared_params = {}
+    if doc.get("data_size") is not None:
+        shared_params["data_size"] = doc["data_size"]
+
+    extras_shared: dict = {}
+    if doc.get("load_time") is not None:
+        extras_shared["load_time_s"] = doc["load_time"]
     if doc.get("tags"):
-        extra_info_shared["tags"] = doc["tags"]
+        extras_shared["tags"] = doc["tags"]
+    if doc.get("comment"):
+        extras_shared["comment"] = doc["comment"]
 
     out: list[dict] = []
     result = doc.get("result", [])
@@ -99,17 +120,27 @@ def parse(content: bytes | str) -> list[dict]:
             })
 
         extra_info = {
-            **extra_info_shared,
+            **extras_shared,
             "runs": len(runs),
             "valid_runs": len(valid),
         }
 
-        out.append({
-            "timestamp": 0,
-            "attributes": {"test_name": test_name},
+        test: dict = {"test_name": test_name}
+        if shared_params:
+            test["params"] = dict(shared_params)
+
+        run = dict(run_base)
+        run["passed"] = passed
+
+        result_dict: dict = {
+            "test": test,
+            "run": run,
+            "env": env,
             "metrics": metrics,
             "extra_info": extra_info,
-            "passed": passed,
-        })
+        }
+        if sut:
+            result_dict["sut"] = sut
+        out.append(result_dict)
 
     return out

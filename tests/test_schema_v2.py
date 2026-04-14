@@ -19,6 +19,7 @@ from benchzoo.parsers import (
     benchmarkdotnet_csv,
     benchmarkdotnet_json,
     cargo_bench_libtest,
+    clickbench,
     criterion_bencher,
     criterion_estimates,
     custom_bigger_is_better,
@@ -112,6 +113,7 @@ V2_PARSERS = [
     (google_benchmark_csv,  DATA / "google-benchmark-output" / "output.csv"),
     (asv,                   DATA / "asv-output" / "output.json"),
     (dotnet_test_trx,       DATA / "dotnet-test-output" / "output.trx"),
+    (clickbench,            DATA / "clickbench-output" / "output.json"),
 ]
 
 

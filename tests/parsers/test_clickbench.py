@@ -40,20 +40,21 @@ def _metric(d, name):
 
 def test_has_five_queries(results):
     assert len(results) == 5
-    assert [d["attributes"]["test_name"] for d in results] == [
+    assert [d["test"]["test_name"] for d in results] == [
         "q1", "q2", "q3", "q4", "q5"
     ]
 
 
-def test_timestamp_is_zero(results):
+def test_framework_name(results):
     for d in results:
-        assert d["timestamp"] == 0
+        assert d["env"]["framework"]["name"] == "clickbench"
 
 
-def test_git_attributes_absent(results):
-    for d in results:
-        for key in ("git_repo", "branch", "git_commit"):
-            assert key not in d["attributes"]
+def test_sut_and_env(results):
+    d = results[0]
+    assert d["sut"]["name"] == "ClickHouse"
+    assert "test_time" in d["run"]
+    assert d["test"]["params"]["data_size"] > 0
 
 
 def test_each_query_has_min_mean_max(results):
@@ -67,7 +68,7 @@ def test_each_query_has_min_mean_max(results):
 
 def test_all_queries_passed(results):
     for d in results:
-        assert d["passed"] is True
+        assert d["run"]["passed"] is True
 
 
 def test_query_times_are_sane(results):
@@ -75,7 +76,7 @@ def test_query_times_are_sane(results):
     in under 1 second (they actually come in around 40 ms each)."""
     for d in results:
         mean = _metric(d, "mean")
-        assert 0 < mean["value"] < 1.0, (d["attributes"]["test_name"], mean)
+        assert 0 < mean["value"] < 1.0, (d["test"]["test_name"], mean)
 
 
 def test_min_leq_mean_leq_max(results):
@@ -87,14 +88,14 @@ def test_min_leq_mean_leq_max(results):
 
 
 def test_extra_info_populated(results):
-    """Corpus-level fields (system, machine, load_time, data_size)
-    are copied into every per-query dict's extra_info."""
+    """Corpus-level fields (load_time, tags) are copied into every
+    per-query dict's extra_info; cluster_size -> env.cpu_count;
+    data_size -> test.params."""
     for d in results:
         ei = d["extra_info"]
-        assert ei["system"] == "ClickHouse"
-        assert ei["cluster_size"] == 1
+        assert d["env"]["cpu_count"] == 1
         assert ei["load_time_s"] > 0
-        assert ei["data_size_bytes"] > 0
+        assert d["test"]["params"]["data_size"] > 0
         assert ei["runs"] == 3
         assert ei["valid_runs"] == 3
 
@@ -111,8 +112,8 @@ def test_parses_failed_runs():
         ],
     })
     out = clickbench.parse(sample)
-    assert out[0]["passed"] is True
-    assert out[1]["passed"] is False   # partial failure
-    assert out[2]["passed"] is False   # total failure
+    assert out[0]["run"]["passed"] is True
+    assert out[1]["run"]["passed"] is False   # partial failure
+    assert out[2]["run"]["passed"] is False   # total failure
     # q3 has no valid runs → no metrics
     assert out[2]["metrics"] == []
