@@ -154,30 +154,34 @@ def parse(content: bytes | str) -> list[dict]:
                 "direction": "higher_is_better",
             })
 
+        params: dict = {}
         extra_info: dict = {}
         if (m := _SCALING_RE.search(block)):
             try:
-                extra_info["scaling_factor"] = int(m.group(1))
+                params["scaling_factor"] = int(m.group(1))
             except ValueError:
-                extra_info["scaling_factor"] = m.group(1)
+                params["scaling_factor"] = m.group(1)
         if (m := _CLIENTS_RE.search(block)):
-            extra_info["clients"] = int(m.group(1))
+            params["clients"] = int(m.group(1))
         if (m := _THREADS_RE.search(block)):
-            extra_info["threads"] = int(m.group(1))
+            params["threads"] = int(m.group(1))
         if (m := _MODE_RE.search(block)):
-            extra_info["query_mode"] = m.group(1)
+            params["query_mode"] = m.group(1)
         if (m := _TX_PER_CLIENT_RE.search(block)):
-            extra_info["transactions_per_client"] = int(m.group(1))
+            params["transactions_per_client"] = int(m.group(1))
         if (m := _TX_PROCESSED_RE.search(block)):
             extra_info["transactions_processed"] = m.group(1).strip()
         if (m := _INITIAL_CONN_RE.search(block)):
             extra_info["initial_connection_time_ms"] = float(m.group(1))
 
+        test: dict = {"test_name": test_name}
+        if params:
+            test["params"] = params
         result: dict = {
-            "timestamp": 0,
-            "attributes": {"test_name": test_name},
+            "test": test,
+            "run": {"passed": passed},
+            "env": {"framework": {"name": "pgbench"}},
             "metrics": metrics,
-            "passed": passed,
         }
         if extra_info:
             result["extra_info"] = extra_info
