@@ -74,10 +74,10 @@ def parse(content: bytes | str) -> list[dict]:
             {"name": "error",  "unit": "ns", "value": _parse_ns(row["Error"]),  "direction": "lower_is_better"},
         ]
         out.append({
-            "timestamp": 0,
-            "attributes": {"test_name": test_name},
+            "test": {"test_name": test_name},
+            "run": {"passed": True},
+            "env": {"framework": {"name": "benchmarkdotnet"}},
             "metrics": metrics,
-            "passed": True,
         })
 
     return out

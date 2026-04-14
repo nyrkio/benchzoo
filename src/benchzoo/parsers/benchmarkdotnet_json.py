@@ -45,12 +45,43 @@ def parse(content: bytes | str) -> list[dict]:
         content = content.decode("utf-8")
     doc = json.loads(content)
 
+    host = doc.get("HostEnvironmentInfo") or {}
+    env: dict = {}
+    if host.get("OsVersion"):
+        env["os"] = host["OsVersion"]
+    if host.get("Architecture"):
+        env["arch"] = host["Architecture"]
+    if host.get("ProcessorName"):
+        env["cpu"] = host["ProcessorName"]
+    if host.get("LogicalCoreCount"):
+        env["cpu_count"] = host["LogicalCoreCount"]
+    if host.get("RuntimeVersion"):
+        env["runtime"] = host["RuntimeVersion"]
+    framework = {"name": "benchmarkdotnet"}
+    if host.get("BenchmarkDotNetVersion"):
+        framework["version"] = host["BenchmarkDotNetVersion"]
+    env["framework"] = framework
+
+    extras = {}
+    for k in ("PhysicalProcessorCount", "PhysicalCoreCount", "HasRyuJit",
+              "Configuration", "DotNetCliVersion"):
+        if host.get(k) is not None:
+            extras[k] = host[k]
+
     out: list[dict] = []
     for entry in doc.get("Benchmarks", []):
         method = entry.get("Method", "")
         # Normalize "Benchmark1" → "benchmark1" for cross-framework
         # consistency with the canonical test_name.
         test_name = method[:1].lower() + method[1:] if method else ""
+
+        test: dict = {"test_name": test_name}
+        group_parts = [p for p in (entry.get("Namespace"), entry.get("Type")) if p]
+        if group_parts:
+            test["group"] = ".".join(group_parts)
+        params_str = entry.get("Parameters") or ""
+        if params_str:
+            test["params"] = {"Parameters": params_str}
 
         stats = entry.get("Statistics", {})
         metrics = [
@@ -61,11 +92,14 @@ def parse(content: bytes | str) -> list[dict]:
             {"name": "stddev", "unit": "ns", "value": stats["StandardDeviation"], "direction": "lower_is_better"},
         ]
 
-        out.append({
-            "timestamp": 0,
-            "attributes": {"test_name": test_name},
+        result: dict = {
+            "test": test,
+            "run": {"passed": True},
+            "env": env,
             "metrics": metrics,
-            "passed": True,
-        })
+        }
+        if extras:
+            result["extra_info"] = dict(extras)
+        out.append(result)
 
     return out

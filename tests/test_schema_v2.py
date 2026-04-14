@@ -15,6 +15,8 @@ from jsonschema import Draft202012Validator
 from benchzoo.parsers import (
     benchmark_ips,
     benchmark_js,
+    benchmarkdotnet_csv,
+    benchmarkdotnet_json,
     cargo_bench_libtest,
     criterion_bencher,
     criterion_estimates,
@@ -96,6 +98,8 @@ V2_PARSERS = [
     (junit_standard,        DATA / "ctest-output" / "output.xml"),
     (junit_go,              DATA / "junit-go-output" / "output.xml"),
     (junit_pytest,          DATA / "pytest-benchmark-output" / "output-junit.xml"),
+    (benchmarkdotnet_json,  DATA / "benchmarkdotnet-output" / "output.json"),
+    (benchmarkdotnet_csv,   DATA / "benchmarkdotnet-output" / "output.csv"),
 ]
 
 

@@ -39,36 +39,29 @@ def _metric(d: dict, name: str) -> dict:
 
 
 def _by_test(results: list[dict]) -> dict[str, dict]:
-    return {d["attributes"]["test_name"]: d for d in results}
+    return {d["test"]["test_name"]: d for d in results}
 
 
 @pytest.mark.parametrize("results", ["json_results", "csv_results"])
 def test_has_four_runs_named_benchmark1_through_4(results, request):
     r = request.getfixturevalue(results)
     assert len(r) == 4
-    assert sorted(d["attributes"]["test_name"] for d in r) == [
+    assert sorted(d["test"]["test_name"] for d in r) == [
         "benchmark1", "benchmark2", "benchmark3", "benchmark4"
     ]
 
 
 @pytest.mark.parametrize("results", ["json_results", "csv_results"])
-def test_timestamp_is_zero(results, request):
+def test_framework_name(results, request):
     for d in request.getfixturevalue(results):
-        assert d["timestamp"] == 0
-
-
-@pytest.mark.parametrize("results", ["json_results", "csv_results"])
-def test_git_attributes_absent(results, request):
-    for d in request.getfixturevalue(results):
-        for key in ("git_repo", "branch", "git_commit"):
-            assert key not in d["attributes"]
+        assert d["env"]["framework"]["name"] == "benchmarkdotnet"
 
 
 @pytest.mark.parametrize("results", ["json_results", "csv_results"])
 def test_method_name_lowercased(results, request):
     """BenchmarkDotNet emits PascalCase method names; parser normalizes."""
     for d in request.getfixturevalue(results):
-        assert d["attributes"]["test_name"][0].islower()
+        assert d["test"]["test_name"][0].islower()
 
 
 @pytest.mark.parametrize("results", ["json_results", "csv_results"])
@@ -92,7 +85,21 @@ def test_benchmark4_mean_in_sleep_range(results, request):
 @pytest.mark.parametrize("results", ["json_results", "csv_results"])
 def test_all_passed(results, request):
     for d in request.getfixturevalue(results):
-        assert d["passed"] is True
+        assert d["run"]["passed"] is True
+
+
+def test_json_carries_host_env(json_results):
+    env = json_results[0]["env"]
+    assert env["framework"]["version"] == "0.14.0"
+    assert "AMD EPYC" in env["cpu"]
+    assert env["cpu_count"] == 2
+    assert "Ubuntu" in env["os"]
+    assert ".NET" in env["runtime"]
+
+
+def test_json_group_is_full_type_path(json_results):
+    for d in json_results:
+        assert d["test"]["group"] == "BenchzooSample.SampleBenchmark"
 
 
 # Parser-specific: CSV's unit-parsing must handle "μs" (U+03BC)
