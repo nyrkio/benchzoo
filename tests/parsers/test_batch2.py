@@ -62,7 +62,7 @@ def test_cargo_bench_libtest():
 def test_benchmark_js():
     results = benchmark_js.parse((DATA / "benchmark-js-output/output.json").read_text())
     assert len(results) == 4
-    by_test = _by_test(results)
+    by_test = {d["test"]["test_name"]: d for d in results}
     mean = _metric(by_test["benchmark1"], "mean")
     # Mean is SECONDS per op (benchmark.js native unit)
     assert 2.0 <= mean["value"] <= 2.3, mean
@@ -73,8 +73,8 @@ def test_benchmark_js():
     # samples ends up in extra_info
     assert by_test["benchmark1"]["extra_info"]["samples"] > 0
     for d in results:
-        assert d["timestamp"] == 0
-        assert "git_commit" not in d["attributes"]
+        assert d["env"]["framework"]["name"] == "benchmark-js"
+        assert d["run"]["passed"] is True
 
 
 # ---------------------------------------------------------------------------

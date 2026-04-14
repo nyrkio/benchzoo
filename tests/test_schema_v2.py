@@ -13,6 +13,7 @@ import pytest
 from jsonschema import Draft202012Validator
 
 from benchzoo.parsers import (
+    benchmark_js,
     gatling_log,
     hey,
     hyperfine_json,
@@ -58,6 +59,7 @@ V2_PARSERS = [
     (gatling_log,           DATA / "gatling-output" / "output.log"),
     (tinybench,             DATA / "tinybench-output" / "output.json"),
     (mitata,                DATA / "mitata-output" / "output.json"),
+    (benchmark_js,          DATA / "benchmark-js-output" / "output.json"),
 ]
 
 

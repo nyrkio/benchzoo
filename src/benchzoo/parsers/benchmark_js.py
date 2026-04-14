@@ -45,6 +45,10 @@ def parse(content: bytes | str) -> list[dict]:
         content = content.decode("utf-8")
     doc = json.loads(content)
 
+    framework: dict = {"name": "benchmark-js"}
+    if doc.get("version"):
+        framework["version"] = doc["version"]
+
     out: list[dict] = []
     for entry in doc.get("results", []):
         metrics = [
@@ -56,15 +60,15 @@ def parse(content: bytes | str) -> list[dict]:
             {"name": "rme",       "unit": "%",     "value": entry["rme"]},
         ]
         out.append({
-            "timestamp": 0,
-            "attributes": {"test_name": entry["name"]},
+            "test": {"test_name": entry["name"]},
+            "run": {"passed": entry.get("passed", True)},
+            "env": {"framework": framework},
             "metrics": metrics,
             "extra_info": {
                 "samples": entry["samples"],
                 "cycles": entry["cycles"],
                 "deferred": entry.get("deferred", False),
             },
-            "passed": entry.get("passed", True),
         })
 
     return out
