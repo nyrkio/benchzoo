@@ -147,10 +147,10 @@ def test_vegeta_json():
 
 def test_perf_stat_text():
     results = perf_stat_text.parse((DATA / "perf-stat-output/output-text.txt").read_text())
-    assert {d["attributes"]["test_name"] for d in results} == {
+    assert {d["test"]["test_name"] for d in results} == {
         "benchmark1", "benchmark2", "benchmark3", "benchmark4"
     }
-    by_test = _by_test(results)
+    by_test = {d["test"]["test_name"]: d for d in results}
     wall = _metric(by_test["benchmark1"], "wall_time")
     # benchmark1 sleeps 2.15 s; perf reports "seconds time elapsed"
     assert 2.0 <= wall["value"] <= 2.3, wall
@@ -159,4 +159,5 @@ def test_perf_stat_text():
     pf = _metric(by_test["benchmark1"], "page_faults")
     assert pf["value"] > 0
     for d in results:
-        assert d["timestamp"] == 0
+        assert d["env"]["framework"]["name"] == "perf-stat"
+        assert d["run"]["passed"] is True

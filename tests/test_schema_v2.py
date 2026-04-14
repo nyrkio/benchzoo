@@ -15,6 +15,7 @@ from jsonschema import Draft202012Validator
 from benchzoo.parsers import (
     hey,
     hyperfine_json,
+    perf_stat_text,
     pgbench,
     pytest_benchmark_json,
     sysbench,
@@ -38,6 +39,7 @@ V2_PARSERS = [
     (hey,                   DATA / "hey-output" / "output.txt"),
     (pgbench,               DATA / "pgbench-output" / "output.txt"),
     (sysbench,              DATA / "sysbench-output" / "output.txt"),
+    (perf_stat_text,        DATA / "perf-stat-output" / "output-text.txt"),
 ]
 
 

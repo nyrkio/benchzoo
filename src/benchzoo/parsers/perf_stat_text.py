@@ -84,10 +84,10 @@ def _parse_block(test_name: str, lines: list[str]) -> dict:
             })
 
     return {
-        "timestamp": 0,
-        "attributes": {"test_name": test_name},
+        "test": {"test_name": test_name},
+        "run": {"passed": True},
+        "env": {"framework": {"name": "perf-stat"}},
         "metrics": metrics,
-        "passed": True,
     }
 
 
