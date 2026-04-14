@@ -53,31 +53,22 @@ _TO_SECONDS = {
 def test_has_four_test_runs(results, request):
     r = request.getfixturevalue(results)
     assert len(r) == 4
-    names = [d["attributes"]["test_name"] for d in r]
+    names = [d["test"]["test_name"] for d in r]
     assert names == ["benchmark1", "benchmark2", "benchmark3", "benchmark4"]
 
 
 @pytest.mark.parametrize("results", ["json_results", "csv_results"])
-def test_timestamp_is_zero(results, request):
+def test_framework_name(results, request):
     r = request.getfixturevalue(results)
     for d in r:
-        assert d["timestamp"] == 0, "parsers must set timestamp=0 per design.md"
-
-
-@pytest.mark.parametrize("results", ["json_results", "csv_results"])
-def test_git_attributes_absent(results, request):
-    r = request.getfixturevalue(results)
-    for d in r:
-        assert "git_repo" not in d["attributes"]
-        assert "branch" not in d["attributes"]
-        assert "git_commit" not in d["attributes"]
+        assert d["env"]["framework"]["name"] == "google-benchmark"
 
 
 @pytest.mark.parametrize("results", ["json_results", "csv_results"])
 def test_test_name_set(results, request):
     r = request.getfixturevalue(results)
     for d in r:
-        assert d["attributes"]["test_name"]  # non-empty
+        assert d["test"]["test_name"]  # non-empty
 
 
 @pytest.mark.parametrize("results", ["json_results", "csv_results"])
@@ -104,7 +95,7 @@ def _metric(d: dict, name: str) -> dict:
 
 
 def _by_test(results: list[dict]) -> dict[str, dict]:
-    return {d["attributes"]["test_name"]: d for d in results}
+    return {d["test"]["test_name"]: d for d in results}
 
 
 def _seconds(metric: dict) -> float:
@@ -153,9 +144,17 @@ def test_benchmark4_in_range(results, request):
 
 def test_json_all_passed(json_results):
     for d in json_results:
-        assert d["passed"] is True
+        assert d["run"]["passed"] is True
 
 
 def test_csv_all_passed(csv_results):
     for d in csv_results:
-        assert d["passed"] is True
+        assert d["run"]["passed"] is True
+
+
+def test_json_context_version_and_sut(json_results):
+    d = json_results[0]
+    assert d["env"]["framework"]["version"] == "v1.9.1"
+    assert d["env"]["cpu_count"] == 2
+    assert d["sut"]["name"] == "./build/sample_benchmark"
+    assert "test_time" in d["run"]

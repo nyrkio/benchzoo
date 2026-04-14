@@ -21,13 +21,47 @@ notes this implementation follows.
 
 from __future__ import annotations
 
+import datetime as _dt
 import json
+
+
+def _parse_iso(ts: str | None) -> int | None:
+    if not ts:
+        return None
+    try:
+        return int(_dt.datetime.fromisoformat(ts).timestamp())
+    except ValueError:
+        return None
 
 
 def parse(content: bytes | str) -> list[dict]:
     if isinstance(content, bytes):
         content = content.decode("utf-8")
     doc = json.loads(content)
+
+    ctx = doc.get("context") or {}
+    env: dict = {}
+    if ctx.get("num_cpus"):
+        env["cpu_count"] = ctx["num_cpus"]
+    framework = {"name": "google-benchmark"}
+    if ctx.get("library_version"):
+        framework["version"] = ctx["library_version"]
+    env["framework"] = framework
+
+    run_base: dict = {"passed": True}
+    t = _parse_iso(ctx.get("date"))
+    if t is not None:
+        run_base["test_time"] = t
+
+    sut: dict = {}
+    if ctx.get("executable"):
+        sut["name"] = ctx["executable"]
+
+    extras: dict = {}
+    for k in ("host_name", "caches", "mhz_per_cpu", "cpu_scaling_enabled",
+              "library_build_type"):
+        if ctx.get(k) is not None:
+            extras[k] = ctx[k]
 
     out: list[dict] = []
     for entry in doc.get("benchmarks", []):
@@ -61,11 +95,19 @@ def parse(content: bytes | str) -> list[dict]:
 
         passed = not bool(entry.get("error_occurred", False))
 
-        out.append({
-            "timestamp": 0,
-            "attributes": {"test_name": test_name},
+        run = dict(run_base)
+        run["passed"] = passed
+
+        result: dict = {
+            "test": {"test_name": test_name},
+            "run": run,
+            "env": env,
             "metrics": metrics,
-            "passed": passed,
-        })
+        }
+        if sut:
+            result["sut"] = sut
+        if extras:
+            result["extra_info"] = dict(extras)
+        out.append(result)
 
     return out

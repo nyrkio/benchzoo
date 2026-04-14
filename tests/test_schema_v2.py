@@ -26,6 +26,8 @@ from benchzoo.parsers import (
     gatling_log,
     go_bench_json,
     go_bench_text,
+    google_benchmark_csv,
+    google_benchmark_json,
     hey,
     hyperfine_csv,
     hyperfine_json,
@@ -104,6 +106,8 @@ V2_PARSERS = [
     (benchmarkdotnet_csv,   DATA / "benchmarkdotnet-output" / "output.csv"),
     (jmh_json,              DATA / "jmh-output" / "output.json"),
     (jmh_csv,               DATA / "jmh-output" / "output.csv"),
+    (google_benchmark_json, DATA / "google-benchmark-output" / "output.json"),
+    (google_benchmark_csv,  DATA / "google-benchmark-output" / "output.csv"),
 ]
 
 

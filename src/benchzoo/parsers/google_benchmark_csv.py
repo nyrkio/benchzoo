@@ -75,10 +75,10 @@ def parse(content: bytes | str) -> list[dict]:
         passed = err in ("", "false", "0")
 
         out.append({
-            "timestamp": 0,
-            "attributes": {"test_name": name},
+            "test": {"test_name": name},
+            "run": {"passed": passed},
+            "env": {"framework": {"name": "google-benchmark"}},
             "metrics": metrics,
-            "passed": passed,
         })
 
     return out
