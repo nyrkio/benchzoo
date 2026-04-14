@@ -18,6 +18,7 @@ from benchzoo.parsers import (
     perf_stat_text,
     pgbench,
     pytest_benchmark_json,
+    redis_benchmark_csv,
     sysbench,
     time_builtin,
     time_gnu,
@@ -44,6 +45,7 @@ V2_PARSERS = [
     (perf_stat_text,        DATA / "perf-stat-output" / "output-text.txt"),
     (time_builtin,          DATA / "time-output" / "output-builtin.txt"),
     (time_gnu,              DATA / "time-output" / "output-gnu.txt"),
+    (redis_benchmark_csv,   DATA / "redis-benchmark-output" / "output.csv"),
 ]
 
 

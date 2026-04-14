@@ -64,10 +64,10 @@ def test_redis_benchmark_csv():
     results = redis_benchmark_csv.parse((DATA / "redis-benchmark-output/output.csv").read_text())
     # We ran SET, GET, INCR, LPUSH, RPUSH, MSET
     assert len(results) >= 5
-    names = {d["attributes"]["test_name"] for d in results}
+    names = {d["test"]["test_name"] for d in results}
     assert "SET" in names
     assert "GET" in names
-    by_test = _by_test(results)
+    by_test = {d["test"]["test_name"]: d for d in results}
     rps = _metric(by_test["SET"], "rps")
     assert rps["unit"] == "ops/s"
     assert rps["direction"] == "higher_is_better"
@@ -76,7 +76,8 @@ def test_redis_benchmark_csv():
     assert p50["unit"] == "ms"
     assert p50["direction"] == "lower_is_better"
     for d in results:
-        assert d["timestamp"] == 0
+        assert d["env"]["framework"]["name"] == "redis-benchmark"
+        assert d["run"]["passed"] is True
 
 
 # ---------------------------------------------------------------------------

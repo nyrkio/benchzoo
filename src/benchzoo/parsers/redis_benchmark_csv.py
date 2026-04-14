@@ -66,10 +66,10 @@ def parse(content: bytes | str) -> list[dict]:
                 })
 
         out.append({
-            "timestamp": 0,
-            "attributes": {"test_name": test},
+            "test": {"test_name": test},
+            "run": {"passed": True},
+            "env": {"framework": {"name": "redis-benchmark"}},
             "metrics": metrics,
-            "passed": True,
         })
 
     return out
