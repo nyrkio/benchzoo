@@ -303,18 +303,20 @@ def _sniff_xml(stripped: str) -> str | None:
         # TRX: xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/..."
         return "dotnet-test"
 
-    # For <testsuite> / <testsuites> roots the producer (jest /
-    # gotestsum / Surefire / CTest / Catch2's junit reporter) is not
-    # reliably distinguishable from the XML alone. pytest-benchmark's
-    # junit is the one exception — its classnames use ".py::".
-    # gotestsum emits byte-identical structure to vanilla junit, but
-    # with a "TestX" name prefix the parser must strip — since we
-    # can't tell that apart from a Java test class named ``TestX``,
-    # we don't try. Everything else routes to junit-standard, whose
-    # parser reads name + time verbatim.
+    # For <testsuite> / <testsuites> roots we look for producer
+    # fingerprints inside the document:
+    #   - pytest-benchmark uses ".py::" in its classnames.
+    #   - gotestsum embeds a <property name="go.version" ...> in every
+    #     junit it writes — a rock-solid go signal (no Java/jest/
+    #     ctest/catch2 junit carries that key).
+    # Everything else routes to junit-standard, whose parser reads
+    # name + time verbatim.
     if root in {"testsuite", "testsuites"}:
-        if ".py::" in stripped[:16384]:
+        head = stripped[:16384]
+        if ".py::" in head:
             return "pytest-benchmark"
+        if 'name="go.version"' in head:
+            return "junit-go"
         return "junit-standard"
 
     return None

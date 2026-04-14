@@ -105,7 +105,7 @@ _FIXTURE_EXPECTATIONS: dict[str, str | None] = {
     "phpbench-output":           "phpbench",
     "dotnet-test-output":        "dotnet-test",
     "junit-jest-output":         "junit-standard",
-    "junit-go-output":           None,              # byte-identical to vanilla junit
+    "junit-go-output":           "junit-go",
     "junit-vanilla-output":      "junit-standard",
     "ctest-output":              "junit-standard",
     # Tier 3 — CSV

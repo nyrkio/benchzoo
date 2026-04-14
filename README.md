@@ -14,7 +14,7 @@ from a log file or from a separate artifact file, then the goal is that
 this repository should always have the parser you need.
 
 **And you don't even need to tell benchzoo which parser to use.**
-Hand `benchzoo.sniff(content)` any benchmark output — **41 of the 42
+Hand `benchzoo.sniff(content)` any benchmark output — **all 42
 supported frameworks are autodetected from content alone**, via a
 four-tier signature matcher (JSON top-level keys → XML root element →
 CSV header row → distinctive text substring):
@@ -22,18 +22,18 @@ CSV header row → distinctive text substring):
 > asv, benchmark-ips, benchmark-js, benchmarkdotnet, benchmarktools-jl,
 > cargo-bench, catch2, clickbench, custom-csv, custom-json, dotnet-test,
 > gatling, go-test-bench, google-benchmark, hey, hyperfine, jmeter, jmh,
-> junit-standard, k6, lighthouse, locust, memtier, mitata, mocha,
-> perf-stat, pgbench, phpbench, playwright, pytest-benchmark,
+> junit-go, junit-standard, k6, lighthouse, locust, memtier, mitata,
+> mocha, perf-stat, pgbench, phpbench, playwright, pytest-benchmark,
 > redis-benchmark, sysbench, time, tinybench, vegeta, vitest-bench,
 > wrk, wrk2.
 
 `junit-standard` covers jest-junit, Maven Surefire / vanilla Java
 JUnit, CTest and Catch2's junit reporter — all four emit structurally
 indistinguishable `<testsuite>` XML, and a single shared parser reads
-testcase `name` + `time` verbatim. The sole remaining holdout is
-`junit-go`: gotestsum's junit XML is byte-identical to vanilla junit
-but needs a `Test`-prefix strip the sniffer can't safely route to
-without false-positives on Java `TestX` class names.
+testcase `name` + `time` verbatim. gotestsum's junit XML has the same
+shape but is distinguished by its `<property name="go.version" ...>`
+fingerprint, which routes to `junit-go`'s `Test`-prefix-stripping
+parser.
 
 Hard invariant: `sniff` never returns a wrong framework. When content
 is genuinely ambiguous it returns `None` and you fall through to
