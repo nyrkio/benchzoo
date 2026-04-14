@@ -33,6 +33,7 @@ See ``frameworks/loadtest/vegeta/README.md``.
 
 from __future__ import annotations
 
+import datetime as _dt
 import json
 
 
@@ -93,12 +94,20 @@ def parse(content: bytes | str) -> list[dict]:
     if doc.get("errors"):
         extra_info["errors"] = doc["errors"]
 
+    run: dict = {"passed": doc.get("success", 1) == 1}
+    earliest = doc.get("earliest")
+    if earliest:
+        try:
+            run["test_time"] = int(
+                _dt.datetime.fromisoformat(earliest.replace("Z", "+00:00")).timestamp()
+            )
+        except ValueError:
+            pass
+
     return [{
-        "timestamp": 0,
-        "attributes": {"test_name": "homepage"},
+        "test": {"test_name": "homepage"},
+        "run": run,
+        "env": {"framework": {"name": "vegeta"}},
         "metrics": metrics,
         "extra_info": extra_info,
-        # vegeta's success field is fractional; parser contract is boolean.
-        # 100% success → passed; any failure → passed=False.
-        "passed": doc.get("success", 1) == 1,
     }]

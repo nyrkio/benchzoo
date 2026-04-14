@@ -56,6 +56,7 @@ from benchzoo.parsers import (
     time_builtin,
     time_gnu,
     tinybench,
+    vegeta_json,
     vitest_bench,
     wrk,
     wrk2,
@@ -118,6 +119,7 @@ V2_PARSERS = [
     (clickbench,            DATA / "clickbench-output" / "output.json"),
     (lighthouse,            DATA / "lighthouse-output" / "output.json"),
     (catch2_xml,            DATA / "catch2-output" / "output.xml"),
+    (vegeta_json,           DATA / "vegeta-output" / "output.json"),
 ]
 
 

@@ -128,7 +128,7 @@ def test_vegeta_json():
     results = vegeta_json.parse((DATA / "vegeta-output/output.json").read_text())
     assert len(results) == 1
     d = results[0]
-    assert d["attributes"]["test_name"] == "homepage"
+    assert d["test"]["test_name"] == "homepage"
     mean = _metric(d, "latency_mean")
     assert mean["unit"] == "ms"
     # Localhost attack — well under 100 ms mean latency
@@ -139,8 +139,8 @@ def test_vegeta_json():
     success = _metric(d, "success_ratio")
     assert success["value"] == 1
     assert d["extra_info"]["requests"] > 0
-    assert d["passed"] is True
-    assert d["timestamp"] == 0
+    assert d["run"]["passed"] is True
+    assert d["env"]["framework"]["name"] == "vegeta"
 
 
 # ---------------------------------------------------------------------------
