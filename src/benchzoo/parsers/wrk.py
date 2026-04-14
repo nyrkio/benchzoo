@@ -88,23 +88,28 @@ def parse(content: bytes | str) -> list[dict]:
         })
 
     # Total requests & duration: "  141528 requests in 5.10s, 400.46MB read"
-    m = re.search(r"^\s*(\d+)\s+requests\s+in\s+\S+,\s+(\S+)\s+read\s*$", content, re.MULTILINE)
     extra_info: dict = {}
+    m = re.search(r"^\s*(\d+)\s+requests\s+in\s+\S+,\s+(\S+)\s+read\s*$", content, re.MULTILINE)
     if m:
         extra_info["total_requests"] = int(m.group(1))
         extra_info["total_read"] = m.group(2)
 
     # Thread count & connections: "  2 threads and 10 connections"
+    params: dict = {}
     m = re.search(r"^\s*(\d+)\s+threads\s+and\s+(\d+)\s+connections\s*$", content, re.MULTILINE)
     if m:
-        extra_info["threads"] = int(m.group(1))
-        extra_info["connections"] = int(m.group(2))
+        params["threads"] = int(m.group(1))
+        params["connections"] = int(m.group(2))
+
+    test: dict = {"test_name": "homepage"}
+    if params:
+        test["params"] = params
 
     result = {
-        "timestamp": 0,
-        "attributes": {"test_name": "homepage"},
+        "test": test,
+        "run": {"passed": True},
+        "env": {"framework": {"name": "wrk"}},
         "metrics": metrics,
-        "passed": True,
     }
     if extra_info:
         result["extra_info"] = extra_info
