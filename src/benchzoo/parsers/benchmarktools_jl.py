@@ -71,7 +71,14 @@ def parse(content: bytes | str) -> list[dict]:
     # BenchmarkGroup.
     if not (isinstance(doc, list) and len(doc) >= 2):
         return []
-    _meta, payload = doc[0], doc[1]
+    meta, payload = doc[0], doc[1]
+
+    env: dict = {"framework": {"name": "benchmarktools-jl"}}
+    if isinstance(meta, dict):
+        if meta.get("BenchmarkTools"):
+            env["framework"]["version"] = meta["BenchmarkTools"]
+        if meta.get("Julia"):
+            env["runtime"] = f"Julia {meta['Julia']}"
 
     # payload is a list of tagged groups; take the first one.
     if not (isinstance(payload, list) and payload):
@@ -119,11 +126,11 @@ def parse(content: bytes | str) -> list[dict]:
             extra_info["samples_count"] = len(times)
 
         out.append({
-            "timestamp": 0,
-            "attributes": {"test_name": test_name},
+            "test": {"test_name": test_name},
+            "run": {"passed": True},
+            "env": env,
             "metrics": metrics,
             "extra_info": extra_info,
-            "passed": True,
         })
 
     return out

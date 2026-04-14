@@ -84,14 +84,17 @@ def test_benchmarktools_jl():
     r = benchmarktools_jl.parse(
         (DATA / "benchmarktools-jl-output/output.json").read_text()
     )
-    names = {d["attributes"]["test_name"] for d in r}
+    names = {d["test"]["test_name"] for d in r}
     assert {"benchmark1", "benchmark2", "benchmark3", "benchmark4"} <= names
-    by = _by_test(r)
+    by = {d["test"]["test_name"]: d for d in r}
     mean = _metric(by["benchmark1"], "mean")
     assert 2.0e9 <= mean["value"] <= 2.3e9, mean
     assert mean["unit"] == "ns"
     # memory / allocs show up in extra_info (BenchmarkTools emits them)
     assert "memory_bytes" in by["benchmark1"].get("extra_info", {})
     for d in r:
-        assert d["timestamp"] == 0
-        assert d["passed"] is True
+        assert d["env"]["framework"]["name"] == "benchmarktools-jl"
+        assert d["run"]["passed"] is True
+    # Meta block exposes Julia + BenchmarkTools versions
+    assert r[0]["env"]["framework"]["version"] == "1.5.0"
+    assert "Julia" in r[0]["env"]["runtime"]

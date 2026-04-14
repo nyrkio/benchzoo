@@ -18,6 +18,7 @@ from benchzoo.parsers import (
     benchmark_js,
     benchmarkdotnet_csv,
     benchmarkdotnet_json,
+    benchmarktools_jl,
     cargo_bench_libtest,
     catch2_xml,
     clickbench,
@@ -124,6 +125,7 @@ V2_PARSERS = [
     (vegeta_json,           DATA / "vegeta-output" / "output.json"),
     (k6_summary,            DATA / "k6-output" / "summary.json"),
     (k6_ndjson,             DATA / "k6-output" / "output.json"),
+    (benchmarktools_jl,     DATA / "benchmarktools-jl-output" / "output.json"),
 ]
 
 
