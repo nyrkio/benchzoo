@@ -93,9 +93,11 @@ def parse(content: bytes | str) -> list[dict]:
                 except ValueError:
                     pass
 
-        extra_info: dict = {
+        params: dict = {
             "revs": int(variant.get("revs") or 0),
             "warmup": int(variant.get("warmup") or 0),
+        }
+        extra_info: dict = {
             "output_time_unit": unit,
         }
         # Count iterations.
@@ -104,15 +106,19 @@ def parse(content: bytes | str) -> list[dict]:
             extra_info["iterations"] = iter_count
         # Look for <group name="..."/> entries inside the subject.
         groups = [g.get("name") for g in subject.iter("group") if g.get("name")]
-        if groups:
+
+        test_doc: dict = {"test_name": test_name, "params": params}
+        if len(groups) == 1:
+            test_doc["group"] = groups[0]
+        elif groups:
             extra_info["groups"] = groups
 
         out.append({
-            "timestamp": 0,
-            "attributes": {"test_name": test_name},
+            "test": test_doc,
+            "run": {"passed": True},
+            "env": {"framework": {"name": "phpbench"}},
             "metrics": metrics,
             "extra_info": extra_info,
-            "passed": True,
         })
 
     return out

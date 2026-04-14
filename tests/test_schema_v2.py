@@ -29,6 +29,7 @@ from benchzoo.parsers import (
     mocha_json,
     perf_stat_text,
     pgbench,
+    phpbench_xml,
     playwright_json,
     pytest_benchmark_json,
     redis_benchmark_csv,
@@ -76,6 +77,7 @@ V2_PARSERS = [
     (criterion_bencher,     DATA / "criterion-output" / "output-bencher.txt"),
     (cargo_bench_libtest,   DATA / "cargo-bench-output" / "output.txt"),
     (vitest_bench,          DATA / "vitest-bench-output" / "output.json"),
+    (phpbench_xml,          DATA / "phpbench-output" / "output.xml"),
 ]
 
 

@@ -67,14 +67,17 @@ def test_benchmark_ips():
 
 def test_phpbench_xml():
     r = phpbench_xml.parse((DATA / "phpbench-output/output.xml").read_text())
-    names = {d["attributes"]["test_name"] for d in r}
+    names = {d["test"]["test_name"] for d in r}
     assert {"benchmark1", "benchmark2", "benchmark3", "benchmark4"} <= names
-    by = _by_test(r)
+    by = {d["test"]["test_name"]: d for d in r}
     mean = _metric(by["benchmark1"], "mean")
     # PHPBench XML emits microseconds; parser converts to seconds
     assert mean["unit"] == "s"
     assert 2.0 <= mean["value"] <= 2.3, mean
     assert mean["direction"] == "lower_is_better"
+    for d in r:
+        assert d["env"]["framework"]["name"] == "phpbench"
+        assert d["run"]["passed"] is True
 
 
 def test_benchmarktools_jl():
