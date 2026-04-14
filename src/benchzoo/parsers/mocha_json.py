@@ -55,10 +55,10 @@ def parse(content: bytes | str) -> list[dict]:
             extra_info["speed"] = entry["speed"]
 
         result = {
-            "timestamp": 0,
-            "attributes": {"test_name": title},
+            "test": {"test_name": title},
+            "run": {"passed": not failed},
+            "env": {"framework": {"name": "mocha"}},
             "metrics": metrics,
-            "passed": not failed,
         }
         if extra_info:
             result["extra_info"] = extra_info

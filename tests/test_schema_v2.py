@@ -22,6 +22,7 @@ from benchzoo.parsers import (
     locust_csv,
     memtier_json,
     mitata,
+    mocha_json,
     perf_stat_text,
     pgbench,
     pytest_benchmark_json,
@@ -62,6 +63,7 @@ V2_PARSERS = [
     (mitata,                DATA / "mitata-output" / "output.json"),
     (benchmark_js,          DATA / "benchmark-js-output" / "output.json"),
     (benchmark_ips,         DATA / "benchmark-ips-output" / "output.json"),
+    (mocha_json,            DATA / "mocha-output" / "output.json"),
 ]
 
 
