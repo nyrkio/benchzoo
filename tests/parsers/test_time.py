@@ -87,39 +87,32 @@ def test_builtin_has_real_user_sys(builtin_results):
 
 
 # ---------------------------------------------------------------------------
-# time_gnu (still v1; migrated in a separate commit).
+# time_gnu — v2 schema
 # ---------------------------------------------------------------------------
 
 def _g_by_test(results):
-    return {d["attributes"]["test_name"]: d for d in results}
+    return {d["test"]["test_name"]: d for d in results}
 
 
 def test_gnu_has_four_test_runs(gnu_results):
     assert len(gnu_results) == 4
-    names = [d["attributes"]["test_name"] for d in gnu_results]
+    names = [d["test"]["test_name"] for d in gnu_results]
     assert names == ["benchmark1", "benchmark2", "benchmark3", "benchmark4"]
 
 
-def test_gnu_timestamp_is_zero(gnu_results):
+def test_gnu_framework_name(gnu_results):
     for d in gnu_results:
-        assert d["timestamp"] == 0
-
-
-def test_gnu_git_attributes_absent(gnu_results):
-    for d in gnu_results:
-        assert "git_repo" not in d["attributes"]
-        assert "branch" not in d["attributes"]
-        assert "git_commit" not in d["attributes"]
+        assert d["env"]["framework"]["name"] == "time"
 
 
 def test_gnu_test_name_set(gnu_results):
     for d in gnu_results:
-        assert d["attributes"]["test_name"]
+        assert d["test"]["test_name"]
 
 
 def test_gnu_all_passed(gnu_results):
     for d in gnu_results:
-        assert d["passed"] is True
+        assert d["run"]["passed"] is True
 
 
 def test_gnu_benchmark1_wall_time_is_215s(gnu_results):
@@ -151,7 +144,7 @@ def test_gnu_has_full_metric_set(gnu_results):
     }
     for d in gnu_results:
         names = {m["name"] for m in d["metrics"]}
-        assert expected <= names, f"missing from {d['attributes']['test_name']}: {expected - names}"
+        assert expected <= names, f"missing from {d['test']['test_name']}: {expected - names}"
 
 
 def test_gnu_max_rss_unit_kb(gnu_results):
@@ -184,4 +177,4 @@ def test_gnu_exit_status_zero_means_passed(gnu_results):
     for d in gnu_results:
         exit_m = _metric(d, "exit_status")
         assert exit_m["value"] == 0
-        assert d["passed"] is True
+        assert d["run"]["passed"] is True
