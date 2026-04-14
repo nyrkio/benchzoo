@@ -48,15 +48,17 @@ def test_mocha_json():
 def test_dotnet_test_trx():
     r = dotnet_test_trx.parse((DATA / "dotnet-test-output/output.trx").read_text())
     # Benchmark1..4 short names after stripping namespace + class.
-    names = {d["attributes"]["test_name"] for d in r}
+    names = {d["test"]["test_name"] for d in r}
     assert {"benchmark1", "benchmark2", "benchmark3", "benchmark4"} <= names
-    by = _by_test(r)
+    by = {d["test"]["test_name"]: d for d in r}
     dur = _metric(by["benchmark1"], "duration")
     assert dur["unit"] == "s"
     assert 2.0 <= dur["value"] <= 2.3, dur
     for d in r:
-        assert d["timestamp"] == 0
-        assert d["passed"] is True
+        assert d["env"]["framework"]["name"] == "dotnet-test"
+        assert d["run"]["passed"] is True
+        assert d["test"]["group"] == "BenchzooSample.SampleTests"
+    assert "test_time" in r[0]["run"]
 
 
 def test_junit_standard_ctest():

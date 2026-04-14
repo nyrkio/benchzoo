@@ -24,6 +24,7 @@ from benchzoo.parsers import (
     custom_bigger_is_better,
     custom_csv,
     custom_smaller_is_better,
+    dotnet_test_trx,
     gatling_log,
     go_bench_json,
     go_bench_text,
@@ -110,6 +111,7 @@ V2_PARSERS = [
     (google_benchmark_json, DATA / "google-benchmark-output" / "output.json"),
     (google_benchmark_csv,  DATA / "google-benchmark-output" / "output.csv"),
     (asv,                   DATA / "asv-output" / "output.json"),
+    (dotnet_test_trx,       DATA / "dotnet-test-output" / "output.trx"),
 ]
 
 

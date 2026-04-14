@@ -25,6 +25,7 @@ See ``frameworks/unit-or-qa/dotnet-test/README.md``.
 
 from __future__ import annotations
 
+import datetime as _dt
 import re
 import xml.etree.ElementTree as ET
 
@@ -54,7 +55,21 @@ def parse(content: bytes | str) -> list[dict]:
     # wildcard '{*}TagName' syntax is for findall paths, not raw iter —
     # we extract the namespace from the root tag and filter manually.
     ns_match = root.tag[1:].split("}", 1)[0] if root.tag.startswith("{") else ""
-    utr_tag = f"{{{ns_match}}}UnitTestResult" if ns_match else "UnitTestResult"
+    ns_prefix = f"{{{ns_match}}}" if ns_match else ""
+    utr_tag = f"{ns_prefix}UnitTestResult"
+    times_tag = f"{ns_prefix}Times"
+
+    run_base: dict = {"passed": True}
+    times_el = root.find(times_tag)
+    if times_el is not None:
+        start = times_el.get("start")
+        if start:
+            try:
+                run_base["test_time"] = int(_dt.datetime.fromisoformat(start).timestamp())
+            except ValueError:
+                pass
+
+    env = {"framework": {"name": "dotnet-test"}}
 
     out: list[dict] = []
     for result in root.iter(utr_tag):
@@ -67,21 +82,26 @@ def parse(content: bytes | str) -> list[dict]:
         passed = outcome == "Passed"
 
         extra_info: dict = {}
-        if name_raw != test_name:
-            extra_info["full_name"] = name_raw
         if outcome and outcome != "Passed":
             extra_info["outcome"] = outcome
 
-        result_dict = {
-            "timestamp": 0,
-            "attributes": {"test_name": test_name},
+        test: dict = {"test_name": test_name}
+        if "." in name_raw:
+            test["group"] = name_raw.rsplit(".", 1)[0]
+
+        run = dict(run_base)
+        run["passed"] = passed
+
+        result_dict: dict = {
+            "test": test,
+            "run": run,
+            "env": env,
             "metrics": [{
                 "name": "duration",
                 "unit": "s",
                 "value": duration_s,
                 "direction": "lower_is_better",
             }],
-            "passed": passed,
         }
         if extra_info:
             result_dict["extra_info"] = extra_info
