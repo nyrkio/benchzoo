@@ -64,18 +64,17 @@ def parse(content: bytes | str) -> list[dict]:
                 "direction": "lower_is_better",
             })
 
-        extra_info = {
+        params = {
             "samples": int(bench.get("samples", "0") or 0),
             "iterations": int(bench.get("iterations", "0") or 0),
             "resamples": int(bench.get("resamples", "0") or 0),
         }
 
         out.append({
-            "timestamp": 0,
-            "attributes": {"test_name": name},
+            "test": {"test_name": name, "params": params},
+            "run": {"passed": passed},
+            "env": {"framework": {"name": "catch2"}},
             "metrics": metrics,
-            "extra_info": extra_info,
-            "passed": passed,
         })
 
     return out

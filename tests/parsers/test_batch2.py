@@ -210,14 +210,14 @@ def test_asv():
 def test_catch2_xml():
     results = catch2_xml.parse((DATA / "catch2-output/output.xml").read_text())
     assert len(results) == 4
-    by_test = _by_test(results)
+    by_test = {d["test"]["test_name"]: d for d in results}
     mean = _metric(by_test["benchmark1"], "mean")
     # Catch2 XML reports nanoseconds
     assert 2.0e9 <= mean["value"] <= 2.3e9, mean
     assert mean["unit"] == "ns"
-    # extra_info carries sample/iteration counts
-    ei = by_test["benchmark1"]["extra_info"]
-    assert ei["samples"] == 3  # --benchmark-samples=3 from run.sh
+    # samples/iterations/resamples captured as test params
+    params = by_test["benchmark1"]["test"]["params"]
+    assert params["samples"] == 3  # --benchmark-samples=3 from run.sh
     for d in results:
-        assert d["timestamp"] == 0
-        assert d["passed"] is True
+        assert d["env"]["framework"]["name"] == "catch2"
+        assert d["run"]["passed"] is True

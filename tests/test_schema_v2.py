@@ -19,6 +19,7 @@ from benchzoo.parsers import (
     benchmarkdotnet_csv,
     benchmarkdotnet_json,
     cargo_bench_libtest,
+    catch2_xml,
     clickbench,
     criterion_bencher,
     criterion_estimates,
@@ -116,6 +117,7 @@ V2_PARSERS = [
     (dotnet_test_trx,       DATA / "dotnet-test-output" / "output.trx"),
     (clickbench,            DATA / "clickbench-output" / "output.json"),
     (lighthouse,            DATA / "lighthouse-output" / "output.json"),
+    (catch2_xml,            DATA / "catch2-output" / "output.xml"),
 ]
 
 
