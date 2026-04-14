@@ -116,10 +116,10 @@ def parse(content: bytes | str) -> list[dict]:
                                 "direction": "lower_is_better"})
 
         out.append({
-            "timestamp": 0,
-            "attributes": {"test_name": test_name},
+            "test": {"test_name": test_name},
+            "run": {"passed": True},
+            "env": {"framework": {"name": "memtier"}},
             "metrics": metrics,
-            "passed": True,
         })
 
     return out

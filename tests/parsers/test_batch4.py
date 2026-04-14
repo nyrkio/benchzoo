@@ -98,12 +98,12 @@ def test_wrk2():
 
 def test_memtier_json():
     results = memtier_json.parse((DATA / "memtier-output/output.json").read_text())
-    names = {d["attributes"]["test_name"] for d in results}
+    names = {d["test"]["test_name"] for d in results}
     # memtier emits at least Sets + Gets + Totals
     assert "sets" in names
     assert "gets" in names
     assert "totals" in names
-    by_test = _by_test(results)
+    by_test = {d["test"]["test_name"]: d for d in results}
     ops = _metric(by_test["totals"], "ops_per_sec")
     assert ops["direction"] == "higher_is_better"
     assert ops["value"] > 100
@@ -111,5 +111,5 @@ def test_memtier_json():
     assert mean["unit"] == "ms"
     assert mean["direction"] == "lower_is_better"
     for d in results:
-        assert d["timestamp"] == 0
-        assert "git_commit" not in d["attributes"]
+        assert d["env"]["framework"]["name"] == "memtier"
+        assert d["run"]["passed"] is True

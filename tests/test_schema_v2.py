@@ -15,6 +15,7 @@ from jsonschema import Draft202012Validator
 from benchzoo.parsers import (
     hey,
     hyperfine_json,
+    memtier_json,
     perf_stat_text,
     pgbench,
     pytest_benchmark_json,
@@ -46,6 +47,7 @@ V2_PARSERS = [
     (time_builtin,          DATA / "time-output" / "output-builtin.txt"),
     (time_gnu,              DATA / "time-output" / "output-gnu.txt"),
     (redis_benchmark_csv,   DATA / "redis-benchmark-output" / "output.csv"),
+    (memtier_json,          DATA / "memtier-output" / "output.json"),
 ]
 
 
