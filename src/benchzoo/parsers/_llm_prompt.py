@@ -16,16 +16,20 @@ from __future__ import annotations
 
 SYSTEM_PROMPT = """You are a benchmark-output parser for the benchzoo library.
 
-Your job is to convert arbitrary benchmark or unit-test output (text, CSV, JSON, XML, anything) into the Nyrkiö JSON shape. Follow these rules STRICTLY:
+Your job is to convert arbitrary benchmark or unit-test output (text, CSV, JSON, XML, anything) into the Nyrkiö v2 JSON shape. Follow these rules STRICTLY:
 
 1. Return ONLY a JSON array. No prose, no markdown code fences, no commentary.
-2. The array contains one object per test run found in the input. Each object has exactly these keys:
-     - "timestamp": always the integer 0 (the caller fills this in later).
-     - "attributes": an object with at least {"test_name": "<stable identifier>"}. NEVER include git_repo, branch, or git_commit keys — omit them entirely, do not set to empty strings.
-     - "metrics": an array of measurement objects. Each measurement has:
+2. The array contains one object per test run found in the input. Each object uses these sub-documents:
+     - "test":   { "test_name": "<stable identifier>", "group"?: "...", "params"?: {...} }  — REQUIRED. "test_name" is mandatory and non-empty.
+     - "run":    { "passed": true|false, "test_time"?: <epoch-int>, "run_id"?: "..." }      — REQUIRED.
+     - "env":    { "framework": {"name": "<kebab-case>", "version"?: "..."},
+                   "os"?, "arch"?, "cpu"?, "cpu_count"?, "memory_gb"?, "runtime"?, "runner"? } — env.framework.name is the framework's kebab-case registry key.
+     - "commit"?: { "repo"?, "sha"?, "ref"?, "commit_time"?: <epoch-int> } — omit the key entirely if unknown.
+     - "sut"?:   { "name"?, "version"?, "url"?, ... } — system under test when distinct from the framework.
+     - "metrics": array of measurement objects. Each measurement has:
          "name" (e.g. "mean", "p99", "ops_per_sec"), "unit" (e.g. "s", "ms", "us", "ns", "ops/s", "bytes"), "value" (a number), "direction" ("lower_is_better" or "higher_is_better"; omit when unknown).
-     - "passed": true or false. False when the source indicates the test failed.
-     - "extra_info": optional object with any additional metadata (group names, param values, sample counts, hardware info, etc). Omit if empty.
+     - "extra_info"?: object with any leftover metadata that doesn't fit above. Omit if empty.
+   Do NOT include a top-level "timestamp" field, a top-level "attributes" object, or a top-level "passed" field — those were the v1 shape and are no longer used.
 
 3. Be conservative about units. If the source says "2.15s" emit {"unit": "s", "value": 2.15}; if it says "2150ms" emit {"unit": "ms", "value": 2150}. Do NOT silently rescale.
 
@@ -38,7 +42,7 @@ Your job is to convert arbitrary benchmark or unit-test output (text, CSV, JSON,
 
 
 FEWSHOT_EXAMPLES = [
-    # hyperfine JSON → Nyrkiö
+    # hyperfine JSON → Nyrkiö v2
     {
         "input": """{
   "results": [
@@ -52,43 +56,43 @@ FEWSHOT_EXAMPLES = [
 }""",
         "output": """[
   {
-    "timestamp": 0,
-    "attributes": {"test_name": "benchmark1"},
+    "test": {"test_name": "benchmark1"},
+    "run": {"passed": true},
+    "env": {"framework": {"name": "hyperfine"}},
     "metrics": [
       {"name": "mean",   "unit": "s", "value": 2.1529678, "direction": "lower_is_better"},
       {"name": "stddev", "unit": "s", "value": 0.00006,   "direction": "lower_is_better"},
       {"name": "median", "unit": "s", "value": 2.1529894, "direction": "lower_is_better"},
       {"name": "min",    "unit": "s", "value": 2.15283,   "direction": "lower_is_better"},
       {"name": "max",    "unit": "s", "value": 2.15304,   "direction": "lower_is_better"}
-    ],
-    "passed": true
+    ]
   }
 ]""",
     },
-    # go test -bench text → Nyrkiö
+    # go test -bench text → Nyrkiö v2
     {
         "input": """BenchmarkBenchmark1-4    1    2150163312 ns/op    0 B/op    0 allocs/op
 BenchmarkBenchmark2-4    1         628 ns/op    0 B/op    0 allocs/op""",
         "output": """[
   {
-    "timestamp": 0,
-    "attributes": {"test_name": "benchmark1"},
+    "test": {"test_name": "benchmark1"},
+    "run": {"passed": true},
+    "env": {"framework": {"name": "go-test-bench"}},
     "metrics": [
       {"name": "ns_per_op", "unit": "ns", "value": 2150163312, "direction": "lower_is_better"}
-    ],
-    "passed": true
+    ]
   },
   {
-    "timestamp": 0,
-    "attributes": {"test_name": "benchmark2"},
+    "test": {"test_name": "benchmark2"},
+    "run": {"passed": true},
+    "env": {"framework": {"name": "go-test-bench"}},
     "metrics": [
       {"name": "ns_per_op", "unit": "ns", "value": 628, "direction": "lower_is_better"}
-    ],
-    "passed": true
+    ]
   }
 ]""",
     },
-    # plain text load-test summary → Nyrkiö
+    # plain text load-test summary → Nyrkiö v2
     {
         "input": """Requests per second:  12543.21 [#/sec]
 Time per request:     7.97 [ms] (mean)
@@ -97,16 +101,16 @@ Time per request:     7.97 [ms] (mean)
 99%  28""",
         "output": """[
   {
-    "timestamp": 0,
-    "attributes": {"test_name": "homepage"},
+    "test": {"test_name": "homepage"},
+    "run": {"passed": true},
+    "env": {"framework": {"name": "ab"}},
     "metrics": [
       {"name": "requests_per_sec", "unit": "ops/s", "value": 12543.21, "direction": "higher_is_better"},
       {"name": "latency_mean",     "unit": "ms",    "value": 7.97,     "direction": "lower_is_better"},
       {"name": "latency_p50",      "unit": "ms",    "value": 7,        "direction": "lower_is_better"},
       {"name": "latency_p95",      "unit": "ms",    "value": 15,       "direction": "lower_is_better"},
       {"name": "latency_p99",      "unit": "ms",    "value": 28,       "direction": "lower_is_better"}
-    ],
-    "passed": true
+    ]
   }
 ]""",
     },

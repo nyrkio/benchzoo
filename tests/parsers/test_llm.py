@@ -63,7 +63,7 @@ def _metric(test_dict: dict, name: str) -> dict | None:
 
 def _find_benchmark1(results: list[dict], expected_name: str) -> dict | None:
     for d in results:
-        if d.get("attributes", {}).get("test_name") == expected_name:
+        if d.get("test", {}).get("test_name") == expected_name:
             return d
     return None
 
@@ -100,7 +100,7 @@ def test_llm_anthropic_finds_benchmark1_wall_time(
     b1 = _find_benchmark1(results, test_name)
     assert b1 is not None, (
         f"LLM did not produce a test_name={test_name!r} entry for {fixture}; "
-        f"got names {[d.get('attributes', {}).get('test_name') for d in results]}"
+        f"got names {[d.get('test', {}).get('test_name') for d in results]}"
     )
     m = _metric(b1, metric_name)
     assert m is not None, (
