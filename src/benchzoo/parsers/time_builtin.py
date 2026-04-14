@@ -65,10 +65,10 @@ def parse(content: bytes | str) -> list[dict]:
                             "direction": "lower_is_better",
                         })
                 out.append({
-                    "timestamp": 0,
-                    "attributes": {"test_name": current_name},
+                    "test": {"test_name": current_name},
+                    "run": {"passed": True},
+                    "env": {"framework": {"name": "time"}},
                     "metrics": metrics,
-                    "passed": True,
                 })
             current_name = None
             current_times = {}

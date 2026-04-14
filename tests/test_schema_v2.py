@@ -19,6 +19,7 @@ from benchzoo.parsers import (
     pgbench,
     pytest_benchmark_json,
     sysbench,
+    time_builtin,
     wrk,
     wrk2,
 )
@@ -40,6 +41,7 @@ V2_PARSERS = [
     (pgbench,               DATA / "pgbench-output" / "output.txt"),
     (sysbench,              DATA / "sysbench-output" / "output.txt"),
     (perf_stat_text,        DATA / "perf-stat-output" / "output-text.txt"),
+    (time_builtin,          DATA / "time-output" / "output-builtin.txt"),
 ]
 
 

@@ -26,52 +26,6 @@ def gnu_results():
     return time_gnu.parse((FIXTURES / "output-gnu.txt").read_text())
 
 
-# ---------------------------------------------------------------------------
-# Structural assertions — shape of the parsed output.
-# ---------------------------------------------------------------------------
-
-@pytest.mark.parametrize("results", ["builtin_results", "gnu_results"])
-def test_has_four_test_runs(results, request):
-    r = request.getfixturevalue(results)
-    assert len(r) == 4
-    names = [d["attributes"]["test_name"] for d in r]
-    assert names == ["benchmark1", "benchmark2", "benchmark3", "benchmark4"]
-
-
-@pytest.mark.parametrize("results", ["builtin_results", "gnu_results"])
-def test_timestamp_is_zero(results, request):
-    r = request.getfixturevalue(results)
-    for d in r:
-        assert d["timestamp"] == 0, "parsers must set timestamp=0 per design.md"
-
-
-@pytest.mark.parametrize("results", ["builtin_results", "gnu_results"])
-def test_git_attributes_absent(results, request):
-    r = request.getfixturevalue(results)
-    for d in r:
-        assert "git_repo" not in d["attributes"]
-        assert "branch" not in d["attributes"]
-        assert "git_commit" not in d["attributes"]
-
-
-@pytest.mark.parametrize("results", ["builtin_results", "gnu_results"])
-def test_test_name_set(results, request):
-    r = request.getfixturevalue(results)
-    for d in r:
-        assert d["attributes"]["test_name"]  # non-empty
-
-
-@pytest.mark.parametrize("results", ["builtin_results", "gnu_results"])
-def test_all_passed(results, request):
-    r = request.getfixturevalue(results)
-    for d in r:
-        assert d["passed"] is True
-
-
-# ---------------------------------------------------------------------------
-# Ground-truth assertions — values match what the sample benchmark ran.
-# ---------------------------------------------------------------------------
-
 def _metric(d: dict, name: str) -> dict:
     for m in d["metrics"]:
         if m["name"] == name:
@@ -79,45 +33,49 @@ def _metric(d: dict, name: str) -> dict:
     raise AssertionError(f"missing metric {name!r} in {d}")
 
 
-def _by_test(results: list[dict]) -> dict[str, dict]:
-    return {d["attributes"]["test_name"]: d for d in results}
+# ---------------------------------------------------------------------------
+# time_builtin — v2 schema
+# ---------------------------------------------------------------------------
+
+def _b_by_test(results):
+    return {d["test"]["test_name"]: d for d in results}
 
 
-# The two parsers use different metric names for the wall-clock field
-# (``real`` for the builtin, ``elapsed`` for GNU). Parametrize both.
-@pytest.mark.parametrize(
-    "results,wall_metric",
-    [
-        ("builtin_results", "real"),
-        ("gnu_results", "elapsed"),
-    ],
-)
-def test_benchmark1_wall_time_is_215s(results, wall_metric, request):
-    """benchmark1 sleeps for 2.15 s; wall time must fall within tolerance."""
-    r = _by_test(request.getfixturevalue(results))
-    wall = _metric(r["benchmark1"], wall_metric)
+def test_builtin_has_four_test_runs(builtin_results):
+    assert len(builtin_results) == 4
+    names = [d["test"]["test_name"] for d in builtin_results]
+    assert names == ["benchmark1", "benchmark2", "benchmark3", "benchmark4"]
+
+
+def test_builtin_framework_name(builtin_results):
+    for d in builtin_results:
+        assert d["env"]["framework"]["name"] == "time"
+
+
+def test_builtin_test_name_set(builtin_results):
+    for d in builtin_results:
+        assert d["test"]["test_name"]
+
+
+def test_builtin_all_passed(builtin_results):
+    for d in builtin_results:
+        assert d["run"]["passed"] is True
+
+
+def test_builtin_benchmark1_wall_time_is_215s(builtin_results):
+    r = _b_by_test(builtin_results)
+    wall = _metric(r["benchmark1"], "real")
     assert 2.0 < wall["value"] < 2.3, wall
     assert wall["unit"] == "s"
     assert wall["direction"] == "lower_is_better"
 
 
-@pytest.mark.parametrize(
-    "results,wall_metric",
-    [
-        ("builtin_results", "real"),
-        ("gnu_results", "elapsed"),
-    ],
-)
-def test_benchmark4_wall_time_in_range(results, wall_metric, request):
+def test_builtin_benchmark4_wall_time_in_range(builtin_results):
     """benchmark4 sleeps 1.15, 2.15, or 3.15 depending on month."""
-    r = _by_test(request.getfixturevalue(results))
-    wall = _metric(r["benchmark4"], wall_metric)
+    r = _b_by_test(builtin_results)
+    wall = _metric(r["benchmark4"], "real")
     assert 1.0 < wall["value"] < 3.3, wall
 
-
-# ---------------------------------------------------------------------------
-# Builtin-specific: real/user/sys metrics all present, lower_is_better.
-# ---------------------------------------------------------------------------
 
 def test_builtin_has_real_user_sys(builtin_results):
     for d in builtin_results:
@@ -129,8 +87,54 @@ def test_builtin_has_real_user_sys(builtin_results):
 
 
 # ---------------------------------------------------------------------------
-# GNU-specific: rich metric set with the right units/directions.
+# time_gnu (still v1; migrated in a separate commit).
 # ---------------------------------------------------------------------------
+
+def _g_by_test(results):
+    return {d["attributes"]["test_name"]: d for d in results}
+
+
+def test_gnu_has_four_test_runs(gnu_results):
+    assert len(gnu_results) == 4
+    names = [d["attributes"]["test_name"] for d in gnu_results]
+    assert names == ["benchmark1", "benchmark2", "benchmark3", "benchmark4"]
+
+
+def test_gnu_timestamp_is_zero(gnu_results):
+    for d in gnu_results:
+        assert d["timestamp"] == 0
+
+
+def test_gnu_git_attributes_absent(gnu_results):
+    for d in gnu_results:
+        assert "git_repo" not in d["attributes"]
+        assert "branch" not in d["attributes"]
+        assert "git_commit" not in d["attributes"]
+
+
+def test_gnu_test_name_set(gnu_results):
+    for d in gnu_results:
+        assert d["attributes"]["test_name"]
+
+
+def test_gnu_all_passed(gnu_results):
+    for d in gnu_results:
+        assert d["passed"] is True
+
+
+def test_gnu_benchmark1_wall_time_is_215s(gnu_results):
+    r = _g_by_test(gnu_results)
+    wall = _metric(r["benchmark1"], "elapsed")
+    assert 2.0 < wall["value"] < 2.3, wall
+    assert wall["unit"] == "s"
+    assert wall["direction"] == "lower_is_better"
+
+
+def test_gnu_benchmark4_wall_time_in_range(gnu_results):
+    r = _g_by_test(gnu_results)
+    wall = _metric(r["benchmark4"], "elapsed")
+    assert 1.0 < wall["value"] < 3.3, wall
+
 
 def test_gnu_has_full_metric_set(gnu_results):
     expected = {
@@ -165,14 +169,13 @@ def test_gnu_cpu_percent_has_no_direction(gnu_results):
 
 
 def test_gnu_benchmark1_max_rss_ground_truth(gnu_results):
-    """benchmark1 in the captured fixture reports 3476 kB max RSS."""
-    r = _by_test(gnu_results)
+    r = _g_by_test(gnu_results)
     m = _metric(r["benchmark1"], "max_rss")
     assert m["value"] == 3476
 
 
 def test_gnu_benchmark1_minor_page_faults_ground_truth(gnu_results):
-    r = _by_test(gnu_results)
+    r = _g_by_test(gnu_results)
     m = _metric(r["benchmark1"], "page_faults_minor")
     assert m["value"] == 298
 
