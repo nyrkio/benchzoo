@@ -35,16 +35,18 @@ def _metric(d: dict, name: str) -> dict:
 
 def test_single_run_named_homepage(results):
     assert len(results) == 1
-    assert results[0]["attributes"]["test_name"] == "homepage"
+    assert results[0]["test"]["test_name"] == "homepage"
 
 
-def test_timestamp_is_zero(results):
-    assert results[0]["timestamp"] == 0
+def test_framework_name(results):
+    assert results[0]["env"]["framework"]["name"] == "lighthouse"
+    assert results[0]["env"]["framework"]["version"] == "12.3.0"
 
 
-def test_git_attributes_absent(results):
-    for key in ("git_repo", "branch", "git_commit"):
-        assert key not in results[0]["attributes"]
+def test_sut_url(results):
+    sut = results[0]["sut"]
+    assert sut["url"] == "http://localhost:8080/"
+    assert sut["name"] == "http://localhost:8080/"
 
 
 def test_emits_core_web_vitals(results):
@@ -62,20 +64,20 @@ def test_fcp_unit_is_ms_not_verbose_millisecond(results):
     assert 1 < fcp["value"] < 60_000
 
 
-def test_fetch_time_in_extra_info_not_timestamp(results):
-    """fetchTime is wall-clock and must not be used for Nyrkiö timestamp."""
-    assert results[0]["timestamp"] == 0
+def test_fetch_time_used_for_run_test_time(results):
+    """fetchTime is parsed into run.test_time (epoch) and kept verbatim
+    in extra_info."""
+    assert "test_time" in results[0]["run"]
     assert "fetch_time" in results[0].get("extra_info", {})
-    # Sanity: the extra_info value looks like an ISO timestamp.
     assert "T" in results[0]["extra_info"]["fetch_time"]
 
 
-def test_lighthouse_version_captured(results):
-    assert results[0]["extra_info"]["lighthouse_version"] == "12.3.0"
+def test_form_factor_in_params(results):
+    assert results[0]["test"]["params"]["formFactor"] == "mobile"
 
 
 def test_all_passed(results):
-    assert results[0]["passed"] is True
+    assert results[0]["run"]["passed"] is True
 
 
 def test_missing_audits_are_skipped():

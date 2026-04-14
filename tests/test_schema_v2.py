@@ -37,6 +37,7 @@ from benchzoo.parsers import (
     jmeter_csv,
     jmh_csv,
     jmh_json,
+    lighthouse,
     junit_go,
     junit_pytest,
     junit_standard,
@@ -114,6 +115,7 @@ V2_PARSERS = [
     (asv,                   DATA / "asv-output" / "output.json"),
     (dotnet_test_trx,       DATA / "dotnet-test-output" / "output.trx"),
     (clickbench,            DATA / "clickbench-output" / "output.json"),
+    (lighthouse,            DATA / "lighthouse-output" / "output.json"),
 ]
 
 

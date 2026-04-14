@@ -36,6 +36,7 @@ See ``frameworks/frontend/lighthouse/README.md``.
 
 from __future__ import annotations
 
+import datetime as _dt
 import json
 
 
@@ -85,20 +86,53 @@ def parse(content: bytes | str) -> list[dict]:
             "direction": "lower_is_better",
         })
 
+    env: dict = {"framework": {"name": "lighthouse"}}
+    if doc.get("lighthouseVersion"):
+        env["framework"]["version"] = doc["lighthouseVersion"]
+    environment = doc.get("environment") or {}
+    if environment.get("hostUserAgent"):
+        env["runtime"] = environment["hostUserAgent"]
+
+    run: dict = {"passed": True}
+    fetch = doc.get("fetchTime")
+    if fetch:
+        try:
+            # Lighthouse fetchTime is ISO with trailing Z
+            run["test_time"] = int(_dt.datetime.fromisoformat(fetch.replace("Z", "+00:00")).timestamp())
+        except ValueError:
+            pass
+
+    sut: dict = {}
+    if doc.get("finalUrl") or doc.get("requestedUrl"):
+        url = doc.get("finalUrl") or doc.get("requestedUrl")
+        sut["name"] = url
+        sut["url"] = url
+
+    cs = doc.get("configSettings") or {}
+    params: dict = {}
+    if cs.get("formFactor"):
+        params["formFactor"] = cs["formFactor"]
+    if cs.get("emulatedFormFactor") is not None:
+        params["emulatedFormFactor"] = cs["emulatedFormFactor"]
+
+    test: dict = {"test_name": "homepage"}
+    if params:
+        test["params"] = params
+
     extra_info: dict = {}
     if "fetchTime" in doc:
         extra_info["fetch_time"] = doc["fetchTime"]
-    if "lighthouseVersion" in doc:
-        extra_info["lighthouse_version"] = doc["lighthouseVersion"]
-    if "userAgent" in doc:
-        extra_info["user_agent"] = doc["userAgent"]
+    if environment.get("benchmarkIndex") is not None:
+        extra_info["benchmark_index"] = environment["benchmarkIndex"]
 
     result: dict = {
-        "timestamp": 0,
-        "attributes": {"test_name": "homepage"},
+        "test": test,
+        "run": run,
+        "env": env,
         "metrics": metrics,
-        "passed": True,
     }
+    if sut:
+        result["sut"] = sut
     if extra_info:
         result["extra_info"] = extra_info
     return [result]
