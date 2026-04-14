@@ -67,7 +67,7 @@ def parse(content: bytes | str) -> list[dict]:
         for func_name in failed:
             slug = go_bench_text._func_to_test_name(func_name)
             for d in results:
-                if d["attributes"]["test_name"] == slug:
-                    d["passed"] = False
+                if d["test"]["test_name"] == slug:
+                    d["run"]["passed"] = False
 
     return results

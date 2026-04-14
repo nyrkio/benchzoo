@@ -81,10 +81,10 @@ def _parse_lines(lines):
                 })
 
             d = {
-                "timestamp": 0,
-                "attributes": {"test_name": test_name},
+                "test": {"test_name": test_name},
+                "run": {"passed": True},
+                "env": {"framework": {"name": "go-test-bench"}},
                 "metrics": metrics,
-                "passed": True,
             }
             results.append(d)
             by_name[func_name] = d
@@ -94,7 +94,7 @@ def _parse_lines(lines):
         if fm:
             func_name = fm.group("name")
             if func_name in by_name:
-                by_name[func_name]["passed"] = False
+                by_name[func_name]["run"]["passed"] = False
 
     return results
 

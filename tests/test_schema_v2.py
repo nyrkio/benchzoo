@@ -16,6 +16,8 @@ from benchzoo.parsers import (
     benchmark_ips,
     benchmark_js,
     gatling_log,
+    go_bench_json,
+    go_bench_text,
     hey,
     hyperfine_json,
     jmeter_csv,
@@ -66,6 +68,8 @@ V2_PARSERS = [
     (benchmark_ips,         DATA / "benchmark-ips-output" / "output.json"),
     (mocha_json,            DATA / "mocha-output" / "output.json"),
     (playwright_json,       DATA / "playwright-output" / "output.json"),
+    (go_bench_text,         DATA / "go-test-bench-output" / "output.txt"),
+    (go_bench_json,         DATA / "go-test-bench-output" / "output.json"),
 ]
 
 

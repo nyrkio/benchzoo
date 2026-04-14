@@ -35,38 +35,29 @@ def json_results():
 def test_has_four_test_runs(results, request):
     r = request.getfixturevalue(results)
     assert len(r) == 4
-    names = [d["attributes"]["test_name"] for d in r]
+    names = [d["test"]["test_name"] for d in r]
     assert names == ["benchmark1", "benchmark2", "benchmark3", "benchmark4"]
 
 
 @pytest.mark.parametrize("results", ["text_results", "json_results"])
-def test_timestamp_is_zero(results, request):
+def test_framework_name(results, request):
     r = request.getfixturevalue(results)
     for d in r:
-        assert d["timestamp"] == 0, "parsers must set timestamp=0 per design.md"
-
-
-@pytest.mark.parametrize("results", ["text_results", "json_results"])
-def test_git_attributes_absent(results, request):
-    r = request.getfixturevalue(results)
-    for d in r:
-        assert "git_repo" not in d["attributes"]
-        assert "branch" not in d["attributes"]
-        assert "git_commit" not in d["attributes"]
+        assert d["env"]["framework"]["name"] == "go-test-bench"
 
 
 @pytest.mark.parametrize("results", ["text_results", "json_results"])
 def test_test_name_set(results, request):
     r = request.getfixturevalue(results)
     for d in r:
-        assert d["attributes"]["test_name"]
+        assert d["test"]["test_name"]
 
 
 @pytest.mark.parametrize("results", ["text_results", "json_results"])
 def test_all_passed(results, request):
     r = request.getfixturevalue(results)
     for d in r:
-        assert d["passed"] is True
+        assert d["run"]["passed"] is True
 
 
 # ---------------------------------------------------------------------------
@@ -81,7 +72,7 @@ def _metric(d: dict, name: str) -> dict:
 
 
 def _by_test(results: list[dict]) -> dict[str, dict]:
-    return {d["attributes"]["test_name"]: d for d in results}
+    return {d["test"]["test_name"]: d for d in results}
 
 
 @pytest.mark.parametrize("results", ["text_results", "json_results"])
