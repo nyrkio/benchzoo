@@ -77,18 +77,22 @@ def parse(content: bytes | str) -> list[dict]:
         if direction is not None:
             error_metric["direction"] = direction
 
-        extra_info: dict = {"mode": mode}
+        params: dict = {"mode": mode}
         if "Threads" in row and row["Threads"] != "":
-            extra_info["threads"] = int(row["Threads"])
+            params["threads"] = int(row["Threads"])
         if "Samples" in row and row["Samples"] != "":
-            extra_info["samples"] = int(row["Samples"])
+            params["samples"] = int(row["Samples"])
+
+        fqn = row["Benchmark"]
+        test: dict = {"test_name": _short_name(fqn), "params": params}
+        if "." in fqn:
+            test["group"] = fqn.rsplit(".", 1)[0]
 
         out.append({
-            "timestamp": 0,
-            "attributes": {"test_name": _short_name(row["Benchmark"])},
+            "test": test,
+            "run": {"passed": True},
+            "env": {"framework": {"name": "jmh"}},
             "metrics": [score_metric, error_metric],
-            "extra_info": extra_info,
-            "passed": True,
         })
 
     return out

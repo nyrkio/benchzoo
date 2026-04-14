@@ -67,20 +67,37 @@ def parse(content: bytes | str) -> list[dict]:
         if direction is not None:
             error_metric["direction"] = direction
 
-        extra_info: dict = {}
+        params: dict = {}
         for key in ("mode", "threads", "forks",
                     "warmupIterations", "measurementIterations"):
             if key in entry:
-                extra_info[key] = entry[key]
+                params[key] = entry[key]
+        if entry.get("params"):
+            params.update(entry["params"])
+
+        test: dict = {"test_name": _short_name(entry["benchmark"])}
+        fqn = entry.get("benchmark", "")
+        if "." in fqn:
+            test["group"] = fqn.rsplit(".", 1)[0]
+        if params:
+            test["params"] = params
+
+        env: dict = {"framework": {"name": "jmh"}}
+        if entry.get("jmhVersion"):
+            env["framework"]["version"] = entry["jmhVersion"]
+        vm_name = entry.get("vmName")
+        vm_ver = entry.get("vmVersion")
+        if vm_name and vm_ver:
+            env["runtime"] = f"{vm_name} {vm_ver}"
+        elif entry.get("jdkVersion"):
+            env["runtime"] = f"JDK {entry['jdkVersion']}"
 
         result: dict = {
-            "timestamp": 0,
-            "attributes": {"test_name": _short_name(entry["benchmark"])},
+            "test": test,
+            "run": {"passed": True},
+            "env": env,
             "metrics": [score_metric, error_metric],
-            "passed": True,
         }
-        if extra_info:
-            result["extra_info"] = extra_info
 
         out.append(result)
 

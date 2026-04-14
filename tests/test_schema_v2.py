@@ -30,6 +30,8 @@ from benchzoo.parsers import (
     hyperfine_csv,
     hyperfine_json,
     jmeter_csv,
+    jmh_csv,
+    jmh_json,
     junit_go,
     junit_pytest,
     junit_standard,
@@ -100,6 +102,8 @@ V2_PARSERS = [
     (junit_pytest,          DATA / "pytest-benchmark-output" / "output-junit.xml"),
     (benchmarkdotnet_json,  DATA / "benchmarkdotnet-output" / "output.json"),
     (benchmarkdotnet_csv,   DATA / "benchmarkdotnet-output" / "output.csv"),
+    (jmh_json,              DATA / "jmh-output" / "output.json"),
+    (jmh_csv,               DATA / "jmh-output" / "output.csv"),
 ]
 
 
