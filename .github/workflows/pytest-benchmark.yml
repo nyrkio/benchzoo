@@ -14,7 +14,7 @@ on:
   schedule:
     # Daily at 12:00 UTC for the test 4 change-detection showcase.
     # Avoid 0 0 * * * — month boundary ambiguity.
-    - cron: '0 12 * * *'
+    - cron: '5 9 * * 6'
 
 permissions:
   contents: read
