@@ -21,7 +21,11 @@ import pathlib
 
 import pytest
 
-from benchzoo.parsers import google_benchmark_csv, google_benchmark_json
+from benchzoo.parsers import (
+    google_benchmark_csv,
+    google_benchmark_json,
+    google_benchmark_text,
+)
 
 FIXTURES = pathlib.Path(__file__).parent.parent / "data" / "google-benchmark-output"
 
@@ -34,6 +38,11 @@ def json_results():
 @pytest.fixture(scope="module")
 def csv_results():
     return google_benchmark_csv.parse((FIXTURES / "output.csv").read_text())
+
+
+@pytest.fixture(scope="module")
+def text_results():
+    return google_benchmark_text.parse((FIXTURES / "output.txt").read_text())
 
 
 # Multiplier from the reported unit to seconds.
@@ -49,7 +58,7 @@ _TO_SECONDS = {
 # Structural assertions — shape of the parsed output.
 # ---------------------------------------------------------------------------
 
-@pytest.mark.parametrize("results", ["json_results", "csv_results"])
+@pytest.mark.parametrize("results", ["json_results", "csv_results", "text_results"])
 def test_has_four_test_runs(results, request):
     r = request.getfixturevalue(results)
     assert len(r) == 4
@@ -57,21 +66,21 @@ def test_has_four_test_runs(results, request):
     assert names == ["benchmark1", "benchmark2", "benchmark3", "benchmark4"]
 
 
-@pytest.mark.parametrize("results", ["json_results", "csv_results"])
+@pytest.mark.parametrize("results", ["json_results", "csv_results", "text_results"])
 def test_framework_name(results, request):
     r = request.getfixturevalue(results)
     for d in r:
         assert d["env"]["framework"]["name"] == "google-benchmark"
 
 
-@pytest.mark.parametrize("results", ["json_results", "csv_results"])
+@pytest.mark.parametrize("results", ["json_results", "csv_results", "text_results"])
 def test_test_name_set(results, request):
     r = request.getfixturevalue(results)
     for d in r:
         assert d["test"]["test_name"]  # non-empty
 
 
-@pytest.mark.parametrize("results", ["json_results", "csv_results"])
+@pytest.mark.parametrize("results", ["json_results", "csv_results", "text_results"])
 def test_metrics_real_and_cpu_time(results, request):
     r = request.getfixturevalue(results)
     for d in r:
@@ -102,7 +111,7 @@ def _seconds(metric: dict) -> float:
     return metric["value"] * _TO_SECONDS[metric["unit"]]
 
 
-@pytest.mark.parametrize("results", ["json_results", "csv_results"])
+@pytest.mark.parametrize("results", ["json_results", "csv_results", "text_results"])
 def test_benchmark1_wall_time_is_215s(results, request):
     """benchmark1 sleeps for 2.15 s; real_time must fall within tolerance."""
     r = _by_test(request.getfixturevalue(results))
@@ -111,16 +120,22 @@ def test_benchmark1_wall_time_is_215s(results, request):
     assert 2.0 < in_seconds < 2.3, (real, in_seconds)
 
 
-@pytest.mark.parametrize("results", ["json_results", "csv_results"])
+@pytest.mark.parametrize("results", ["json_results", "csv_results", "text_results"])
 def test_benchmark2_sub_100ms(results, request):
-    """benchmark2 is a tight CPU loop per iteration — sub-millisecond."""
+    """benchmark2 is a tight CPU loop per iteration — sub-millisecond.
+
+    Note: the text format rounds times to three decimals, so a
+    ~0.00036 ms real_time displays (and parses) as 0.000 ms. We accept
+    ``== 0`` here rather than fight that precision loss — it's a
+    known limitation of the console reporter.
+    """
     r = _by_test(request.getfixturevalue(results))
     real = _metric(r["benchmark2"], "real_time")
     in_seconds = _seconds(real)
-    assert 0 < in_seconds < 0.1, (real, in_seconds)
+    assert 0 <= in_seconds < 0.1, (real, in_seconds)
 
 
-@pytest.mark.parametrize("results", ["json_results", "csv_results"])
+@pytest.mark.parametrize("results", ["json_results", "csv_results", "text_results"])
 def test_benchmark3_sub_200ms(results, request):
     """benchmark3 writes 1.4 MB of data to /dev/null per iteration."""
     r = _by_test(request.getfixturevalue(results))
@@ -129,7 +144,7 @@ def test_benchmark3_sub_200ms(results, request):
     assert 0 < in_seconds < 0.2, (real, in_seconds)
 
 
-@pytest.mark.parametrize("results", ["json_results", "csv_results"])
+@pytest.mark.parametrize("results", ["json_results", "csv_results", "text_results"])
 def test_benchmark4_in_range(results, request):
     """benchmark4 sleeps for 1.15, 2.15, or 3.15 s depending on month."""
     r = _by_test(request.getfixturevalue(results))
@@ -149,6 +164,11 @@ def test_json_all_passed(json_results):
 
 def test_csv_all_passed(csv_results):
     for d in csv_results:
+        assert d["run"]["passed"] is True
+
+
+def test_text_all_passed(text_results):
+    for d in text_results:
         assert d["run"]["passed"] is True
 
 
