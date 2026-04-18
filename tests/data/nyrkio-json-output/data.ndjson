@@ -1,0 +1,2 @@
+{"timestamp":1706033544,"metrics":[{"name":"build time","value":56607,"unit":"ms"}],"attributes":{"git_repo":"https://github.com/tigerbeetle/tigerbeetle","branch":"main","git_commit":"89341c9e6b9915ed458a51c48add7bb072066096"}}
+{"timestamp":1706119944,"metrics":[{"name":"TPS","value":142000,"unit":"ops/s"}],"attributes":{"git_repo":"https://github.com/tigerbeetle/tigerbeetle","branch":"main","git_commit":"b2c42463b550b3ada982e8d503886e9f9da485c5"}}

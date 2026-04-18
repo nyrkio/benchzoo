@@ -70,6 +70,22 @@ def parse(content: bytes | str) -> list[dict]:
     doc = json.loads(content)
 
     all_stats = doc.get("ALL STATS", {})
+    # memtier encodes its concurrency config as threads × clients: each
+    # of ``threads`` worker threads opens ``clients`` connections, so
+    # total concurrency is the product. Expose both dimensions as
+    # params; we copy the same block onto every op's test dict below.
+    cfg = doc.get("configuration") or {}
+    params: dict = {}
+    for k_src, k_out in (("threads", "threads"),
+                         ("clients", "clients"),
+                         ("pipeline", "pipeline"),
+                         ("data-size", "data_size")):
+        if k_src in cfg:
+            v = cfg[k_src]
+            try:
+                params[k_out] = int(v)
+            except (TypeError, ValueError):
+                params[k_out] = v
 
     out: list[dict] = []
     for op_name, stats in all_stats.items():
@@ -115,8 +131,11 @@ def parse(content: bytes | str) -> list[dict]:
                                 "value": value,
                                 "direction": "lower_is_better"})
 
+        test: dict = {"test_name": test_name}
+        if params:
+            test["params"] = dict(params)
         out.append({
-            "test": {"test_name": test_name},
+            "test": test,
             "run": {"passed": True},
             "env": {"framework": {"name": "memtier"}},
             "metrics": metrics,

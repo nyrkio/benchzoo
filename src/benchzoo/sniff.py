@@ -233,6 +233,11 @@ def _sniff_json(stripped: str) -> str | None:
     if isinstance(doc, list) and doc:
         first = doc[0]
         if isinstance(first, dict):
+            # Nyrkiö's historical JSON format — same per-object shape
+            # the ndjson sniff catches, but in array form.
+            if _looks_like_nyrkio_v1_row(first):
+                return "nyrkio-json"
+
             # customBiggerIsBetter / customSmallerIsBetter — the ONLY
             # signal is the presence of {"name", "value"} with an
             # optional "unit"; can't distinguish the two variants from
@@ -263,6 +268,31 @@ def _sniff_json(stripped: str) -> str | None:
     return None
 
 
+def _looks_like_nyrkio_v1_row(obj: dict) -> bool:
+    """Shape check shared by the array and ndjson paths.
+
+    A Nyrkiö-v1 row is a flat dict with ``timestamp`` (epoch seconds,
+    not a wall-clock string), a ``metrics`` list, and an
+    ``attributes`` dict that carries git provenance inline —
+    specifically ``git_repo`` (a URL) and ``git_commit``. The combined
+    presence of those three keys is distinctive enough; no modern
+    framework emits git keys in its own output.
+    """
+    if not isinstance(obj, dict):
+        return False
+    if not isinstance(obj.get("timestamp"), (int, float)):
+        return False
+    metrics = obj.get("metrics")
+    if not isinstance(metrics, list) or not metrics:
+        return False
+    attrs = obj.get("attributes")
+    if not isinstance(attrs, dict):
+        return False
+    if "git_repo" not in attrs or "git_commit" not in attrs:
+        return False
+    return True
+
+
 def _sniff_ndjson_line(first: dict) -> str | None:
     """Detect ndjson streams by their first object's shape."""
     if not isinstance(first, dict):
@@ -273,6 +303,9 @@ def _sniff_ndjson_line(first: dict) -> str | None:
     # go test -json: {"Time": ..., "Action": ..., "Package": ...}
     if {"Action", "Package"} <= set(first):
         return "go-test-bench"
+    # Nyrkiö-v1 ndjson (tigerbeetle/devhubdb style).
+    if _looks_like_nyrkio_v1_row(first):
+        return "nyrkio-json"
     return None
 
 

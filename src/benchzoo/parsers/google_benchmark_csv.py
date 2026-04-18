@@ -18,6 +18,8 @@ from __future__ import annotations
 import csv
 import io
 
+from ._google_benchmark_common import split_benchmark_name
+
 
 _HEADER_PREFIX = "name,iterations,real_time,cpu_time,time_unit"
 
@@ -41,13 +43,13 @@ def parse(content: bytes | str) -> list[dict]:
 
     out: list[dict] = []
     for row in reader:
-        name = row.get("name", "").strip()
-        if not name:
+        raw_name = row.get("name", "").strip()
+        if not raw_name:
             continue
-        # Strip Google Benchmark's "/iterations:N" suffix that appears
-        # when ->Iterations(N) was used on registration.
-        if "/iterations:" in name:
-            name = name.split("/iterations:", 1)[0]
+        # Split the configured parameters (args, threads, iterations)
+        # out of the composite name — see google_benchmark_json.py for
+        # the full rationale.
+        name, name_attrs = split_benchmark_name(raw_name)
         unit = row.get("time_unit") or "ns"
 
         try:
@@ -74,8 +76,11 @@ def parse(content: bytes | str) -> list[dict]:
         err = (row.get("error_occurred") or "").strip().lower()
         passed = err in ("", "false", "0")
 
+        test_block: dict = {"test_name": name}
+        if name_attrs:
+            test_block["params"] = name_attrs
         out.append({
-            "test": {"test_name": name},
+            "test": test_block,
             "run": {"passed": passed},
             "env": {"framework": {"name": "google-benchmark"}},
             "metrics": metrics,

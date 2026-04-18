@@ -38,6 +38,16 @@ def parse(content: bytes | str) -> list[dict]:
     params: dict = {}
     if thresholds:
         params["thresholds"] = thresholds
+    # Peak virtual users — k6's concurrency dimension. The Gauge
+    # metric ``vus_max`` carries the max observed value, which equals
+    # the configured ``vus`` (or the peak during a stages ramp). We
+    # expose it under the cross-parser ``vus`` key.
+    vus_max = (doc.get("metrics") or {}).get("vus_max") or {}
+    peak_vus = vus_max.get("max") if isinstance(vus_max, dict) else None
+    if peak_vus is None and isinstance(options.get("vus"), (int, float)):
+        peak_vus = options["vus"]
+    if peak_vus is not None:
+        params["vus"] = int(peak_vus)
 
     root_group = doc.get("root_group") or doc.get("rootGroup") or {}
     group_name = root_group.get("name") or None

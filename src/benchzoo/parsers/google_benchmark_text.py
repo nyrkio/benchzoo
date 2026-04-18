@@ -42,6 +42,8 @@ from __future__ import annotations
 
 import re
 
+from ._google_benchmark_common import split_benchmark_name
+
 
 _GH_ACTIONS_PREFIX = re.compile(
     r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+Z\s+"
@@ -109,11 +111,10 @@ def _parse_row(line: str) -> dict | None:
     if real_unit not in _TIME_UNITS or cpu_unit not in _TIME_UNITS:
         return None
 
-    # Strip the `/iterations:N` suffix Google Benchmark adds when the
-    # benchmark was registered via ->Iterations(N); the parsed name
-    # should match what the test was registered as.
-    if "/iterations:" in name:
-        name = name.split("/iterations:", 1)[0]
+    # Split the configured parameters (args, threads, iterations)
+    # out of the composite name; see google_benchmark_json.py for the
+    # full rationale.
+    name, name_attrs = split_benchmark_name(name)
 
     metrics: list[dict] = [
         {"name": "real_time", "unit": real_unit,
@@ -128,6 +129,7 @@ def _parse_row(line: str) -> dict | None:
 
     return {
         "test_name": name,
+        "name_attrs": name_attrs,
         "iterations": iterations,
         "metrics": metrics,
     }
@@ -176,8 +178,11 @@ def parse(content: bytes | str) -> list[dict]:
         sut = {}
         if executable:
             sut["name"] = executable
+        test_block: dict = {"test_name": row["test_name"]}
+        if row["name_attrs"]:
+            test_block["params"] = row["name_attrs"]
         entry: dict = {
-            "test": {"test_name": row["test_name"]},
+            "test": test_block,
             "run": {"passed": True},
             "env": {"framework": {"name": "google-benchmark"}},
             "metrics": row["metrics"],

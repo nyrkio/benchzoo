@@ -43,6 +43,13 @@ def parse(content: bytes | str) -> list[dict]:
     groups: dict[str, dict[str, list[float]]] = {}
     failures: dict[str, int] = {}
     counts: dict[str, int] = {}
+    # JMeter records the active thread-group count (``grpThreads``) and
+    # total-active-threads (``allThreads``) at the moment of each
+    # sample. Tracking the max across a label's samples gives the
+    # peak concurrency the test applied — a meaningful configuration
+    # dimension even though the CSV also has it as runtime state.
+    peak_grp: dict[str, int] = {}
+    peak_all: dict[str, int] = {}
 
     reader = csv.DictReader(io.StringIO(content))
     for row in reader:
@@ -59,6 +66,13 @@ def parse(content: bytes | str) -> list[dict]:
         counts[label] = counts.get(label, 0) + 1
         if row.get("success", "").strip().lower() != "true":
             failures[label] = failures.get(label, 0) + 1
+        for src, dst in (("grpThreads", peak_grp), ("allThreads", peak_all)):
+            try:
+                v = int(row.get(src, "") or 0)
+            except ValueError:
+                continue
+            if v > dst.get(label, 0):
+                dst[label] = v
 
     out: list[dict] = []
     for label, series in groups.items():
@@ -91,8 +105,16 @@ def parse(content: bytes | str) -> list[dict]:
             "failures": failures.get(label, 0),
         }
 
+        test: dict = {"test_name": label}
+        params: dict = {}
+        if label in peak_grp:
+            params["threads"] = peak_grp[label]
+        if label in peak_all and peak_all[label] != peak_grp.get(label):
+            params["all_threads"] = peak_all[label]
+        if params:
+            test["params"] = params
         out.append({
-            "test": {"test_name": label},
+            "test": test,
             "run": {"passed": failures.get(label, 0) == 0},
             "env": {"framework": {"name": "jmeter"}},
             "metrics": metrics,

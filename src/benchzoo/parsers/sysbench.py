@@ -41,6 +41,13 @@ _LAT_MAX_RE = re.compile(r"^\s*max:\s*([0-9.]+)\s*$", re.MULTILINE)
 _LAT_P95_RE = re.compile(r"^\s*95th percentile:\s*([0-9.]+)\s*$", re.MULTILINE)
 _LAT_SUM_RE = re.compile(r"^\s*sum:\s*([0-9.]+)\s*$", re.MULTILINE)
 
+# sysbench echoes its config before the stats block:
+#   Running the test with following options:
+#   Number of threads: 4
+_THREADS_RE = re.compile(
+    r"^\s*Number of threads:\s*(\d+)\s*$", re.MULTILINE
+)
+
 
 def _split_blocks(text: str) -> list[tuple[str, str]]:
     matches = list(_SEPARATOR_RE.finditer(text))
@@ -55,6 +62,14 @@ def _split_blocks(text: str) -> list[tuple[str, str]]:
 def parse(content: bytes | str) -> list[dict]:
     if isinstance(content, bytes):
         content = content.decode("utf-8")
+
+    # Thread count is usually printed once, at the top of the file,
+    # *before* the `=== bench ===` separators — the harness runs the
+    # same sysbench config across all four benchmarks. Look for it in
+    # the whole file first; per-block search is a fallback for outputs
+    # that re-echo the config per invocation.
+    global_threads_m = _THREADS_RE.search(content)
+    global_threads = int(global_threads_m.group(1)) if global_threads_m else None
 
     out: list[dict] = []
     for marker_name, block in _split_blocks(content):
@@ -90,8 +105,14 @@ def parse(content: bytes | str) -> list[dict]:
         if m:
             extra_info["number_of_events"] = int(m.group(1))
 
+        test: dict = {"test_name": marker_name}
+        block_threads_m = _THREADS_RE.search(block)
+        threads = (int(block_threads_m.group(1))
+                   if block_threads_m else global_threads)
+        if threads is not None:
+            test["params"] = {"threads": threads}
         result: dict = {
-            "test": {"test_name": marker_name},
+            "test": test,
             "run": {"passed": True},
             "env": {"framework": {"name": "sysbench"}},
             "metrics": metrics,

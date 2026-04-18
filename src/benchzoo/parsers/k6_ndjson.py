@@ -39,8 +39,11 @@ def parse(content: bytes | str) -> list[dict]:
     if isinstance(content, bytes):
         content = content.decode("utf-8")
 
-    # Accumulate values per metric name.
+    # Accumulate values per metric name. Also track peak VUs — the
+    # ``vus`` metric streams as Points whose value is the live count;
+    # its maximum is the concurrency dimension we surface per test.
     values: dict[str, list[float]] = {}
+    peak_vus: float | None = None
     for line in content.splitlines():
         if not line.strip():
             continue
@@ -48,6 +51,11 @@ def parse(content: bytes | str) -> list[dict]:
         if obj.get("type") != "Point":
             continue
         name = obj.get("metric", "")
+        if name == "vus" or name == "vus_max":
+            v = float(obj["data"]["value"])
+            if peak_vus is None or v > peak_vus:
+                peak_vus = v
+            continue
         if not _BENCHMARK_NAME_RE.match(name):
             continue
         values.setdefault(name, []).append(float(obj["data"]["value"]))
@@ -63,8 +71,11 @@ def parse(content: bytes | str) -> list[dict]:
             {"name": "median", "unit": "ms", "value": median_val,      "direction": "lower_is_better"},
             {"name": "max",    "unit": "ms", "value": max(samples),    "direction": "lower_is_better"},
         ]
+        test: dict = {"test_name": name}
+        if peak_vus is not None:
+            test["params"] = {"vus": int(peak_vus)}
         out.append({
-            "test": {"test_name": name},
+            "test": test,
             "run": {"passed": True},
             "env": {"framework": {"name": "k6"}},
             "metrics": metrics,

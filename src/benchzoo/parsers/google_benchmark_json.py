@@ -24,6 +24,8 @@ from __future__ import annotations
 import datetime as _dt
 import json
 
+from ._google_benchmark_common import split_benchmark_name
+
 
 def _parse_iso(ts: str | None) -> int | None:
     if not ts:
@@ -70,12 +72,13 @@ def parse(content: bytes | str) -> list[dict]:
         if entry.get("run_type") == "aggregate":
             continue
 
-        test_name = entry.get("run_name") or entry.get("name") or ""
-        # Google Benchmark appends "/iterations:N" to the registered name
-        # when ->Iterations(N) is used. Strip it so the test_name matches
-        # the name we registered via ->Name("benchmarkN").
-        if "/iterations:" in test_name:
-            test_name = test_name.split("/iterations:", 1)[0]
+        raw_name = entry.get("run_name") or entry.get("name") or ""
+        # Google Benchmark encodes the configured parameters (args,
+        # threads, iterations, …) into the name as ``/``-separated
+        # suffixes. Split them out so the test_name matches what the
+        # author registered via ``->Name("benchmarkN")`` and the
+        # parameters flow through as structured attributes.
+        test_name, name_attrs = split_benchmark_name(raw_name)
         unit = entry.get("time_unit", "ns")
 
         metrics = [
@@ -98,8 +101,11 @@ def parse(content: bytes | str) -> list[dict]:
         run = dict(run_base)
         run["passed"] = passed
 
+        test_block: dict = {"test_name": test_name}
+        if name_attrs:
+            test_block["params"] = name_attrs
         result: dict = {
-            "test": {"test_name": test_name},
+            "test": test_block,
             "run": run,
             "env": env,
             "metrics": metrics,

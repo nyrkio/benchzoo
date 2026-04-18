@@ -125,7 +125,55 @@ _FIXTURE_EXPECTATIONS: dict[str, str | None] = {
     "cargo-bench-output":        "cargo-bench",
     "gatling-output":            "gatling",
     "criterion-output":          None,              # estimates.json is tiny nested, bencher text is same as cargo bench
+    # Historical Nyrkiö JSON — both the top-level-array form (nyrkio.com
+    # exports) and the NDJSON form (tigerbeetle/devhubdb) must sniff.
+    "nyrkio-json-output":        "nyrkio-json",
 }
+
+
+# Every framework in the registry has to have a line in
+# _FIXTURE_EXPECTATIONS — either pointing to a real fixture dir (sniff
+# coverage) or explicitly mapped to ``None`` (known non-detectable,
+# with a comment explaining why). If you add a new parser and forget
+# to cover it here, this test fails until you decide which case it is.
+# Some framework-name aliases collapse to the same parser module
+# (e.g. junit-jest, junit-vanilla, ctest all use junit_standard) —
+# the test accepts either a fixture named after the alias or named
+# after the shared format key.
+_SNIFF_ALIASES = {
+    "junit-jest":     "junit-standard",
+    "junit-vanilla":  "junit-standard",
+    "ctest":          "junit-standard",
+}
+
+
+def test_every_parser_has_sniff_coverage_declaration():
+    """Any framework present in :data:`PARSERS` must have an entry in
+    ``_FIXTURE_EXPECTATIONS`` so a reviewer sees whether it's
+    auto-detectable or deliberately marked non-detectable. Prevents
+    the "added a parser, forgot a sniff signature" class of bug."""
+    covered_expected_names = {v for v in _FIXTURE_EXPECTATIONS.values() if v}
+    # A parser is considered covered if it, or one of its aliases,
+    # appears as an expected value in _FIXTURE_EXPECTATIONS, OR if
+    # some fixture dir is explicitly mapped to None for it.
+    declared_dirs = set(_FIXTURE_EXPECTATIONS.keys())
+
+    missing = []
+    for framework in PARSERS:
+        alias = _SNIFF_ALIASES.get(framework, framework)
+        if alias in covered_expected_names:
+            continue
+        # Fall back: any fixture-dir name mentioning the framework.
+        if f"{framework}-output" in declared_dirs:
+            continue
+        missing.append(framework)
+
+    assert not missing, (
+        "parsers without sniff-coverage declaration in _FIXTURE_EXPECTATIONS: "
+        f"{sorted(missing)}. Add a fixture dir + expectation, or map the "
+        "fixture dir to None with a comment if the framework's output is "
+        "too ambiguous to distinguish."
+    )
 
 
 def _fixture_files(dir_name: str) -> list[pathlib.Path]:

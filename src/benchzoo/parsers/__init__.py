@@ -135,6 +135,10 @@ PARSERS: dict[str, dict[str, str]] = {
     "custom-json":       {"bigger_is_better":  "custom_bigger_is_better",
                           "smaller_is_better": "custom_smaller_is_better"},
     "custom-csv":        {"csv":       "custom_csv"},
+    # Historical Nyrkiö JSON (pre-benchzoo): carries git provenance +
+    # commit timestamp inline in the data file; accepted as either a
+    # JSON array or NDJSON.
+    "nyrkio-json":       {"v1":        "nyrkio_json_v1"},
 }
 
 
