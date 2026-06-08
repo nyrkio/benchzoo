@@ -471,6 +471,18 @@ _TEXT_PATTERNS: list[tuple[str, str | None, "re.Pattern[str]"]] = [
          r"^test \S+ \.\.\. bench:\s+[\d,.]+\s+ns/iter \(\+/-",
          re.MULTILINE,
      )),
+    # criterion's DEFAULT stdout: a "time:  [lo <u> mid <u> hi <u>]"
+    # confidence-interval line. Distinctive (three time-unit values in
+    # brackets) so it's found even buried in a wall of cargo-compile
+    # output — unlike the bencher format above, which criterion only
+    # emits with --output-format bencher.
+    ("criterion", "text",
+     re.compile(
+         r"^\s*time:\s+\[\s*[0-9.]+\s*(?:ns|µs|μs|us|ms|s)\s+"
+         r"[0-9.]+\s*(?:ns|µs|μs|us|ms|s)\s+"
+         r"[0-9.]+\s*(?:ns|µs|μs|us|ms|s)\s*\]",
+         re.MULTILINE,
+     )),
     # Gatling simulation.log
     ("gatling", "log",
      re.compile(r"^RUN\t\S+\t\S+\t\d{13}\t", re.MULTILINE)),

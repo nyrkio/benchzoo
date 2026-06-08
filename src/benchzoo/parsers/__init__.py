@@ -76,7 +76,8 @@ from types import ModuleType
 PARSERS: dict[str, dict[str, str]] = {
     # Dedicated benchmark libraries
     "criterion":         {"estimates": "criterion_estimates",
-                          "bencher":   "criterion_bencher"},
+                          "bencher":   "criterion_bencher",
+                          "text":      "criterion_text"},
     "cargo-bench":       {"text":      "cargo_bench_libtest"},
     "google-benchmark":  {"json":      "google_benchmark_json",
                           "csv":       "google_benchmark_csv",
