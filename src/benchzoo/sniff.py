@@ -24,8 +24,15 @@ Detection strategy (tiers, tried in order, first match wins):
     4. Text   — distinctive substring or regex that appears in one
                 framework's output and nowhere else in our corpus.
 
-Each tier returns the detected framework name (matching the
-:data:`benchzoo.parsers.PARSERS` registry keys) or ``None``.
+Each tier returns ``"framework/format"`` — the framework name (a
+:data:`benchzoo.parsers.PARSERS` key) plus the specific parser format
+the matched representation maps to, e.g. ``"google-benchmark/json"`` or
+``"k6/ndjson"``. This is directly splittable into
+``find_parser(*result.split("/", 1))``. When the format genuinely can't
+be determined from content alone (today only ``custom-json``'s
+bigger/smaller direction, and a few text representations with no parser),
+the bare framework name is returned and the caller must supply the
+format. ``None`` means unrecognized or ambiguous.
 """
 
 from __future__ import annotations
@@ -41,10 +48,12 @@ _SNIFF_BYTES = 1_048_576
 
 
 def sniff(content: bytes | str) -> str | None:
-    """Guess the framework that produced ``content``.
+    """Guess the framework and format that produced ``content``.
 
-    Returns the framework name (matching :data:`PARSERS` keys) or
-    ``None`` when the content is unrecognized or ambiguous.
+    Returns ``"framework/format"`` (e.g. ``"google-benchmark/json"``),
+    splittable into ``find_parser(*result.split("/", 1))``. Returns a
+    bare framework name when the format can't be inferred from content,
+    or ``None`` when the content is unrecognized or ambiguous.
     """
     if isinstance(content, bytes):
         sample = content[:_SNIFF_BYTES].decode("utf-8", errors="replace")
@@ -87,35 +96,38 @@ def sniff(content: bytes | str) -> str | None:
 # ---------------------------------------------------------------------------
 
 
-# (framework, required substrings all appearing in the leading chunk)
+# (framework, format, required substrings all appearing in the leading chunk)
 # Order matters only when two signatures could both match the same
-# input; each entry here is deliberately unique.
-_JSON_SUBSTRING_SIGS: list[tuple[str, tuple[str, ...]]] = [
-    ("pytest-benchmark", ('"machine_info"', '"commit_info"', '"benchmarks"')),
-    ("google-benchmark", ('"context"', '"caches"', '"benchmarks"')),
-    ("benchmarkdotnet",  ('"HostEnvironmentInfo"', '"Benchmarks"')),
-    ("lighthouse",       ('"lighthouseVersion"', '"audits"')),
-    ("k6",               ('"root_group"', '"metrics"')),
-    ("memtier",          ('"ALL STATS"',)),
-    ("asv",              ('"result_columns"', '"results"')),
-    ("clickbench",       ('"system"', '"data_size"', '"result"')),
-    ("playwright",       ('"suites"', '"stats"', '"expected"', '"config"')),
-    ("mocha",            ('"stats"', '"tests"', '"pending"', '"passes"')),
-    ("vitest-bench",     ('"files"', '"groups"', '"benchmarks"')),
-    ("vegeta",           ('"latencies"', '"50th"', '"95th"', '"99th"')),
-    ("hyperfine",        ('"results"', '"command"', '"exit_codes"')),
-    ("benchmark-ips",    ('"benchmark_ips_version"',)),
+# input; each entry here is deliberately unique. ``format`` is the
+# PARSERS sub-key the matched representation maps to (k6's summary JSON
+# vs its streaming ndjson are different parsers, so the format is part
+# of the answer).
+_JSON_SUBSTRING_SIGS: list[tuple[str, str, tuple[str, ...]]] = [
+    ("pytest-benchmark", "json", ('"machine_info"', '"commit_info"', '"benchmarks"')),
+    ("google-benchmark", "json", ('"context"', '"caches"', '"benchmarks"')),
+    ("benchmarkdotnet",  "json", ('"HostEnvironmentInfo"', '"Benchmarks"')),
+    ("lighthouse",       "json", ('"lighthouseVersion"', '"audits"')),
+    ("k6",               "summary", ('"root_group"', '"metrics"')),
+    ("memtier",          "json", ('"ALL STATS"',)),
+    ("asv",              "json", ('"result_columns"', '"results"')),
+    ("clickbench",       "json", ('"system"', '"data_size"', '"result"')),
+    ("playwright",       "json", ('"suites"', '"stats"', '"expected"', '"config"')),
+    ("mocha",            "json", ('"stats"', '"tests"', '"pending"', '"passes"')),
+    ("vitest-bench",     "json", ('"files"', '"groups"', '"benchmarks"')),
+    ("vegeta",           "json", ('"latencies"', '"50th"', '"95th"', '"99th"')),
+    ("hyperfine",        "json", ('"results"', '"command"', '"exit_codes"')),
+    ("benchmark-ips",    "json", ('"benchmark_ips_version"',)),
     # Our self-labeled envelopes
-    ("benchmark-js",     ('"framework": "benchmark.js"',)),
-    ("tinybench",        ('"framework": "tinybench"',)),
-    ("mitata",           ('"framework": "mitata"',)),
+    ("benchmark-js",     "json", ('"framework": "benchmark.js"',)),
+    ("tinybench",        "json", ('"framework": "tinybench"',)),
+    ("mitata",           "json", ('"framework": "mitata"',)),
 ]
 
 
 def _json_substring_signature(head: str) -> str | None:
-    for framework, needles in _JSON_SUBSTRING_SIGS:
+    for framework, fmt, needles in _JSON_SUBSTRING_SIGS:
         if all(n in head for n in needles):
-            return framework
+            return f"{framework}/{fmt}"
     return None
 
 
@@ -151,83 +163,85 @@ def _sniff_json(stripped: str) -> str | None:
         if "results" in keys and isinstance(doc.get("results"), list) and doc["results"]:
             first = doc["results"][0]
             if isinstance(first, dict) and "command" in first and "mean" in first and "stddev" in first:
-                return "hyperfine"
+                return "hyperfine/json"
 
         # Lighthouse: {"lighthouseVersion": ..., "audits": ...}
         if "lighthouseVersion" in keys and "audits" in keys:
-            return "lighthouse"
+            return "lighthouse/json"
 
         # Google Benchmark: {"context": {...}, "benchmarks": [...]}
         if "context" in keys and "benchmarks" in keys:
             ctx = doc.get("context")
             if isinstance(ctx, dict) and "caches" in ctx:
-                return "google-benchmark"
+                return "google-benchmark/json"
 
         # BenchmarkDotNet: {"HostEnvironmentInfo": ..., "Benchmarks": ...}
         if "HostEnvironmentInfo" in keys and "Benchmarks" in keys:
-            return "benchmarkdotnet"
+            return "benchmarkdotnet/json"
 
         # pytest-benchmark: {"machine_info", "commit_info", "benchmarks"}
         if "machine_info" in keys and "benchmarks" in keys and "commit_info" in keys:
-            return "pytest-benchmark"
+            return "pytest-benchmark/json"
 
         # k6 summary: {"root_group": ..., "metrics": {...}}
         if "root_group" in keys and "metrics" in keys:
-            return "k6"
+            return "k6/summary"
 
         # vegeta: has "latencies" top-level with "50th"/"95th"/"99th"
         if "latencies" in keys:
             lat = doc.get("latencies")
             if isinstance(lat, dict) and {"50th", "95th", "99th"} <= set(lat):
-                return "vegeta"
+                return "vegeta/json"
 
         # memtier: has "ALL STATS" with the space in it
         if "ALL STATS" in keys:
-            return "memtier"
+            return "memtier/json"
 
         # asv: top-level has "result_columns" + "results"
         if "result_columns" in keys and "results" in keys:
-            return "asv"
+            return "asv/json"
 
         # ClickBench: {"system", "result": [[...]]}
         if "system" in keys and "result" in keys and isinstance(doc.get("result"), list):
             first = (doc["result"] or [None])[0]
             if isinstance(first, list):
-                return "clickbench"
+                return "clickbench/json"
 
         # Playwright: {"config": {...}, "suites": [...], "stats": {...}}
         if {"suites", "stats"} <= keys and isinstance(doc.get("suites"), list):
             stats = doc.get("stats", {})
             if isinstance(stats, dict) and "expected" in stats:
-                return "playwright"
+                return "playwright/json"
 
         # Mocha JSON: {"stats": {...}, "tests": [...], "pending": [...]}
         if {"stats", "tests", "pending", "passes"} <= keys:
-            return "mocha"
+            return "mocha/json"
 
         # Vitest bench: {"files": [{"groups": [{"benchmarks": ...}]}]}
         if "files" in keys and isinstance(doc.get("files"), list) and doc["files"]:
             f0 = doc["files"][0]
             if isinstance(f0, dict) and "groups" in f0:
-                return "vitest-bench"
+                return "vitest-bench/json"
 
         # Our own emit-script envelopes (self-labeled)
         framework = doc.get("framework")
         if framework in {"benchmark.js", "tinybench", "mitata"}:
             return {
-                "benchmark.js": "benchmark-js",
-                "tinybench":    "tinybench",
-                "mitata":       "mitata",
+                "benchmark.js": "benchmark-js/json",
+                "tinybench":    "tinybench/json",
+                "mitata":       "mitata/json",
             }[framework]
+        # The custom-json envelope self-labels its direction, so here —
+        # unlike the bare-array form below — we CAN name the format.
         if framework == "benchzoo-custom-bigger-is-better":
-            return "custom-json"
+            return "custom-json/bigger_is_better"
         if framework == "benchzoo-custom-smaller-is-better":
-            return "custom-json"
+            return "custom-json/smaller_is_better"
         if framework == "benchmark_ips_version" in doc or "benchmark_ips_version" in doc:
-            return "benchmark-ips"
+            return "benchmark-ips/json"
         # benchmark-ips: signature is the version key at the top level
         if "benchmark_ips_version" in keys and "benchmarks" in keys:
-            return "benchmark-ips"
+            return "benchmark-ips/json"
 
     # Top-level array: benchzoo-owned custom JSON, or JMH results
     if isinstance(doc, list) and doc:
@@ -236,26 +250,28 @@ def _sniff_json(stripped: str) -> str | None:
             # Nyrkiö's historical JSON format — same per-object shape
             # the ndjson sniff catches, but in array form.
             if _looks_like_nyrkio_v1_row(first):
-                return "nyrkio-json"
+                return "nyrkio-json/v1"
 
             # customBiggerIsBetter / customSmallerIsBetter — the ONLY
             # signal is the presence of {"name", "value"} with an
             # optional "unit"; can't distinguish the two variants from
             # content alone (that's a direction-interpretation choice,
-            # not a shape choice). Return the umbrella name.
+            # not a shape choice). Return the bare framework name with no
+            # format — the caller must supply bigger_is_better /
+            # smaller_is_better itself.
             if {"name", "value"} <= set(first) and all(
                 isinstance(e, dict) and "name" in e and "value" in e for e in doc[:5]
             ):
                 # Could be JMH (top-level array of benchmarks each with
                 # "benchmark" + "primaryMetric"). Distinguish:
                 if "primaryMetric" in first and "benchmark" in first:
-                    return "jmh"
-                # Otherwise custom-json.
+                    return "jmh/json"
+                # Otherwise custom-json, format-ambiguous (no "/format").
                 return "custom-json"
 
             # JMH: top-level array with "primaryMetric"
             if "primaryMetric" in first and "benchmark" in first:
-                return "jmh"
+                return "jmh/json"
 
         # Julia BenchmarkTools.jl: top-level array where [0] is
         # metadata dict with Julia/BenchmarkTools keys and [1] is
@@ -263,7 +279,7 @@ def _sniff_json(stripped: str) -> str | None:
         if len(doc) == 2 and isinstance(doc[0], dict):
             meta = doc[0]
             if "Julia" in meta and "BenchmarkTools" in meta:
-                return "benchmarktools-jl"
+                return "benchmarktools-jl/json"
 
     return None
 
@@ -299,13 +315,13 @@ def _sniff_ndjson_line(first: dict) -> str | None:
         return None
     # k6 streaming: {"metric": ..., "type": "Metric" | "Point", "data": ...}
     if first.get("type") in {"Metric", "Point"} and "metric" in first and "data" in first:
-        return "k6"
+        return "k6/ndjson"
     # go test -json: {"Time": ..., "Action": ..., "Package": ...}
     if {"Action", "Package"} <= set(first):
-        return "go-test-bench"
+        return "go-test-bench/json"
     # Nyrkiö-v1 ndjson (tigerbeetle/devhubdb style).
     if _looks_like_nyrkio_v1_row(first):
-        return "nyrkio-json"
+        return "nyrkio-json/v1"
     return None
 
 
@@ -329,12 +345,12 @@ def _sniff_xml(stripped: str) -> str | None:
     root, attrs = m.group(1), m.group(2) or ""
 
     if root == "Catch2TestRun":
-        return "catch2"
+        return "catch2/xml"
     if root == "phpbench":
-        return "phpbench"
+        return "phpbench/xml"
     if root == "TestRun" and "TeamTest" in attrs:
         # TRX: xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/..."
-        return "dotnet-test"
+        return "dotnet-test/trx"
 
     # For <testsuite> / <testsuites> roots we look for producer
     # fingerprints inside the document:
@@ -347,10 +363,10 @@ def _sniff_xml(stripped: str) -> str | None:
     if root in {"testsuite", "testsuites"}:
         head = stripped[:16384]
         if ".py::" in head:
-            return "pytest-benchmark"
+            return "pytest-benchmark/junit"
         if 'name="go.version"' in head:
-            return "junit-go"
-        return "junit-standard"
+            return "junit-go/xml"
+        return "junit-standard/xml"
 
     return None
 
@@ -364,11 +380,11 @@ def _sniff_xml(stripped: str) -> str | None:
 # versions are omitted (caller must specify framework explicitly).
 _CSV_HEADERS = {
     'command,mean,stddev,median,user,system,min,max':
-        "hyperfine",
+        "hyperfine/csv",
     '"test","rps","avg_latency_ms","min_latency_ms","p50_latency_ms","p95_latency_ms","p99_latency_ms","max_latency_ms"':
-        "redis-benchmark",
+        "redis-benchmark/csv",
     'test_name,metric_name,unit,value,direction':
-        "custom-csv",
+        "custom-csv/csv",
 }
 
 
@@ -382,10 +398,10 @@ def _sniff_csv(sample: str) -> str | None:
 
         # JMeter's per-sample CSV
         if line.startswith("timeStamp,elapsed,label,responseCode,"):
-            return "jmeter"
+            return "jmeter/csv"
         # Locust stats CSV
         if line.startswith("Type,Name,Request Count,Failure Count,"):
-            return "locust"
+            return "locust/csv"
         # PerfStat CSV — comment block precedes real data, which
         # starts after "# started on ..." and is multi-line. Handle
         # in text tier instead.
@@ -398,71 +414,77 @@ def _sniff_csv(sample: str) -> str | None:
 # Tier 4: distinctive text substrings.
 # ---------------------------------------------------------------------------
 
-# Each entry: (framework, compiled pattern, description).
-# Patterns are chosen to be unique — if one matches, we are
-# confident. If several match, we return the first — so order
-# matters: put more-specific patterns (wrk2 before wrk) first.
-_TEXT_PATTERNS: list[tuple[str, "re.Pattern[str]"]] = [
+# Each entry: (framework, format, compiled pattern). ``format`` is the
+# PARSERS sub-key the matched text maps to, or ``None`` when the
+# framework has no parser for this text representation (jmh/catch2 only
+# parse their structured output; mitata only parses JSON) — in that case
+# sniff names the framework but leaves the format for the caller, so
+# find_parser falls through rather than mis-dispatching.
+# Patterns are chosen to be unique — if one matches, we are confident.
+# If several match, we return the first — so order matters: put
+# more-specific patterns (wrk2 before wrk) first.
+_TEXT_PATTERNS: list[tuple[str, str | None, "re.Pattern[str]"]] = [
     # wrk2's HdrHistogram label is its unique marker vs. plain wrk.
-    ("wrk2",
+    ("wrk2", "text",
      re.compile(r"^\s*Latency Distribution \(HdrHistogram", re.MULTILINE)),
     # wrk's banner line is distinct (and not also present in wrk2 —
     # wrk2 uses the same banner, so wrk's signature is wrk-specific
     # only when the wrk2 check above has failed).
-    ("wrk",
+    ("wrk", "text",
      re.compile(r"^Running \d+(\.\d+)?s test @", re.MULTILINE)),
     # hey's Summary / Latency distribution lines
-    ("hey",
+    ("hey", "text",
      re.compile(r"^Summary:\n\s+Total:\s+[0-9.]+ secs", re.MULTILINE)),
     # perf stat headline
-    ("perf-stat",
+    ("perf-stat", "text",
      re.compile(r"Performance counter stats for '")),
     # pgbench
-    ("pgbench",
+    ("pgbench", "text",
      re.compile(r"^transaction type:", re.MULTILINE)),
     # sysbench
-    ("sysbench",
+    ("sysbench", "text",
      re.compile(r"^sysbench \S+ \(using", re.MULTILINE)),
     # Bash builtin time: "real    Xm Y.ZZZs"
-    ("time",
+    ("time", "builtin",
      re.compile(r"^real\s+\d+m\d+(\.\d+)?s\s*$\n^user\s+\d+m\d+",
                 re.MULTILINE)),
     # GNU time -v
-    ("time",
+    ("time", "gnu",
      re.compile(r"Elapsed \(wall clock\) time \(h:mm:ss or m:ss\):")),
-    # JMH text output header
-    ("jmh",
+    # JMH text output header (no text parser — json/csv only)
+    ("jmh", None,
      re.compile(r"^Benchmark\s+Mode\s+Cnt\s+Score", re.MULTILINE)),
-    # Catch2 v3 text banner
-    ("catch2",
+    # Catch2 v3 text banner (no text parser — xml/junit only)
+    ("catch2", None,
      re.compile(r"^All tests passed \(\d+ assertions? in \d+ test case",
                 re.MULTILINE)),
     # Go test -bench text: "BenchmarkName-N  iterations  ns/op"
     # Distinguish from cargo bench text (same format) by package path
     # hint: go bench output contains "PASS" + "ok <package>"
-    ("go-test-bench",
+    ("go-test-bench", "text",
      re.compile(r"^Benchmark\S+-\d+\s+\d+\s+[\d,.]+\s+ns/op.*\n.*PASS",
                 re.MULTILINE | re.DOTALL)),
     # cargo bench / libtest / criterion bencher — same line format
     # as go bench ns/op, but different prefix ("test NAME ... bench:")
-    ("cargo-bench",
+    ("cargo-bench", "text",
      re.compile(
          r"^test \S+ \.\.\. bench:\s+[\d,.]+\s+ns/iter \(\+/-",
          re.MULTILINE,
      )),
     # Gatling simulation.log
-    ("gatling",
+    ("gatling", "log",
      re.compile(r"^RUN\t\S+\t\S+\t\d{13}\t", re.MULTILINE)),
     # mitata's pretty-table preamble precedes its JSON envelope;
     # when we have only the preamble (e.g. CI log capture), match
     # the "clk: ~X GHz" header banner that mitata prints unconditionally.
-    ("mitata",
+    # No text parser — mitata only parses its JSON envelope.
+    ("mitata", None,
      re.compile(r"^clk: ~[\d.]+ (GHz|MHz)", re.MULTILINE)),
 ]
 
 
 def _sniff_text(sample: str) -> str | None:
-    for framework, pattern in _TEXT_PATTERNS:
+    for framework, fmt, pattern in _TEXT_PATTERNS:
         if pattern.search(sample):
-            return framework
+            return f"{framework}/{fmt}" if fmt else framework
     return None

@@ -201,6 +201,18 @@ def test_sniff_fixture(fixture_dir: str, expected: str | None):
         # Read as bytes to exercise the bytes-path.
         content = path.read_bytes()
         result = benchzoo.sniff(content)
+        # sniff now returns "framework/format" (e.g. "google-benchmark/json")
+        # — or a bare framework name when the format is ambiguous. Validate
+        # the shape, then compare on the framework part.
+        if result is not None and "/" in result:
+            rfw, rfmt = result.split("/", 1)
+            assert rfw in PARSERS and rfmt in PARSERS[rfw], (
+                f"{path.name}: sniff returned invalid spec {result!r} "
+                f"(format not in PARSERS[{rfw!r}])"
+            )
+            framework = rfw
+        else:
+            framework = result
         # Some fixture dirs bundle a plain-junit artifact alongside the
         # framework's native output (e.g. catch2-output ships
         # output.junit.xml). "junit-standard" is the honest answer for
@@ -209,14 +221,14 @@ def test_sniff_fixture(fixture_dir: str, expected: str | None):
         allowed = {None, expected, "junit-standard"} if "junit" in path.name.lower() else {None, expected}
         if expected is None:
             # No claim either way — but we must not fabricate.
-            assert result in (None,) or result in PARSERS, (
+            assert framework is None or framework in PARSERS, (
                 f"{path.name}: sniff returned unknown framework {result!r}"
             )
         else:
-            assert result in allowed, (
+            assert framework in allowed, (
                 f"{path.name}: expected {expected!r} or None, got {result!r}"
             )
-            if result == expected:
+            if framework == expected:
                 seen_any_match = True
 
     if expected is not None:
