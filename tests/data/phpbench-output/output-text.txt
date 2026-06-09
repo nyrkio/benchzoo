@@ -1,0 +1,15 @@
+2026-06-08T22:38:25.3101379Z Package doctrine/annotations is abandoned, you should avoid using it. No replacement was suggested.
+2026-06-08T22:38:25.3102396Z Generating autoload files
+2026-06-08T22:38:25.3134768Z 15 packages you are using are looking for funding.
+2026-06-08T22:38:25.3135349Z Use the `composer fund` command to find out more!
+2026-06-08T22:38:36.3475881Z Dumped result to output.xml
+2026-06-08T22:38:36.3597879Z +-------------+-----------------+-----+------+-----+-----------+---------+--------+
+2026-06-08T22:38:36.3599003Z | benchmark   | subject         | set | revs | its | mem_peak  | mode    | rstdev |
+2026-06-08T22:38:36.3599777Z +-------------+-----------------+-----+------+-----+-----------+---------+--------+
+2026-06-08T22:38:36.3607345Z | SampleBench | benchBenchmark1 |     | 1    | 3   | 682.224kb | 2.150s  | ±0.00% |
+2026-06-08T22:38:36.3608475Z | SampleBench | benchBenchmark2 |     | 1000 | 5   | 682.224kb | 2.952μs | ±1.10% |
+2026-06-08T22:38:36.3609575Z | SampleBench | benchBenchmark3 |     | 10   | 5   | 1.934mb   | 3.704ms | ±0.74% |
+2026-06-08T22:38:36.3612532Z | SampleBench | benchBenchmark4 |     | 1    | 3   | 682.224kb | 1.150s  | ±0.00% |
+2026-06-08T22:38:36.3613123Z +-------------+-----------------+-----+------+-----+-----------+---------+--------+
+2026-06-08T22:38:36.3613457Z 
+2026-06-08T22:38:36.3739304Z ##[group]Run actions/upload-artifact@v4

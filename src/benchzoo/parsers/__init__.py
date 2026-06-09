@@ -144,6 +144,33 @@ PARSERS: dict[str, dict[str, str]] = {
 }
 
 
+# stdout/text parsers (2026-06-09): console output for frameworks that
+# previously only parsed uploaded files, so results printed to a CI log
+# (no artifact) can still be ingested. See CLAUDE.md and docs/.
+for _fw, _mod in {
+    "jmh": "jmh_text",
+    "benchmarkdotnet": "benchmarkdotnet_text",
+    "pytest-benchmark": "pytest_benchmark_text",
+    "hyperfine": "hyperfine_text",
+    "asv": "asv_text",
+    "benchmark-ips": "benchmark_ips_text",
+    "mitata": "mitata_text",
+    "vitest-bench": "vitest_bench_text",
+    "benchmarktools-jl": "benchmarktools_jl_text",
+    "phpbench": "phpbench_text",
+    "catch2": "catch2_text",
+    "locust": "locust_text",
+    "jmeter": "jmeter_text",
+    "redis-benchmark": "redis_benchmark_text",
+    "memtier": "memtier_text",
+    "junit-jest": "junit_jest_text",
+    "junit-go": "junit_go_text",
+    "ctest": "ctest_text",
+}.items():
+    PARSERS.setdefault(_fw, {})["text"] = _mod
+del _fw, _mod
+
+
 def find_parser(framework: str, format: str | None = None) -> ModuleType:
     """Import and return the parser module for ``framework`` (+ ``format``).
 

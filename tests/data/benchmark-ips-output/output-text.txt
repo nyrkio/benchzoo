@@ -1,0 +1,37 @@
+2026-06-05T09:25:46.1262966Z ##[group]Run ./run.sh
+2026-06-05T09:25:46.1263698Z [36;1m./run.sh[0m
+2026-06-05T09:25:46.1299158Z shell: /usr/bin/bash -e {0}
+2026-06-05T09:25:46.1299458Z ##[endgroup]
+2026-06-05T09:25:46.3890533Z Bundle complete! 1 Gemfile dependency, 2 gems now installed.
+2026-06-05T09:25:46.3891221Z Bundled gems are installed into `./vendor/bundle`
+2026-06-05T09:25:46.9134444Z ruby 3.3.11 (2026-03-26 revision 1f2d15125a) [x86_64-linux]
+2026-06-05T09:25:46.9135130Z Warming up --------------------------------------
+2026-06-05T09:25:49.0691529Z           benchmark1     1.000 i/100ms
+2026-06-05T09:25:50.0247904Z           benchmark2     2.324k i/100ms
+2026-06-05T09:25:51.0072128Z           benchmark3    22.000 i/100ms
+2026-06-05T09:25:52.1658137Z           benchmark4     1.000 i/100ms
+2026-06-05T09:25:52.1658545Z Calculating -------------------------------------
+2026-06-05T09:25:54.3211064Z           benchmark1      0.465 (± 0.0%) i/s     (2.15 s/i) -      1.000 in   2.150126s
+2026-06-05T09:25:56.4249919Z           benchmark2     23.254k (± 0.5%) i/s   (43.00 μs/i) -     48.804k in   2.098763s
+2026-06-05T09:25:58.5134365Z           benchmark3    232.857 (± 4.7%) i/s    (4.29 ms/i) -    484.000 in   2.083193s
+2026-06-05T09:26:00.8214528Z           benchmark4      0.869 (± 0.0%) i/s     (1.15 s/i) -      2.000 in   2.300269s
+2026-06-05T09:26:00.8220910Z 
+2026-06-05T09:26:00.8221110Z Comparison:
+2026-06-05T09:26:00.8221371Z           benchmark2:    23254.2 i/s
+2026-06-05T09:26:00.8221764Z           benchmark3:      232.9 i/s - 99.86x  slower
+2026-06-05T09:26:00.8222125Z           benchmark4:        0.9 i/s - 26745.51x  slower
+2026-06-05T09:26:00.8222488Z           benchmark1:        0.5 i/s - 49999.57x  slower
+2026-06-05T09:26:00.8223022Z 
+2026-06-05T09:26:00.8328633Z ##[group]Run actions/upload-artifact@v4
+2026-06-05T09:26:00.8328944Z with:
+2026-06-05T09:26:00.8329194Z   name: benchmark-ips-output
+2026-06-05T09:26:00.8329853Z   path: frameworks/language/benchmark-ips/output.json
+frameworks/language/benchmark-ips/output.txt
+frameworks/language/benchmark-ips/output-raw.dump
+
+2026-06-05T09:26:00.8330518Z   if-no-files-found: error
+2026-06-05T09:26:00.8330779Z   compression-level: 6
+2026-06-05T09:26:00.8331028Z   overwrite: false
+2026-06-05T09:26:00.8331268Z   include-hidden-files: false
+2026-06-05T09:26:00.8331532Z ##[endgroup]
+2026-06-05T09:26:01.0564550Z Multiple search paths detected. Calculating the least common ancestor of all paths

@@ -1,0 +1,32 @@
+2026-04-12T22:06:46.4828380Z [36;1m./run.sh[0m
+2026-04-12T22:06:46.4842237Z shell: /usr/bin/bash -e {0}
+2026-04-12T22:06:46.4842486Z env:
+2026-04-12T22:06:46.4842734Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.13/x64
+2026-04-12T22:06:46.4843151Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.13/x64/lib/pkgconfig
+2026-04-12T22:06:46.4843575Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.13/x64
+2026-04-12T22:06:46.4843930Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.13/x64
+2026-04-12T22:06:46.4844273Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.13/x64
+2026-04-12T22:06:46.4844631Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.13/x64/lib
+2026-04-12T22:06:46.4844927Z ##[endgroup]
+2026-04-12T22:06:47.7813637Z [2026-04-12 22:06:47,767] runnervm35a4x/INFO/locust.main: Starting Locust 2.32.4
+2026-04-12T22:06:47.7814669Z [2026-04-12 22:06:47,769] runnervm35a4x/INFO/locust.main: Run time limit set to 10 seconds
+2026-04-12T22:06:47.7815790Z [2026-04-12 22:06:47,770] runnervm35a4x/INFO/locust.runners: Ramping to 10 users at a rate of 10.00 per second
+2026-04-12T22:06:47.7816790Z [2026-04-12 22:06:47,772] runnervm35a4x/INFO/locust.runners: All users spawned: {"HomepageUser": 10} (10 total users)
+2026-04-12T22:06:52.7704928Z [2026-04-12 22:06:52,770] runnervm35a4x/WARNING/root: CPU usage above 90%! This may constrain your throughput and may even give inconsistent response time measurements! See https://docs.locust.io/en/stable/running-distributed.html for how to distribute the load over multiple CPU cores or machines
+2026-04-12T22:06:56.9540456Z [2026-04-12 22:06:56,953] runnervm35a4x/INFO/locust.main: --run-time limit reached, shutting down
+2026-04-12T22:06:56.9916467Z [2026-04-12 22:06:56,991] runnervm35a4x/WARNING/locust.runners: CPU usage was too high at some point during the test! See https://docs.locust.io/en/stable/running-distributed.html for how to distribute the load over multiple CPU cores or machines
+2026-04-12T22:06:56.9919257Z [2026-04-12 22:06:56,991] runnervm35a4x/INFO/locust.main: Shutting down (exit code 0)
+2026-04-12T22:06:56.9920528Z Type     Name                                                                          # reqs      # fails |    Avg     Min     Max    Med |   req/s  failures/s
+2026-04-12T22:06:56.9922084Z --------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+2026-04-12T22:06:56.9934124Z GET      /                                                                              14619     0(0.00%) |      4       2      67      4 | 1585.66        0.00
+2026-04-12T22:06:56.9936502Z --------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+2026-04-12T22:06:56.9939895Z          Aggregated                                                                     14619     0(0.00%) |      4       2      67      4 | 1585.66        0.00
+2026-04-12T22:06:56.9941328Z 
+2026-04-12T22:06:56.9950570Z Response time percentiles (approximated)
+2026-04-12T22:06:56.9952154Z Type     Name                                                                                  50%    66%    75%    80%    90%    95%    98%    99%  99.9% 99.99%   100% # reqs
+2026-04-12T22:06:56.9954340Z --------|--------------------------------------------------------------------------------|--------|------|------|------|------|------|------|------|------|------|------|------
+2026-04-12T22:06:56.9955636Z GET      /                                                                                       4      5      5      5      5      6      6      7     22     37     68  14619
+2026-04-12T22:06:56.9956764Z --------|--------------------------------------------------------------------------------|--------|------|------|------|------|------|------|------|------|------|------|------
+2026-04-12T22:06:56.9958270Z          Aggregated                                                                              4      5      5      5      5      6      6      7     22     37     68  14619
+2026-04-12T22:06:56.9959143Z 
+2026-04-12T22:06:57.0546505Z ##[group]Run actions/upload-artifact@v4

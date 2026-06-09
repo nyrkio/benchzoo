@@ -1,0 +1,36 @@
+﻿2026-06-09T06:37:22.1852368Z ##[group]Run bash run.sh
+2026-06-09T06:37:22.1852742Z [36;1mbash run.sh[0m
+2026-06-09T06:37:22.1887874Z shell: /usr/bin/bash -e {0}
+2026-06-09T06:37:22.1888514Z ##[endgroup]
+2026-06-09T06:37:29.3496593Z 
+2026-06-09T06:37:29.3503884Z added 46 packages, and audited 47 packages in 7s
+2026-06-09T06:37:29.3504264Z 
+2026-06-09T06:37:29.3504467Z 13 packages are looking for funding
+2026-06-09T06:37:29.3504824Z   run `npm fund` for details
+2026-06-09T06:37:29.3676208Z 
+2026-06-09T06:37:29.3676909Z 5 vulnerabilities (4 moderate, 1 critical)
+2026-06-09T06:37:29.3677332Z 
+2026-06-09T06:37:29.3677739Z To address all issues (including breaking changes), run:
+2026-06-09T06:37:29.3678555Z   npm audit fix --force
+2026-06-09T06:37:29.3678838Z 
+2026-06-09T06:37:29.3679057Z Run `npm audit` for details.
+2026-06-09T06:37:29.7212736Z [33mBenchmarking is an experimental feature.
+2026-06-09T06:37:29.7213846Z Breaking changes might not follow SemVer, please pin Vitest's version when using it.[39m
+2026-06-09T06:37:29.9581194Z 
+2026-06-09T06:37:29.9583306Z [1m[7m[36m RUN [39m[27m[22m [36mv2.1.8 [39m[90m/home/runner/work/benchzoo/benchzoo/frameworks/language/vitest-bench[39m
+2026-06-09T06:37:29.9584118Z 
+2026-06-09T06:37:41.3065340Z  [32m✓[39m sample-benchmark.bench.ts[2m > [22mbenchzoo canonical sample benchmark[33m 11169[2mms[22m[39m
+2026-06-09T06:37:41.3075171Z      [1mname      [22m  [1m        hz[22m  [1m     min[22m  [1m     max[22m  [1m    mean[22m  [1m     p75[22m  [1m     p99[22m  [1m    p995[22m  [1m    p999[22m  [1m   rme[22m  [1msamples[22m
+2026-06-09T06:37:41.3077553Z    [32m·[39m benchmark1  [34m    0.4646[39m  [36m2,152.23[39m  [36m2,152.40[39m  [36m2,152.34[39m  [36m2,152.40[39m  [36m2,152.40[39m  [36m2,152.40[39m  [36m2,152.40[39m  [2m±0.01%[22m  [2m      3[22m  [1m[90m slowest[39m[22m
+2026-06-09T06:37:41.3080012Z    [32m·[39m benchmark2  [34m124,736.49[39m  [36m  0.0068[39m  [36m  0.3558[39m  [36m  0.0080[39m  [36m  0.0069[39m  [36m  0.0390[39m  [36m  0.0695[39m  [36m  0.0903[39m  [2m±0.71%[22m  [2m  62369[22m  [1m[32m fastest[39m[22m
+2026-06-09T06:37:41.3081684Z    [32m·[39m benchmark3  [34m  3,440.62[39m  [36m  0.0301[39m  [36m  5.1278[39m  [36m  0.2906[39m  [36m  0.6026[39m  [36m  2.8629[39m  [36m  3.1719[39m  [36m  4.7152[39m  [2m±7.42%[22m  [2m   1722[22m
+2026-06-09T06:37:41.3083928Z    [32m·[39m benchmark4  [34m    0.8688[39m  [36m1,150.39[39m  [36m1,151.42[39m  [36m1,151.06[39m  [36m1,151.42[39m  [36m1,151.42[39m  [36m1,151.42[39m  [36m1,151.42[39m  [2m±0.13%[22m  [2m      3[22m
+2026-06-09T06:37:41.3199678Z 
+2026-06-09T06:37:41.3209469Z [1m[7m[36m BENCH [39m[27m[22m [36mSummary
+2026-06-09T06:37:41.3209969Z [39m
+2026-06-09T06:37:41.3210556Z   benchmark2[2m - sample-benchmark.bench.ts[2m > [22m[2mbenchzoo canonical sample benchmark[22m
+2026-06-09T06:37:41.3211222Z [32m    36.25x [39m[90mfaster than [39mbenchmark3
+2026-06-09T06:37:41.3211705Z [32m    143579.28x [39m[90mfaster than [39mbenchmark4
+2026-06-09T06:37:41.3212224Z [32m    268475.27x [39m[90mfaster than [39mbenchmark1
+2026-06-09T06:37:41.3212467Z 
+2026-06-09T06:37:41.3216407Z Benchmark report written to /home/runner/work/benchzoo/benchzoo/frameworks/language/vitest-bench/output.json

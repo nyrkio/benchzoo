@@ -1,0 +1,17 @@
+2026-06-09T04:33:24.0932005Z go: downloading golang.org/x/text v0.14.0
+2026-06-09T04:33:24.2979644Z go: downloading golang.org/x/mod v0.16.0
+2026-06-09T04:33:38.0035663Z === RUN   TestBenchmark1
+2026-06-09T04:33:40.1539637Z --- PASS: TestBenchmark1 (2.15s)
+2026-06-09T04:33:40.1540897Z === RUN   TestBenchmark2
+2026-06-09T04:33:40.1541652Z --- PASS: TestBenchmark2 (0.00s)
+2026-06-09T04:33:40.1542439Z === RUN   TestBenchmark3
+2026-06-09T04:33:40.1564324Z --- PASS: TestBenchmark3 (0.00s)
+2026-06-09T04:33:40.1564873Z === RUN   TestBenchmark4
+2026-06-09T04:33:40.1566280Z     sample_test.go:91: benchmark4: month=6, sleep=1.15s
+2026-06-09T04:33:41.3068761Z --- PASS: TestBenchmark4 (1.15s)
+2026-06-09T04:33:41.3069465Z PASS
+2026-06-09T04:33:41.3072105Z ok  	github.com/nyrkio/benchzoo/frameworks/unit-or-qa/junit-go	3.305s
+2026-06-09T04:33:41.3164699Z 
+2026-06-09T04:33:41.3165093Z DONE 4 tests in 5.101s
+2026-06-09T04:33:41.3266856Z ##[group]Run actions/upload-artifact@v4
+2026-06-09T04:33:41.3267146Z with:

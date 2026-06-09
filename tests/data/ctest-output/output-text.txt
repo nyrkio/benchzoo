@@ -1,0 +1,16 @@
+2026-06-04T08:09:30.4804537Z -- Configuring done (0.2s)
+2026-06-04T08:09:30.5532238Z -- Generating done (0.1s)
+2026-06-04T08:09:30.5534838Z -- Build files have been written to: /home/runner/work/benchzoo/benchzoo/frameworks/unit-or-qa/ctest/build
+2026-06-04T08:09:31.7630077Z Test project /home/runner/work/benchzoo/benchzoo/frameworks/unit-or-qa/ctest/build
+2026-06-04T08:09:31.8239970Z     Start 1: benchmark1
+2026-06-04T08:09:33.9857948Z 1/4 Test #1: benchmark1 .......................   Passed    2.15 sec
+2026-06-04T08:09:33.9858809Z     Start 2: benchmark2
+2026-06-04T08:09:33.9894693Z 2/4 Test #2: benchmark2 .......................   Passed    0.00 sec
+2026-06-04T08:09:33.9897049Z     Start 3: benchmark3
+2026-06-04T08:09:33.9970328Z 3/4 Test #3: benchmark3 .......................   Passed    0.01 sec
+2026-06-04T08:09:33.9970866Z     Start 4: benchmark4
+2026-06-04T08:09:35.1541120Z 4/4 Test #4: benchmark4 .......................   Passed    1.16 sec
+2026-06-04T08:09:35.1542131Z 
+2026-06-04T08:09:35.1542357Z 100% tests passed, 0 tests failed out of 4
+2026-06-04T08:09:35.1542725Z 
+2026-06-04T08:09:35.1542930Z Total Test time (real) =   3.39 sec

@@ -1,0 +1,110 @@
+2026-06-07T22:11:50.9994073Z // Job: Job-KDYUWA(IterationCount=3, RunStrategy=Monitoring)
+2026-06-07T22:11:50.9994553Z 
+2026-06-07T22:11:51.0163895Z 
+2026-06-07T22:11:51.0164142Z // BeforeActualRun
+2026-06-07T22:11:52.1767693Z WorkloadActual   1: 1 op, 1150635273.00 ns, 1.1506 s/op
+2026-06-07T22:11:53.3283404Z WorkloadActual   2: 1 op, 1150121799.00 ns, 1.1501 s/op
+2026-06-07T22:11:54.4795952Z WorkloadActual   3: 1 op, 1150112095.00 ns, 1.1501 s/op
+2026-06-07T22:11:54.4796409Z 
+2026-06-07T22:11:54.4798669Z // AfterActualRun
+2026-06-07T22:11:54.5026337Z WorkloadResult   1: 1 op, 1150635273.00 ns, 1.1506 s/op
+2026-06-07T22:11:54.5027177Z WorkloadResult   2: 1 op, 1150121799.00 ns, 1.1501 s/op
+2026-06-07T22:11:54.5027907Z WorkloadResult   3: 1 op, 1150112095.00 ns, 1.1501 s/op
+2026-06-07T22:11:54.5031243Z 
+2026-06-07T22:11:54.5045178Z // AfterAll
+2026-06-07T22:11:54.5087430Z // Benchmark Process 2802 has exited with code 0.
+2026-06-07T22:11:54.5087936Z 
+2026-06-07T22:11:54.5094754Z Mean = 1.150 s, StdErr = 0.000 s (0.02%), N = 3, StdDev = 0.000 s
+2026-06-07T22:11:54.5095479Z Min = 1.150 s, Q1 = 1.150 s, Median = 1.150 s, Q3 = 1.150 s, Max = 1.151 s
+2026-06-07T22:11:54.5096038Z IQR = 0.000 s, LowerFence = 1.150 s, UpperFence = 1.151 s
+2026-06-07T22:11:54.5096779Z ConfidenceInterval = [1.145 s; 1.156 s] (CI 99.9%), Margin = 0.005 s (0.47% of Mean)
+2026-06-07T22:11:54.5097466Z Skewness = 0.38, Kurtosis = 0.67, MValue = 2
+2026-06-07T22:11:54.5097791Z 
+2026-06-07T22:11:54.5098448Z // ** Remained 0 (0.0 %) benchmark(s) to run. Estimated finish 2026-06-07 22:11 (0h 0m from now) **
+2026-06-07T22:11:54.5408341Z // ***** BenchmarkRunner: Finish  *****
+2026-06-07T22:11:54.5408871Z 
+2026-06-07T22:11:54.5408983Z // * Export *
+2026-06-07T22:11:54.5438512Z   BenchmarkDotNet.Artifacts/results/BenchzooSample.SampleBenchmark-report.csv
+2026-06-07T22:11:54.5684077Z   BenchmarkDotNet.Artifacts/results/BenchzooSample.SampleBenchmark-report-github.md
+2026-06-07T22:11:54.5694568Z   BenchmarkDotNet.Artifacts/results/BenchzooSample.SampleBenchmark-report.html
+2026-06-07T22:11:54.8683566Z   BenchmarkDotNet.Artifacts/results/BenchzooSample.SampleBenchmark-report-full.json
+2026-06-07T22:11:54.8684082Z 
+2026-06-07T22:11:54.8684242Z // * Detailed results *
+2026-06-07T22:11:54.8685960Z SampleBenchmark.Benchmark1: Job-RKWAOX(IterationCount=3, RunStrategy=Monitoring)
+2026-06-07T22:11:54.8710116Z Runtime = .NET 8.0.27 (8.0.2726.22922), X64 RyuJIT AVX2; GC = Concurrent Workstation
+2026-06-07T22:11:54.8710993Z Mean = 2.150 s, StdErr = 0.000 s (0.01%), N = 3, StdDev = 0.000 s
+2026-06-07T22:11:54.8711699Z Min = 2.150 s, Q1 = 2.150 s, Median = 2.150 s, Q3 = 2.150 s, Max = 2.151 s
+2026-06-07T22:11:54.8712369Z IQR = 0.000 s, LowerFence = 2.150 s, UpperFence = 2.151 s
+2026-06-07T22:11:54.8713143Z ConfidenceInterval = [2.145 s; 2.156 s] (CI 99.9%), Margin = 0.005 s (0.25% of Mean)
+2026-06-07T22:11:54.8713872Z Skewness = 0.35, Kurtosis = 0.67, MValue = 2
+2026-06-07T22:11:54.8714645Z -------------------- Histogram --------------------
+2026-06-07T22:11:54.8714983Z [2.150 s ; 2.151 s) | @@@
+2026-06-07T22:11:54.8715266Z ---------------------------------------------------
+2026-06-07T22:11:54.8715499Z 
+2026-06-07T22:11:54.8715942Z SampleBenchmark.Benchmark2: Job-RKWAOX(IterationCount=3, RunStrategy=Monitoring)
+2026-06-07T22:11:54.8716554Z Runtime = .NET 8.0.27 (8.0.2726.22922), X64 RyuJIT AVX2; GC = Concurrent Workstation
+2026-06-07T22:11:54.8717061Z Mean = 101.907 us, StdErr = 98.246 us (96.41%), N = 3, StdDev = 170.167 us
+2026-06-07T22:11:54.8717548Z Min = 3.605 us, Q1 = 3.660 us, Median = 3.716 us, Q3 = 151.058 us, Max = 298.399 us
+2026-06-07T22:11:54.8718030Z IQR = 147.397 us, LowerFence = -217.435 us, UpperFence = 372.153 us
+2026-06-07T22:11:54.8718586Z ConfidenceInterval = [-3,002.579 us; 3,206.393 us] (CI 99.9%), Margin = 3,104.486 us (3046.40% of Mean)
+2026-06-07T22:11:54.8719223Z Skewness = 0.38, Kurtosis = 0.67, MValue = 2
+2026-06-07T22:11:54.8719568Z -------------------- Histogram --------------------
+2026-06-07T22:11:54.8719886Z [-3.857 us ; 305.861 us) | @@@
+2026-06-07T22:11:54.8720180Z ---------------------------------------------------
+2026-06-07T22:11:54.8720389Z 
+2026-06-07T22:11:54.8720681Z SampleBenchmark.Benchmark3: Job-RKWAOX(IterationCount=3, RunStrategy=Monitoring)
+2026-06-07T22:11:54.8721248Z Runtime = .NET 8.0.27 (8.0.2726.22922), X64 RyuJIT AVX2; GC = Concurrent Workstation
+2026-06-07T22:11:54.8721754Z Mean = 5.290 ms, StdErr = 0.244 ms (4.62%), N = 3, StdDev = 0.423 ms
+2026-06-07T22:11:54.8722202Z Min = 4.991 ms, Q1 = 5.048 ms, Median = 5.104 ms, Q3 = 5.439 ms, Max = 5.774 ms
+2026-06-07T22:11:54.8722649Z IQR = 0.391 ms, LowerFence = 4.461 ms, UpperFence = 6.026 ms
+2026-06-07T22:11:54.8723150Z ConfidenceInterval = [-2.426 ms; 13.005 ms] (CI 99.9%), Margin = 7.715 ms (145.85% of Mean)
+2026-06-07T22:11:54.8723594Z Skewness = 0.35, Kurtosis = 0.67, MValue = 2
+2026-06-07T22:11:54.8723925Z -------------------- Histogram --------------------
+2026-06-07T22:11:54.8724236Z [4.606 ms ; 5.433 ms) | @@
+2026-06-07T22:11:54.8724477Z [5.433 ms ; 6.159 ms) | @
+2026-06-07T22:11:54.8724762Z ---------------------------------------------------
+2026-06-07T22:11:54.8724970Z 
+2026-06-07T22:11:54.8725251Z SampleBenchmark.Benchmark4: Job-RKWAOX(IterationCount=3, RunStrategy=Monitoring)
+2026-06-07T22:11:54.8725816Z Runtime = .NET 8.0.27 (8.0.2726.22922), X64 RyuJIT AVX2; GC = Concurrent Workstation
+2026-06-07T22:11:54.8726285Z Mean = 1.150 s, StdErr = 0.000 s (0.02%), N = 3, StdDev = 0.000 s
+2026-06-07T22:11:54.8726711Z Min = 1.150 s, Q1 = 1.150 s, Median = 1.150 s, Q3 = 1.150 s, Max = 1.151 s
+2026-06-07T22:11:54.8727116Z IQR = 0.000 s, LowerFence = 1.150 s, UpperFence = 1.151 s
+2026-06-07T22:11:54.8727576Z ConfidenceInterval = [1.145 s; 1.156 s] (CI 99.9%), Margin = 0.005 s (0.47% of Mean)
+2026-06-07T22:11:54.8728129Z Skewness = 0.38, Kurtosis = 0.67, MValue = 2
+2026-06-07T22:11:54.8728598Z -------------------- Histogram --------------------
+2026-06-07T22:11:54.8729288Z [1.150 s ; 1.151 s) | @@@
+2026-06-07T22:11:54.8729688Z ---------------------------------------------------
+2026-06-07T22:11:54.8729988Z 
+2026-06-07T22:11:54.8730101Z // * Summary *
+2026-06-07T22:11:54.8730270Z 
+2026-06-07T22:11:54.8730534Z BenchmarkDotNet v0.14.0, Ubuntu 24.04.4 LTS (Noble Numbat)
+2026-06-07T22:11:54.8731104Z AMD EPYC 9V74, 1 CPU, 4 logical and 2 physical cores
+2026-06-07T22:11:54.8731546Z .NET SDK 10.0.300
+2026-06-07T22:11:54.8731956Z   [Host]     : .NET 8.0.27 (8.0.2726.22922), X64 RyuJIT AVX2
+2026-06-07T22:11:54.8732591Z   Job-RKWAOX : .NET 8.0.27 (8.0.2726.22922), X64 RyuJIT AVX2
+2026-06-07T22:11:54.8732968Z 
+2026-06-07T22:11:54.8733174Z IterationCount=3  RunStrategy=Monitoring  
+2026-06-07T22:11:54.8733473Z 
+2026-06-07T22:11:54.8733782Z | Method     | Mean           | Error      | StdDev   | Median           |
+2026-06-07T22:11:54.8734475Z |----------- |---------------:|-----------:|---------:|-----------------:|
+2026-06-07T22:11:54.8735220Z | Benchmark1 | 2,150,299.4 us | 5,382.3 us | 295.0 us | 2,150,175.087 us |
+2026-06-07T22:11:54.8736356Z | Benchmark2 |       101.9 us | 3,104.5 us | 170.2 us |         3.716 us |
+2026-06-07T22:11:54.8737172Z | Benchmark3 |     5,289.7 us | 7,715.3 us | 422.9 us |     5,104.289 us |
+2026-06-07T22:11:54.8738122Z | Benchmark4 | 1,150,289.7 us | 5,460.3 us | 299.3 us | 1,150,121.799 us |
+2026-06-07T22:11:54.8828107Z 
+2026-06-07T22:11:54.8828290Z // * Warnings *
+2026-06-07T22:11:54.8831126Z MinIterationTime
+2026-06-07T22:11:54.8834513Z   SampleBenchmark.Benchmark2: IterationCount=3, RunStrategy=Monitoring -> The minimum observed iteration time is 3.605us which is very small. It's recommended to increase it to at least 100ms using more operations.
+2026-06-07T22:11:54.8836837Z   SampleBenchmark.Benchmark3: IterationCount=3, RunStrategy=Monitoring -> The minimum observed iteration time is 4.991ms which is very small. It's recommended to increase it to at least 100ms using more operations.
+2026-06-07T22:11:54.8837924Z // * Config Issues *
+2026-06-07T22:11:54.8838161Z 
+2026-06-07T22:11:54.8838287Z // * Warnings *
+2026-06-07T22:11:54.8838595Z Configuration
+2026-06-07T22:11:54.8839448Z   Summary -> The exporter CsvExporter is already present in configuration. There may be unexpected results.
+2026-06-07T22:11:54.8840133Z 
+2026-06-07T22:11:54.8840258Z // * Legends *
+2026-06-07T22:11:54.8840606Z   Mean   : Arithmetic mean of all measurements
+2026-06-07T22:11:54.8841091Z   Error  : Half of 99.9% confidence interval
+2026-06-07T22:11:54.8841611Z   StdDev : Standard deviation of all measurements
+2026-06-07T22:11:54.8842307Z   Median : Value separating the higher half of all measurements (50th percentile)
+2026-06-07T22:11:54.8842978Z   1 us   : 1 Microsecond (0.000001 sec)

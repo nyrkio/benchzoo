@@ -451,12 +451,14 @@ _TEXT_PATTERNS: list[tuple[str, str | None, "re.Pattern[str]"]] = [
     # GNU time -v
     ("time", "gnu",
      re.compile(r"Elapsed \(wall clock\) time \(h:mm:ss or m:ss\):")),
-    # JMH text output header (no text parser — json/csv only)
-    ("jmh", None,
-     re.compile(r"^Benchmark\s+Mode\s+Cnt\s+Score", re.MULTILINE)),
-    # Catch2 v3 text banner (no text parser — xml/junit only)
-    ("catch2", None,
-     re.compile(r"^All tests passed \(\d+ assertions? in \d+ test case",
+    # JMH summary-table header → jmh_text (timestamp-tolerant for CI logs).
+    ("jmh", "text",
+     re.compile(r"^\s*(?:\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+Z\s+)?"
+                r"Benchmark\s+Mode\s+Cnt\s+Score\s+Error\s+Units\s*$",
+                re.MULTILINE)),
+    # Catch2 benchmark table header → catch2_text.
+    ("catch2", "text",
+     re.compile(r"^.*benchmark name\s+samples\s+iterations\s+est run time\s*$",
                 re.MULTILINE)),
     # Go test -bench text: "BenchmarkName-N  iterations  ns/op"
     # Distinguish from cargo bench text (same format) by package path
@@ -496,12 +498,26 @@ _TEXT_PATTERNS: list[tuple[str, str | None, "re.Pattern[str]"]] = [
     # Gatling simulation.log
     ("gatling", "log",
      re.compile(r"^RUN\t\S+\t\S+\t\d{13}\t", re.MULTILINE)),
-    # mitata's pretty-table preamble precedes its JSON envelope;
-    # when we have only the preamble (e.g. CI log capture), match
-    # the "clk: ~X GHz" header banner that mitata prints unconditionally.
-    # No text parser — mitata only parses its JSON envelope.
-    ("mitata", None,
-     re.compile(r"^clk: ~[\d.]+ (GHz|MHz)", re.MULTILINE)),
+    # mitata's pretty-table header → mitata_text (its "json" artifact is
+    # really ANSI console text, so the text parser is the real one).
+    ("mitata", "text",
+     re.compile(r"^(?:\d{4}-\d\d-\d\dT[\d:.]+Z\s)?benchmark\s+avg \(min … max\) p75 / p99",
+                re.MULTILINE)),
+    ("benchmarkdotnet", "text", re.compile(r"^(?:\S+\s)?BenchmarkDotNet v\d", re.MULTILINE)),
+    ("pytest-benchmark", "text", re.compile(r"^\s*(?:\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+Z\s+)?Name \(time in (?:ns|µs|μs|us|ms|s)\)\s+Min\s+Max\s+Mean\s+StdDev\b", re.MULTILINE)),
+    ("hyperfine", "text", re.compile(r"^.*Time\s*\(mean\s*[±+].*\):\s*[0-9.]+\s*(?:ns|µs|μs|us|ms|s)\s*[±+]", re.MULTILINE)),
+    ("asv", "text", re.compile(r"^.*?·\s*Running \d+ total benchmarks \(\d+ commits?", re.MULTILINE)),
+    ("benchmark-ips", "text", re.compile(r"\(±\s*[0-9.]+%\)\s*i/s\s+\(\s*[0-9.]+\s*(?:ns|µs|μs|us|ms|s)/i\s*\)")),
+    ("vitest-bench", "text", re.compile(r"^\s*(?:\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+Z\s+)?(?:\x1b\[[0-9;]*m)*Benchmarking is an experimental feature\.", re.MULTILINE)),
+    ("benchmarktools-jl", "text", re.compile(r"\bTrial\(\s*[0-9][0-9.]*\s*(?:ns|µs|μs|us|ms|s)\s*\)", re.MULTILINE)),
+    ("phpbench", "text", re.compile(r"^\s*(?:\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+Z\s+)?\|\s*benchmark\s+\|\s*subject\s+\|\s*set\s+\|\s*revs\s+\|\s*its\s+\|\s*mem_peak\s+\|\s*mode\s+\|\s*rstdev\s+\|", re.MULTILINE)),
+    ("locust", "text", re.compile(r"^(?:\d{4}-\d{2}-\d{2}T[\d:.]+Z\s+)?Type\s+Name\s+# reqs\s+# fails", re.MULTILINE)),
+    ("jmeter", "text", re.compile(r"summary\s*=\s*\d+ in \d{2}:\d{2}:\d{2} = [0-9.]+/s Avg:\s*\d+ Min:\s*\d+ Max:\s*\d+ Err:", re.MULTILINE)),
+    ("redis-benchmark", "text", re.compile(r"^\s*(?:\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+Z\s+)?throughput summary:\s+[0-9.]+\s+requests per second", re.MULTILINE)),
+    ("memtier", "text", re.compile(r"^\s*(?:\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+Z\s+)?Type\s+Ops/sec\s+Hits/sec\s+Misses/sec\b", re.MULTILINE)),
+    ("junit-jest", "text", re.compile(r"^(?:\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+Z\s+)?\s*[✓√]\s+\S.*\(\d+(?:\.\d+)?\s*(?:ms|s|min)\)\s*$", re.MULTILINE)),
+    ("junit-go", "text", re.compile(r"^\s*(?:\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+Z\s+)?---\s+(?:PASS|FAIL):\s+Test\S*\s+\([0-9.]+s\)", re.MULTILINE)),
+    ("ctest", "text", re.compile(r"^\s*(?:\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+Z\s+)?\d+/\d+\s+Test\s+#\d+:\s+\S.*?\s+\.{2,}\s*(?:\*{3}\s*)?\w[\w ]*?\s+[0-9]+(?:\.[0-9]+)?\s+sec\b", re.MULTILINE)),
 ]
 
 

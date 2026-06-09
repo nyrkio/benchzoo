@@ -1,0 +1,129 @@
+2026-06-08T08:26:55.2964679Z ##[group]Run bash run.sh
+2026-06-08T08:26:55.2964955Z [36;1mbash run.sh[0m
+2026-06-08T08:26:55.2992705Z shell: /usr/bin/bash -e {0}
+2026-06-08T08:26:55.2992941Z env:
+2026-06-08T08:26:55.2993235Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.19-10/x64
+2026-06-08T08:26:55.2993639Z   JAVA_HOME_17_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.19-10/x64
+2026-06-08T08:26:55.2993948Z ##[endgroup]
+2026-06-08T08:27:03.9908272Z # JMH version: 1.37
+2026-06-08T08:27:03.9908751Z # VM version: JDK 17.0.19, OpenJDK 64-Bit Server VM, 17.0.19+10
+2026-06-08T08:27:03.9918845Z # VM invoker: /usr/lib/jvm/temurin-17-jdk-amd64/bin/java
+2026-06-08T08:27:03.9919704Z # VM options: <none>
+2026-06-08T08:27:04.0935320Z # Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+2026-06-08T08:27:04.0935920Z # Warmup: 1 iterations, 1 s each
+2026-06-08T08:27:04.0936872Z # Measurement: 3 iterations, 1 s each
+2026-06-08T08:27:04.0937524Z # Timeout: 10 min per iteration
+2026-06-08T08:27:04.0938279Z # Threads: 1 thread, will synchronize iterations
+2026-06-08T08:27:04.0944790Z # Benchmark mode: Average time, time/op
+2026-06-08T08:27:04.0945352Z # Benchmark: io.nyrkio.benchzoo.jmh.SampleBenchmark.benchmark1
+2026-06-08T08:27:04.0945709Z 
+2026-06-08T08:27:04.1133980Z # Run progress: 0.00% complete, ETA 00:00:16
+2026-06-08T08:27:04.1134364Z # Fork: 1 of 1
+2026-06-08T08:27:06.4372221Z # Warmup Iteration   1: 2150.122 ms/op
+2026-06-08T08:27:08.5830239Z Iteration   1: 2150.114 ms/op
+2026-06-08T08:27:10.7358285Z Iteration   2: 2150.101 ms/op
+2026-06-08T08:27:12.8855142Z Iteration   3: 2150.108 ms/op
+2026-06-08T08:27:12.8956454Z 
+2026-06-08T08:27:12.8975179Z 
+2026-06-08T08:27:12.9119483Z Result "io.nyrkio.benchzoo.jmh.SampleBenchmark.benchmark1":
+2026-06-08T08:27:12.9120538Z   2150.108 ±(99.9%) 0.111 ms/op [Average]
+2026-06-08T08:27:12.9120932Z   (min, avg, max) = (2150.101, 2150.108, 2150.114), stdev = 0.006
+2026-06-08T08:27:12.9121343Z   CI (99.9%): [2149.996, 2150.219] (assumes normal distribution)
+2026-06-08T08:27:12.9121535Z 
+2026-06-08T08:27:12.9121539Z 
+2026-06-08T08:27:12.9138796Z # JMH version: 1.37
+2026-06-08T08:27:12.9141341Z # VM version: JDK 17.0.19, OpenJDK 64-Bit Server VM, 17.0.19+10
+2026-06-08T08:27:12.9142409Z # VM invoker: /usr/lib/jvm/temurin-17-jdk-amd64/bin/java
+2026-06-08T08:27:12.9142898Z # VM options: <none>
+2026-06-08T08:27:12.9143393Z # Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+2026-06-08T08:27:12.9143770Z # Warmup: 1 iterations, 1 s each
+2026-06-08T08:27:12.9143994Z # Measurement: 3 iterations, 1 s each
+2026-06-08T08:27:12.9144224Z # Timeout: 10 min per iteration
+2026-06-08T08:27:12.9144453Z # Threads: 1 thread, will synchronize iterations
+2026-06-08T08:27:12.9144707Z # Benchmark mode: Average time, time/op
+2026-06-08T08:27:12.9145003Z # Benchmark: io.nyrkio.benchzoo.jmh.SampleBenchmark.benchmark2
+2026-06-08T08:27:12.9145219Z 
+2026-06-08T08:27:12.9145331Z # Run progress: 25.00% complete, ETA 00:00:26
+2026-06-08T08:27:12.9145570Z # Fork: 1 of 1
+2026-06-08T08:27:14.0577404Z # Warmup Iteration   1: ≈ 10⁻⁴ ms/op
+2026-06-08T08:27:15.0541665Z Iteration   1: ≈ 10⁻⁴ ms/op
+2026-06-08T08:27:16.0563659Z Iteration   2: ≈ 10⁻⁴ ms/op
+2026-06-08T08:27:17.0569680Z Iteration   3: ≈ 10⁻⁴ ms/op
+2026-06-08T08:27:17.0659151Z 
+2026-06-08T08:27:17.0659429Z 
+2026-06-08T08:27:17.0663058Z Result "io.nyrkio.benchzoo.jmh.SampleBenchmark.benchmark2":
+2026-06-08T08:27:17.0663570Z   ≈ 10⁻⁴ ms/op
+2026-06-08T08:27:17.0663724Z 
+2026-06-08T08:27:17.0667101Z 
+2026-06-08T08:27:17.0677671Z # JMH version: 1.37
+2026-06-08T08:27:17.0678210Z # VM version: JDK 17.0.19, OpenJDK 64-Bit Server VM, 17.0.19+10
+2026-06-08T08:27:17.0678679Z # VM invoker: /usr/lib/jvm/temurin-17-jdk-amd64/bin/java
+2026-06-08T08:27:17.0678936Z # VM options: <none>
+2026-06-08T08:27:17.0679286Z # Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+2026-06-08T08:27:17.0679812Z # Warmup: 1 iterations, 1 s each
+2026-06-08T08:27:17.0680374Z # Measurement: 3 iterations, 1 s each
+2026-06-08T08:27:17.0680603Z # Timeout: 10 min per iteration
+2026-06-08T08:27:17.0680838Z # Threads: 1 thread, will synchronize iterations
+2026-06-08T08:27:17.0681093Z # Benchmark mode: Average time, time/op
+2026-06-08T08:27:17.0681399Z # Benchmark: io.nyrkio.benchzoo.jmh.SampleBenchmark.benchmark3
+2026-06-08T08:27:17.0681612Z 
+2026-06-08T08:27:17.0681713Z # Run progress: 50.00% complete, ETA 00:00:12
+2026-06-08T08:27:17.0681938Z # Fork: 1 of 1
+2026-06-08T08:27:18.2164847Z # Warmup Iteration   1: 1.432 ms/op
+2026-06-08T08:27:19.2178654Z Iteration   1: 1.416 ms/op
+2026-06-08T08:27:20.2205506Z Iteration   2: 1.420 ms/op
+2026-06-08T08:27:21.2223425Z Iteration   3: 1.416 ms/op
+2026-06-08T08:27:21.2305295Z 
+2026-06-08T08:27:21.2305946Z 
+2026-06-08T08:27:21.2320434Z Result "io.nyrkio.benchzoo.jmh.SampleBenchmark.benchmark3":
+2026-06-08T08:27:21.2321318Z   1.417 ±(99.9%) 0.037 ms/op [Average]
+2026-06-08T08:27:21.2321961Z   (min, avg, max) = (1.416, 1.417, 1.420), stdev = 0.002
+2026-06-08T08:27:21.2323338Z   CI (99.9%): [1.381, 1.454] (assumes normal distribution)
+2026-06-08T08:27:21.2323760Z 
+2026-06-08T08:27:21.2323918Z 
+2026-06-08T08:27:21.2327365Z # JMH version: 1.37
+2026-06-08T08:27:21.2327786Z # VM version: JDK 17.0.19, OpenJDK 64-Bit Server VM, 17.0.19+10
+2026-06-08T08:27:21.2328491Z # VM invoker: /usr/lib/jvm/temurin-17-jdk-amd64/bin/java
+2026-06-08T08:27:21.2329089Z # VM options: <none>
+2026-06-08T08:27:21.2329786Z # Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+2026-06-08T08:27:21.2330582Z # Warmup: 1 iterations, 1 s each
+2026-06-08T08:27:21.2331007Z # Measurement: 3 iterations, 1 s each
+2026-06-08T08:27:21.2331360Z # Timeout: 10 min per iteration
+2026-06-08T08:27:21.2331739Z # Threads: 1 thread, will synchronize iterations
+2026-06-08T08:27:21.2332157Z # Benchmark mode: Average time, time/op
+2026-06-08T08:27:21.2332620Z # Benchmark: io.nyrkio.benchzoo.jmh.SampleBenchmark.benchmark4
+2026-06-08T08:27:21.2332955Z 
+2026-06-08T08:27:21.2333546Z # Run progress: 75.00% complete, ETA 00:00:05
+2026-06-08T08:27:21.2333901Z # Fork: 1 of 1
+2026-06-08T08:27:22.5250851Z # Warmup Iteration   1: 1150.848 ms/op
+2026-06-08T08:27:23.6763345Z Iteration   1: 1150.133 ms/op
+2026-06-08T08:27:24.8282715Z Iteration   2: 1150.133 ms/op
+2026-06-08T08:27:25.9794508Z Iteration   3: 1150.144 ms/op
+2026-06-08T08:27:25.9872239Z 
+2026-06-08T08:27:25.9872811Z 
+2026-06-08T08:27:25.9884484Z Result "io.nyrkio.benchzoo.jmh.SampleBenchmark.benchmark4":
+2026-06-08T08:27:25.9885470Z   1150.137 ±(99.9%) 0.113 ms/op [Average]
+2026-06-08T08:27:25.9885973Z   (min, avg, max) = (1150.133, 1150.137, 1150.144), stdev = 0.006
+2026-06-08T08:27:25.9886593Z   CI (99.9%): [1150.023, 1150.250] (assumes normal distribution)
+2026-06-08T08:27:25.9887186Z 
+2026-06-08T08:27:25.9887319Z 
+2026-06-08T08:27:25.9891275Z # Run complete. Total time: 00:00:21
+2026-06-08T08:27:25.9891525Z 
+2026-06-08T08:27:25.9891877Z REMEMBER: The numbers below are just data. To gain reusable insights, you need to follow up on
+2026-06-08T08:27:25.9892661Z why the numbers are the way they are. Use profilers (see -prof, -lprof), design factorial
+2026-06-08T08:27:25.9893408Z experiments, perform baseline and negative tests that provide experimental control, make sure
+2026-06-08T08:27:25.9894182Z the benchmarking environment is safe on JVM/OS/HW level, ask for reviews from the domain experts.
+2026-06-08T08:27:25.9894801Z Do not assume the numbers tell you what you want them to tell.
+2026-06-08T08:27:25.9895074Z 
+2026-06-08T08:27:25.9895398Z NOTE: Current JVM experimentally supports Compiler Blackholes, and they are in use. Please exercise
+2026-06-08T08:27:25.9896138Z extra caution when trusting the results, look into the generated code to check the benchmark still
+2026-06-08T08:27:25.9896862Z works, and factor in a small probability of new VM bugs. Additionally, while comparisons between
+2026-06-08T08:27:25.9897595Z different JVMs are already problematic, the performance difference caused by different Blackhole
+2026-06-08T08:27:25.9898853Z modes can be very significant. Please make sure you use the consistent Blackhole mode for comparisons.
+2026-06-08T08:27:25.9899332Z 
+2026-06-08T08:27:25.9948740Z Benchmark                   Mode  Cnt     Score    Error  Units
+2026-06-08T08:27:25.9964638Z SampleBenchmark.benchmark1  avgt    3  2150.108 ±  0.111  ms/op
+2026-06-08T08:27:25.9965303Z SampleBenchmark.benchmark2  avgt    3    ≈ 10⁻⁴           ms/op
+2026-06-08T08:27:25.9977769Z SampleBenchmark.benchmark3  avgt    3     1.417 ±  0.037  ms/op
+2026-06-08T08:27:25.9982195Z SampleBenchmark.benchmark4  avgt    3  1150.137 ±  0.113  ms/op
+2026-06-08T08:27:26.0116038Z 

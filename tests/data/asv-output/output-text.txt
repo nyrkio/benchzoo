@@ -1,0 +1,49 @@
+2026-06-05T04:32:38.1699590Z ##[group]Run ./run.sh
+2026-06-05T04:32:38.1699895Z [36;1m./run.sh[0m
+2026-06-05T04:32:38.1728938Z shell: /usr/bin/bash -e {0}
+2026-06-05T04:32:38.1729210Z env:
+2026-06-05T04:32:38.1729504Z   pythonLocation: /opt/hostedtoolcache/Python/3.12.13/x64
+2026-06-05T04:32:38.1730150Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.12.13/x64/lib/pkgconfig
+2026-06-05T04:32:38.1730592Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.13/x64
+2026-06-05T04:32:38.1730994Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.13/x64
+2026-06-05T04:32:38.1731389Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.12.13/x64
+2026-06-05T04:32:38.1731779Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.12.13/x64/lib
+2026-06-05T04:32:38.1732116Z ##[endgroup]
+2026-06-05T04:32:38.3920746Z Couldn't load asv.plugins._mamba_helpers because
+2026-06-05T04:32:38.3921330Z No module named 'libmambapy'
+2026-06-05T04:32:38.5279820Z · No information stored about machine 'runnervm3jyl0'. I know about nothing.
+2026-06-05T04:32:38.5280693Z   
+2026-06-05T04:32:38.5280888Z 
+2026-06-05T04:32:38.5287721Z I will now ask you some questions about this machine to identify it in the benchmarks.
+2026-06-05T04:32:38.5288333Z 
+2026-06-05T04:32:38.5288648Z 1. machine:  A unique name to identify this machine in the results.
+2026-06-05T04:32:38.5289438Z    May be anything, as long as it is unique across all the machines
+2026-06-05T04:32:38.5290215Z    used to benchmark this project.  NOTE: If changed from the default,
+2026-06-05T04:32:38.5291009Z    it will no longer match the hostname of this machine, and you may
+2026-06-05T04:32:38.5291702Z    need to explicitly use the --machine argument to asv.
+2026-06-05T04:32:38.5292718Z machine [runnervm3jyl0]: 2. os:  The OS type and version of this machine.  For example,
+2026-06-05T04:32:38.5293468Z    'Macintosh OS-X 10.8'.
+2026-06-05T04:32:38.5294159Z os [Linux 6.17.0-1015-azure]: 3. arch:  The generic CPU architecture of this machine.  For example,
+2026-06-05T04:32:38.5294913Z    'i386' or 'x86_64'.
+2026-06-05T04:32:38.5295514Z arch [x86_64]: 4. cpu:  A specific description of the CPU of this machine, including
+2026-06-05T04:32:38.5296344Z    its speed and class.  For example, 'Intel(R) Core(TM) i5-2520M CPU
+2026-06-05T04:32:38.5296948Z    @ 2.50GHz (4 cores)'.
+2026-06-05T04:32:38.5297666Z cpu [AMD EPYC 9V74 80-Core Processor]: 5. num_cpu:  The number of CPUs in the system. For example, '4'.
+2026-06-05T04:32:38.5298618Z num_cpu [4]: 6. ram:  The amount of physical RAM on this machine.  For example,
+2026-06-05T04:32:38.5299228Z    '4GB'.
+2026-06-05T04:32:38.6601523Z Couldn't load asv.plugins._mamba_helpers because
+2026-06-05T04:32:38.6601943Z No module named 'libmambapy'
+2026-06-05T04:32:43.6236675Z ram [16373460]: · Creating environments
+2026-06-05T04:32:43.8140781Z · Discovering benchmarks
+2026-06-05T04:32:44.1755414Z ·· Uninstalling from virtualenv-py3.12
+2026-06-05T04:32:48.7529183Z ·· Building c0c1d55c <main> for virtualenv-py3.12
+2026-06-05T04:32:49.4594903Z ·· Installing c0c1d55c <main> into virtualenv-py3.12
+2026-06-05T04:32:49.4649564Z · Running 4 total benchmarks (1 commits * 1 environments * 4 benchmarks)
+2026-06-05T04:32:49.4701093Z [ 0.00%] · For benchzoo commit c0c1d55c <main>:
+2026-06-05T04:32:49.5765404Z [ 0.00%] ·· Benchmarking virtualenv-py3.12
+2026-06-05T04:32:51.7333997Z [12.50%] ··· benchmarks.SampleBenchmark.time_benchmark1                 2.15±0s
+2026-06-05T04:32:51.7389572Z [25.00%] ··· benchmarks.SampleBenchmark.time_benchmark2                54.7±0μs
+2026-06-05T04:32:51.7486584Z [37.50%] ··· benchmarks.SampleBenchmark.time_benchmark3                5.02±0ms
+2026-06-05T04:32:53.0054391Z [50.00%] ··· benchmarks.SampleBenchmark.time_benchmark4                 1.15±0s
+2026-06-05T04:32:53.0403590Z Copied .asv/results/runnervm3jyl0/c0c1d55c-virtualenv-py3.12.json -> output.json
+2026-06-05T04:32:53.0493096Z ##[group]Run actions/upload-artifact@v4

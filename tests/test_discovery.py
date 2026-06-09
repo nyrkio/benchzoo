@@ -214,12 +214,20 @@ def test_sniff_fixture(fixture_dir: str, expected: str | None):
             framework = rfw
         else:
             framework = result
-        # Some fixture dirs bundle a plain-junit artifact alongside the
-        # framework's native output (e.g. catch2-output ships
-        # output.junit.xml). "junit-standard" is the honest answer for
-        # those files even when the dir's primary expected framework is
-        # different.
-        allowed = {None, expected, "junit-standard"} if "junit" in path.name.lower() else {None, expected}
+        # A file in <framework>-output/ may legitimately sniff to that
+        # framework — its "namesake" — even when the dir's primary
+        # expectation points elsewhere. This happens when one dir holds
+        # more than one of the framework's formats: e.g. junit-jest-output
+        # ships a generic-junit XML (→ junit-standard) AND a jest console
+        # log (→ junit-jest/text). The namesake is the dir's framework, so
+        # allowing it cannot let a *wrong* framework through.
+        namesake = fixture_dir.removesuffix("-output")
+        allowed = {None, expected, namesake}
+        # Some dirs also bundle a plain-junit artifact (e.g.
+        # catch2-output/output.junit.xml); "junit-standard" is the honest
+        # answer for any junit-named file.
+        if "junit" in path.name.lower():
+            allowed.add("junit-standard")
         if expected is None:
             # No claim either way — but we must not fabricate.
             assert framework is None or framework in PARSERS, (

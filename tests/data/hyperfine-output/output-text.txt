@@ -1,0 +1,33 @@
+2026-06-03T11:57:34.7020411Z Processing triggers for man-db (2.12.0-4build2) ...
+2026-06-03T11:57:34.7054929Z Not building database; man-db/auto-update is not 'true'.
+2026-06-03T11:57:34.7258680Z hyperfine 1.19.0
+2026-06-03T11:57:34.7305965Z ##[group]Run ./run.sh
+2026-06-03T11:57:34.7306323Z [36;1m./run.sh[0m
+2026-06-03T11:57:34.7336379Z shell: /usr/bin/bash -e {0}
+2026-06-03T11:57:34.7336721Z ##[endgroup]
+2026-06-03T11:57:34.7781171Z Benchmark 1: benchmark1
+2026-06-03T11:57:58.4727894Z   Time (mean ± σ):      2.153 s ±  0.000 s    [User: 0.001 s, System: 0.003 s]
+2026-06-03T11:57:58.4729027Z   Range (min … max):    2.153 s …  2.154 s    10 runs
+2026-06-03T11:57:58.4729511Z  
+2026-06-03T11:57:58.4729774Z Benchmark 2: benchmark2
+2026-06-03T11:57:58.5128586Z  
+2026-06-03T11:57:58.5129446Z   Time (mean ± σ):       2.9 ms ±   0.1 ms    [User: 2.1 ms, System: 0.9 ms]
+2026-06-03T11:57:58.5130199Z   Range (min … max):     2.9 ms …   3.0 ms    10 runs
+2026-06-03T11:57:58.5130659Z  
+2026-06-03T11:57:58.5132313Z   Warning: Command took less than 5 ms to complete. Note that the results might be inaccurate because hyperfine can not calibrate the shell startup time much more precise than this limit. You can try to use the `-N`/`--shell=none` option to disable the shell completely.
+2026-06-03T11:57:58.5133401Z Benchmark 3: benchmark3
+2026-06-03T11:57:58.5966256Z   Time (mean ± σ):       6.9 ms ±   0.1 ms    [User: 0.8 ms, System: 6.2 ms]
+2026-06-03T11:57:58.5967131Z   Range (min … max):     6.8 ms …   7.0 ms    10 runs
+2026-06-03T11:57:58.5967621Z  
+2026-06-03T11:57:58.5967966Z Benchmark 4: benchmark4
+2026-06-03T11:58:11.3303181Z   Time (mean ± σ):      1.157 s ±  0.000 s    [User: 0.002 s, System: 0.005 s]
+2026-06-03T11:58:11.3304023Z   Range (min … max):    1.157 s …  1.157 s    10 runs
+2026-06-03T11:58:11.3304548Z  
+2026-06-03T11:58:11.3305236Z Summary
+2026-06-03T11:58:11.3305610Z   benchmark2 ran
+2026-06-03T11:58:11.3306065Z     2.36 ± 0.05 times faster than benchmark3
+2026-06-03T11:58:11.3306629Z   397.52 ± 6.98 times faster than benchmark4
+2026-06-03T11:58:11.3307193Z   739.92 ± 12.99 times faster than benchmark1
+2026-06-03T11:58:11.3441006Z ##[group]Run actions/upload-artifact@v4
+2026-06-03T11:58:11.3441333Z with:
+2026-06-03T11:58:11.3441559Z   name: hyperfine-output

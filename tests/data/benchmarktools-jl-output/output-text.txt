@@ -1,0 +1,21 @@
+2026-06-04T03:57:02.1324934Z Error: Missing source file for Base.PkgId(Base.UUID("9a0b3e4d-1c5f-4c22-8e41-2b1a7a0e6c10"), "benchzoo_benchmarktools_sample"┌ Info: benchmark4 month/sleep
+2026-06-04T03:57:02.1325336Z │   month = 6
+2026-06-04T03:57:02.1325464Z └   sleep_s = 1.15
+2026-06-04T03:57:02.4733088Z (1/4) benchmarking "benchmark1"...
+2026-06-04T03:57:11.3138398Z done (took 8.816656403 seconds)
+2026-06-04T03:57:11.3138746Z (2/4) benchmarking "benchmark2"...
+2026-06-04T03:57:11.4509972Z done (took 0.137029242 seconds)
+2026-06-04T03:57:11.4510288Z (3/4) benchmarking "benchmark3"...
+2026-06-04T03:57:12.2064468Z done (took 0.755412425 seconds)
+2026-06-04T03:57:12.2064735Z (4/4) benchmarking "benchmark4"...
+2026-06-04T03:57:16.9501048Z done (took 4.743603074 seconds)
+2026-06-04T03:57:17.2717012Z --- results summary ---
+2026-06-04T03:57:17.3765775Z benchmark1: Trial(2.153 s)
+2026-06-04T03:57:17.3766057Z benchmark2: Trial(20.000 ns)
+2026-06-04T03:57:17.3773794Z benchmark3: Trial(25.739 μs)
+2026-06-04T03:57:17.3775340Z benchmark4: Trial(1.152 s)
+2026-06-04T03:57:17.3775514Z --- wrote output.json ---
+2026-06-04T03:57:17.3901054Z -rw-r--r-- 1 runner runner 217843 Jun  4 03:57 output.json
+2026-06-04T03:57:17.3902712Z --- head of output.json ---
+2026-06-04T03:57:17.3911686Z [{"Julia":"1.11.9","BenchmarkTools":"1.5.0"},[["BenchmarkGroup",{"data":{"benchmark1":["Trial",{"allocs":4,"gctimes":[0.0,0.0,0.0],"memory":112,"params":["Parameters",{"gctrial":true,"time_tolerance":0.05,"evals_set":false,"samples":3,"evals":1,"gcsample":false,"seconds":30.0,"overhead":0.0,"memory_tolerance":0.01}],"times":[2.152638993e9,2.15322102e9,2.153197003e9]}],"benchmark2":["Trial",{"allocs":0,"gctimes":[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,
+2026-06-04T03:57:17.3948155Z ##[group]Run actions/upload-artifact@v4

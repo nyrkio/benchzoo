@@ -1,0 +1,22 @@
+2026-04-13T00:00:51.0701351Z ##[group]Run bash run.sh
+2026-04-13T00:00:51.0701626Z [36;1mbash run.sh[0m
+2026-04-13T00:00:51.0724158Z shell: /usr/bin/bash -e {0}
+2026-04-13T00:00:51.0724596Z env:
+2026-04-13T00:00:51.0724768Z   JMETER_VERSION: 5.6.3
+2026-04-13T00:00:51.0725022Z   JVM_ARGS: -Xms512m -Xmx1024m -Djava.awt.headless=true
+2026-04-13T00:00:51.0725423Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.18-8/x64
+2026-04-13T00:00:51.0726228Z   JAVA_HOME_17_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.18-8/x64
+2026-04-13T00:00:51.0726592Z ##[endgroup]
+2026-04-13T00:00:53.3751957Z WARN StatusConsoleListener The use of package scanning to locate plugins is deprecated and will be removed in a future release
+2026-04-13T00:00:53.3937220Z WARN StatusConsoleListener The use of package scanning to locate plugins is deprecated and will be removed in a future release
+2026-04-13T00:00:53.3976828Z WARN StatusConsoleListener The use of package scanning to locate plugins is deprecated and will be removed in a future release
+2026-04-13T00:00:53.4445705Z WARN StatusConsoleListener The use of package scanning to locate plugins is deprecated and will be removed in a future release
+2026-04-13T00:00:54.0292703Z Apr 13, 2026 12:00:53 AM java.util.prefs.FileSystemPreferences$1 run
+2026-04-13T00:00:54.0317651Z INFO: Created user preferences directory.
+2026-04-13T00:00:54.8884901Z Creating summariser <summary>
+2026-04-13T00:00:54.8951406Z Created the tree successfully using test-plan.jmx
+2026-04-13T00:00:54.9222248Z Starting standalone test @ 2026 Apr 13 00:00:54 UTC (1776038454899)
+2026-04-13T00:00:54.9496397Z Waiting for possible Shutdown/StopTestNow/HeapDump/ThreadDump message on port 4445
+2026-04-13T00:00:55.9937699Z summary =   1000 in 00:00:01 = 1034.1/s Avg:     0 Min:     0 Max:    36 Err:     0 (0.00%)
+2026-04-13T00:00:55.9938792Z Tidying up ...    @ 2026 Apr 13 00:00:55 UTC (1776038455992)
+2026-04-13T00:00:55.9939753Z ... end of run
