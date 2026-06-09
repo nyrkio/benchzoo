@@ -483,6 +483,16 @@ _TEXT_PATTERNS: list[tuple[str, str | None, "re.Pattern[str]"]] = [
          r"[0-9.]+\s*(?:ns|µs|μs|us|ms|s)\s*\]",
          re.MULTILINE,
      )),
+    # linetimer (PyPI ``linetimer``) CodeTimer stdout: one line per timed
+    # block, "Code block 'NAME' took: 1.50120 s". Used e.g. by
+    # pola-rs/polars-benchmark's TPC-H suite; usually buried in a CI log.
+    ("linetimer", "text",
+     re.compile(
+         r"^\s*(?:\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+Z\s+)?"
+         r"Code block '[^']*' took:\s+[0-9.]+(?:[eE][+-]?[0-9]+)?\s*"
+         r"(?:ns|µs|μs|us|ms|sec|s|min|m|h)\b",
+         re.MULTILINE,
+     )),
     # Gatling simulation.log
     ("gatling", "log",
      re.compile(r"^RUN\t\S+\t\S+\t\d{13}\t", re.MULTILINE)),

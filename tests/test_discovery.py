@@ -123,6 +123,7 @@ _FIXTURE_EXPECTATIONS: dict[str, str | None] = {
     "time-output":               "time",
     "go-test-bench-output":      "go-test-bench",
     "cargo-bench-output":        "cargo-bench",
+    "linetimer-output":          "linetimer",
     "gatling-output":            "gatling",
     "criterion-output":          None,              # estimates.json is tiny nested, bencher text is same as cargo bench
     # Historical Nyrkiö JSON — both the top-level-array form (nyrkio.com

@@ -1,0 +1,7 @@
+2026-06-08T20:48:55.1234567Z ##[group]Run TPC-H benchmark suite
+2026-06-08T20:48:58.9876543Z Loaded data: scale_factor=10.0
+2026-06-08T20:49:01.2345678Z Code block 'Run polars query 1' took: 1.50120 s
+2026-06-08T20:49:02.3456789Z Code block 'Run polars query 2' took: 0.07198 s
+2026-06-08T20:49:03.4567890Z Code block 'Run polars query 3' took: 0.50565 s
+2026-06-08T20:49:04.5678901Z Code block 'Run polars query 4' took: 0.50226 s
+2026-06-08T20:49:05.6789012Z ##[endgroup]

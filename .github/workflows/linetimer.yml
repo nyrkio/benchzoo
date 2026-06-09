@@ -1,0 +1,52 @@
+name: linetimer
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'frameworks/language/linetimer/**'
+      - '.github/workflows/linetimer.yml'
+  pull_request:
+    paths:
+      - 'frameworks/language/linetimer/**'
+      - '.github/workflows/linetimer.yml'
+  workflow_dispatch:
+  schedule:
+    # Weekly. Spread away from the other framework crons.
+    - cron: '13 7 * * 1'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: linetimer-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frameworks/language/linetimer
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: frameworks/language/linetimer/requirements.txt
+
+      - name: Install linetimer
+        run: pip install -r requirements.txt
+
+      - name: Run sample benchmark
+        run: bash ./run.sh
+
+      - name: Upload output as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: linetimer-output
+          path: frameworks/language/linetimer/output.txt
+          if-no-files-found: error

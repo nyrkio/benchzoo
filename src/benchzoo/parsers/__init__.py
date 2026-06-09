@@ -79,6 +79,7 @@ PARSERS: dict[str, dict[str, str]] = {
                           "bencher":   "criterion_bencher",
                           "text":      "criterion_text"},
     "cargo-bench":       {"text":      "cargo_bench_libtest"},
+    "linetimer":         {"text":      "linetimer"},
     "google-benchmark":  {"json":      "google_benchmark_json",
                           "csv":       "google_benchmark_csv",
                           "text":      "google_benchmark_text"},
