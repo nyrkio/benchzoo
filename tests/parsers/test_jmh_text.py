@@ -119,3 +119,30 @@ def test_benchmark4_change_point(text_results):
     # June specifically -> 1.15 s.
     assert 1100 < score["value"] < 1200, score
     assert score["direction"] == "lower_is_better"
+
+
+# ---------------------------------------------------------------------------
+# Parametrized table + throughput mode (e.g. caffeine: @Param columns, ops/s)
+# ---------------------------------------------------------------------------
+
+def test_parametrized_throughput_table_sniffs_and_parses():
+    """JMH with a @Param column ('(computeType)') and Throughput mode
+    (ops/s -> higher_is_better), as ben-manes/caffeine emits. The sniff
+    signature must tolerate the param column between Benchmark and Mode,
+    and the parser must read the Result blocks (ops/s)."""
+    from benchzoo.sniff import sniff
+    sample = (
+        'Result "com.github.benmanes.caffeine.cache.ComputeBenchmark.compute_sameKey":\n'
+        '  141604244.603 ±(99.9%) 1804309497.840 ops/s [Average]\n'
+        '\n'
+        '# Run complete. Total time: 00:06:10\n'
+        'Benchmark                          (computeType)   Mode  Cnt          Score            Error  Units\n'
+        'ComputeBenchmark.compute_sameKey        Caffeine  thrpt    3  141604244.603 ± 1804309497.840  ops/s\n'
+    )
+    assert sniff(sample) == "jmh/text"          # param column tolerated
+    rows = jmh_text.parse(sample)
+    assert rows, "should parse the Result block"
+    score = _metric(rows[0], "score")
+    assert score["unit"] == "ops/s"
+    assert score["direction"] == "higher_is_better"
+    assert score["value"] == pytest.approx(141604244.603)

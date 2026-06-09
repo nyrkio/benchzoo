@@ -452,9 +452,11 @@ _TEXT_PATTERNS: list[tuple[str, str | None, "re.Pattern[str]"]] = [
     ("time", "gnu",
      re.compile(r"Elapsed \(wall clock\) time \(h:mm:ss or m:ss\):")),
     # JMH summary-table header → jmh_text (timestamp-tolerant for CI logs).
+    # ``.*?`` between Benchmark and Mode allows JMH's optional @Param columns
+    # (e.g. caffeine's "Benchmark   (computeType)   Mode  Cnt  Score ...").
     ("jmh", "text",
      re.compile(r"^\s*(?:\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+Z\s+)?"
-                r"Benchmark\s+Mode\s+Cnt\s+Score\s+Error\s+Units\s*$",
+                r"Benchmark\b.*?\bMode\s+Cnt\s+Score\s+Error\s+Units\s*$",
                 re.MULTILINE)),
     # Catch2 benchmark table header → catch2_text.
     ("catch2", "text",
