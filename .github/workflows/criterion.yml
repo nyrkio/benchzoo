@@ -55,4 +55,5 @@ jobs:
           path: |
             frameworks/language/criterion/output/
             frameworks/language/criterion/output-bencher.txt
+            frameworks/language/criterion/output-text.txt
           if-no-files-found: error

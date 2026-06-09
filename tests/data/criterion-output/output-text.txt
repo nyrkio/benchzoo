@@ -1,0 +1,39 @@
+Benchmarking benchmark2
+Benchmarking benchmark2: Warming up for 3.0000 s
+Benchmarking benchmark2: Collecting 100 samples in estimated 5.0010 s (24M iterations)
+Benchmarking benchmark2: Analyzing
+benchmark2              time:   [205.95 ns 206.80 ns 207.66 ns]
+Found 3 outliers among 100 measurements (3.00%)
+  2 (2.00%) high mild
+  1 (1.00%) high severe
+
+Benchmarking benchmark3
+Benchmarking benchmark3: Warming up for 3.0000 s
+Benchmarking benchmark3: Collecting 100 samples in estimated 5.0000 s (12B iterations)
+Benchmarking benchmark3: Analyzing
+benchmark3              time:   [400.52 ps 401.99 ps 403.74 ps]
+Found 9 outliers among 100 measurements (9.00%)
+  5 (5.00%) high mild
+  4 (4.00%) high severe
+
+Benchmarking benchmark1
+Benchmarking benchmark1: Warming up for 3.0000 s
+
+Warning: Unable to complete 10 samples in 5.0s. You may wish to increase target time to 21.5s.
+Benchmarking benchmark1: Collecting 10 samples in estimated 21.502 s (10 iterations)
+Benchmarking benchmark1: Analyzing
+benchmark1              time:   [2.1503 s 2.1504 s 2.1505 s]
+Found 2 outliers among 10 measurements (20.00%)
+  1 (10.00%) low mild
+  1 (10.00%) high mild
+
+Benchmarking benchmark4
+Benchmarking benchmark4: Warming up for 3.0000 s
+
+Warning: Unable to complete 10 samples in 5.0s. You may wish to increase target time to 11.5s.
+Benchmarking benchmark4: Collecting 10 samples in estimated 11.501 s (10 iterations)
+Benchmarking benchmark4: Analyzing
+benchmark4              time:   [1.1501 s 1.1502 s 1.1503 s]
+Found 1 outliers among 10 measurements (10.00%)
+  1 (10.00%) high severe
+

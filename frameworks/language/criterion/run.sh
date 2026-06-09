@@ -29,8 +29,11 @@ mkdir -p output
 
 # `cargo bench --bench sample_benchmark` runs every bench group declared
 # in `criterion_main!`. With harness = false and no filter, all four
-# benches execute.
-cargo bench --bench sample_benchmark
+# benches execute. We tee stdout to output-text.txt to capture criterion's
+# DEFAULT human-readable output (the "benchmarkN  time: [lo mid hi]" lines)
+# — the format the `criterion_text` parser reads, distinct from the
+# estimates.json and bencher fixtures below.
+cargo bench --bench sample_benchmark 2>&1 | tee output-text.txt
 
 # Copy the per-bench estimates.json files into ./output/ under a flat
 # naming scheme. The `new/` subdirectory is the most recent run;

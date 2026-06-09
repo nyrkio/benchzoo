@@ -35,15 +35,20 @@ import re
 _ANSI_RE = re.compile(r"\x1b\[[0-9;]*m")
 
 # Nanoseconds per criterion time unit. µ may be the micro sign (U+00B5) or
-# Greek mu (U+03BC); criterion also occasionally emits ASCII "us".
-_UNIT_NS = {"ns": 1.0, "µs": 1e3, "μs": 1e3, "us": 1e3, "ms": 1e6, "s": 1e9}
-_UNIT = r"(?:ns|µs|μs|us|ms|s)"
+# Greek mu (U+03BC); criterion also occasionally emits ASCII "us". Fast
+# benches measure in picoseconds (criterion divides wall time by a huge
+# iteration count), so "ps" is real and must be handled.
+_UNIT_NS = {"ps": 1e-3, "ns": 1.0, "µs": 1e3, "μs": 1e3, "us": 1e3,
+            "ms": 1e6, "s": 1e9}
+_UNIT = r"(?:ps|ns|µs|μs|us|ms|s)"
 
 # The criterion confidence-interval line: "time:   [lo <u> mid <u> hi <u>]".
-# Anchored at line start (after optional indentation) so a stray "time:" in
-# prose can't match.
+# criterion prints the benchmark id INLINE on this line for short names
+# ("benchmark1              time:   [...]") and on its OWN line just above
+# when the id is long enough to wrap. So capture an optional id before
+# "time:" here, and fall back to the preceding line when it's absent.
 _TIME_RE = re.compile(
-    r"^\s*time:\s*\[\s*"
+    r"^(?P<name>.*?)\btime:\s*\[\s*"
     r"([0-9.]+)\s*(" + _UNIT + r")\s+"
     r"([0-9.]+)\s*(" + _UNIT + r")\s+"
     r"([0-9.]+)\s*(" + _UNIT + r")\s*\]"
@@ -71,21 +76,24 @@ def parse(content: bytes | str) -> list[dict]:
         m = _TIME_RE.match(line)
         if not m:
             continue
-        # The benchmark id is the nearest preceding non-blank line that
-        # isn't criterion/cargo chrome — criterion prints it immediately
-        # before the time line.
-        name = None
-        for j in range(i - 1, max(-1, i - 6), -1):
-            cand = lines[j].strip()
-            if not cand or cand.startswith(_NOISE_PREFIXES):
-                continue
-            name = cand
-            break
+        # Inline id (short names): everything before "time:" on this line.
+        name = m.group("name").strip()
+        if not name or name.startswith(_NOISE_PREFIXES):
+            # Wrapped id (long names): the nearest preceding non-blank line
+            # that isn't criterion/cargo chrome.
+            name = None
+            for j in range(i - 1, max(-1, i - 6), -1):
+                cand = lines[j].strip()
+                if not cand or cand.startswith(_NOISE_PREFIXES):
+                    continue
+                name = cand
+                break
         if not name:
             continue
-        lower = _to_ns(m.group(1), m.group(2))
-        point = _to_ns(m.group(3), m.group(4))
-        upper = _to_ns(m.group(5), m.group(6))
+        vals = m.groups()[1:]   # the six (value, unit) groups after "name"
+        lower = _to_ns(vals[0], vals[1])
+        point = _to_ns(vals[2], vals[3])
+        upper = _to_ns(vals[4], vals[5])
         out.append({
             "test": {"test_name": name},
             "run": {"passed": True},
