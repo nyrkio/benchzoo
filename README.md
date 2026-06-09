@@ -58,9 +58,11 @@ proprietary formats, or bootstrapping a new deterministic parser.
 ## Status
 
 42 frameworks end-to-end (sample benchmark + workflow +
-real CI-captured fixture + parser + ground-truth tests); **250+
-passing parser tests**. The library is `pip install -e .`-able; the
-corpus runs on every push.
+real CI-captured fixture + parser + ground-truth tests); **370+
+passing parser tests**. **32 frameworks parse plain stdout / CI-log
+output** (the `*_text` parsers) — so results printed to a job log with
+no uploaded artifact still ingest. The library is `pip install -e .`-able;
+the corpus runs on every push.
 
 Pre-1.0: parser API may still move; not yet on PyPI.
 
@@ -122,19 +124,19 @@ LLM parser tests skip by default; set `BENCHZOO_RUN_LLM_ANTHROPIC=1`
 | Rust | [criterion](frameworks/language/criterion/) | `criterion_estimates`, `criterion_bencher` |
 | Rust | [cargo bench (libtest)](frameworks/language/cargo-bench/) | `cargo_bench_libtest` (shares `criterion_bencher`) |
 | C++ | [Google Benchmark](frameworks/language/google-benchmark/) | `google_benchmark_json`, `google_benchmark_csv` |
-| C++ | [Catch2](frameworks/language/catch2/) | `catch2_xml`, `junit_standard` |
-| Java/JVM | [JMH](frameworks/language/jmh/) | `jmh_json`, `jmh_csv` |
-| C# / .NET | [BenchmarkDotNet](frameworks/language/benchmarkdotnet/) | `benchmarkdotnet_json`, `benchmarkdotnet_csv` |
+| C++ | [Catch2](frameworks/language/catch2/) | `catch2_xml`, `junit_standard`, `catch2_text` |
+| Java/JVM | [JMH](frameworks/language/jmh/) | `jmh_json`, `jmh_csv`, `jmh_text` |
+| C# / .NET | [BenchmarkDotNet](frameworks/language/benchmarkdotnet/) | `benchmarkdotnet_json`, `benchmarkdotnet_csv`, `benchmarkdotnet_text` |
 | Go | [`go test -bench`](frameworks/language/go-test-bench/) | `go_bench_text`, `go_bench_json` |
-| Python | [pytest-benchmark](frameworks/language/pytest-benchmark/) | `pytest_benchmark_json`, `junit_pytest` |
-| Python | [asv (airspeed velocity)](frameworks/language/asv/) | `asv` |
+| Python | [pytest-benchmark](frameworks/language/pytest-benchmark/) | `pytest_benchmark_json`, `junit_pytest`, `pytest_benchmark_text` |
+| Python | [asv (airspeed velocity)](frameworks/language/asv/) | `asv`, `asv_text` |
 | JS | [benchmark.js](frameworks/language/benchmark-js/) | `benchmark_js` |
 | JS | [tinybench](frameworks/language/tinybench/) | `tinybench` |
-| JS | [mitata](frameworks/language/mitata/) | `mitata` |
-| JS/TS | [vitest bench](frameworks/language/vitest-bench/) | `vitest_bench` |
-| Julia | [BenchmarkTools.jl](frameworks/language/benchmarktools-jl/) | `benchmarktools_jl` |
-| PHP | [PHPBench](frameworks/language/phpbench/) | `phpbench_xml` |
-| Ruby | [benchmark-ips](frameworks/language/benchmark-ips/) | `benchmark_ips` |
+| JS | [mitata](frameworks/language/mitata/) | `mitata`, `mitata_text` |
+| JS/TS | [vitest bench](frameworks/language/vitest-bench/) | `vitest_bench`, `vitest_bench_text` |
+| Julia | [BenchmarkTools.jl](frameworks/language/benchmarktools-jl/) | `benchmarktools_jl`, `benchmarktools_jl_text` |
+| PHP | [PHPBench](frameworks/language/phpbench/) | `phpbench_xml`, `phpbench_text` |
+| Ruby | [benchmark-ips](frameworks/language/benchmark-ips/) | `benchmark_ips`, `benchmark_ips_text` |
 
 ### Load / HTTP testing
 
@@ -145,8 +147,8 @@ LLM parser tests skip by default; set `BENCHZOO_RUN_LLM_ANTHROPIC=1`
 | [wrk2](frameworks/loadtest/wrk2/) | `wrk2` |
 | [hey](frameworks/loadtest/hey/) | `hey` |
 | [vegeta](frameworks/loadtest/vegeta/) | `vegeta_json` |
-| [Locust](frameworks/loadtest/locust/) | `locust_csv` |
-| [JMeter](frameworks/loadtest/jmeter/) | `jmeter_csv` |
+| [Locust](frameworks/loadtest/locust/) | `locust_csv`, `locust_text` |
+| [JMeter](frameworks/loadtest/jmeter/) | `jmeter_csv`, `jmeter_text` |
 | [Gatling](frameworks/loadtest/gatling/) | `gatling_log` |
 
 ### Databases
@@ -155,8 +157,8 @@ LLM parser tests skip by default; set `BENCHZOO_RUN_LLM_ANTHROPIC=1`
 | --- | --- |
 | [pgbench](frameworks/database/pgbench/) | `pgbench` |
 | [sysbench](frameworks/database/sysbench/) | `sysbench` |
-| [redis-benchmark](frameworks/database/redis-benchmark/) | `redis_benchmark_csv` |
-| [memtier_benchmark](frameworks/database/memtier/) | `memtier_json` |
+| [redis-benchmark](frameworks/database/redis-benchmark/) | `redis_benchmark_csv`, `redis_benchmark_text` |
+| [memtier_benchmark](frameworks/database/memtier/) | `memtier_json`, `memtier_text` |
 | [ClickBench](frameworks/database/clickbench/) | `clickbench` |
 
 ### Frontend
@@ -170,18 +172,18 @@ LLM parser tests skip by default; set `BENCHZOO_RUN_LLM_ANTHROPIC=1`
 | Framework | Parser(s) |
 | --- | --- |
 | [mocha (--reporter json)](frameworks/unit-or-qa/mocha/) | `mocha_json` |
-| [Jest (jest-junit)](frameworks/unit-or-qa/junit-jest/) | `junit_standard` |
-| [go test (gotestsum)](frameworks/unit-or-qa/junit-go/) | `junit_go` |
+| [Jest (jest-junit)](frameworks/unit-or-qa/junit-jest/) | `junit_standard`, `junit_jest_text` |
+| [go test (gotestsum)](frameworks/unit-or-qa/junit-go/) | `junit_go`, `junit_go_text` |
 | [JUnit 5 / Maven Surefire](frameworks/unit-or-qa/junit-vanilla/) | `junit_standard` |
 | [dotnet test (TRX)](frameworks/unit-or-qa/dotnet-test/) | `dotnet_test_trx` |
-| [CTest (--output-junit)](frameworks/unit-or-qa/ctest/) | `junit_standard` |
+| [CTest (--output-junit)](frameworks/unit-or-qa/ctest/) | `junit_standard`, `ctest_text` |
 | [Playwright](frameworks/unit-or-qa/playwright/) | `playwright_json` |
 
 ### Generic / escape hatches
 
 | Framework | Parser(s) |
 | --- | --- |
-| [hyperfine](frameworks/generic/hyperfine/) | `hyperfine_json`, `hyperfine_csv` |
+| [hyperfine](frameworks/generic/hyperfine/) | `hyperfine_json`, `hyperfine_csv`, `hyperfine_text` |
 | [Unix time (bash + GNU)](frameworks/generic/time/) | `time_builtin`, `time_gnu` |
 | [perf stat](frameworks/generic/perf-stat/) | `perf_stat_text` |
 | [custom JSON](frameworks/generic/custom-json/) | `custom_bigger_is_better`, `custom_smaller_is_better` |
