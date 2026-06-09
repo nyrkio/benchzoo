@@ -7,19 +7,23 @@ either prefixed with GitHub Actions' ISO-8601 timestamp (read from a job
 *log*, no artifact — polars' case) or clean (from an artifact). Both must
 parse, and units normalise to seconds.
 
-``test_four_sample_benchmarks_round_trip`` runs the same four blocks as
-the ``frameworks/language/linetimer`` example through *real* linetimer and
-parses the captured stdout — no fixture, no throwaway script.
+``tests/data/linetimer-output/output.txt`` is the captured native output
+of the four canonical benchmarks (``docs/sample-benchmark.md``), produced
+by ``frameworks/language/linetimer/bench.py``. The ground-truth test
+asserts the known wall times — the load-bearing "does the parser read the
+right field" check.
 """
 
 from __future__ import annotations
 
-import time
+import pathlib
 
 import pytest
 
 from benchzoo.parsers import find_parser, linetimer
 from benchzoo.sniff import sniff
+
+FIXTURES = pathlib.Path(__file__).parent.parent / "data" / "linetimer-output"
 
 # A GitHub-Actions job-log excerpt: per-line ISO timestamp + cargo noise.
 _LOG = (
@@ -46,6 +50,39 @@ def test_registry_resolves():
     assert find_parser("linetimer") is linetimer  # single format -> fmt optional
 
 
+# ---------------------------------------------------------------------------
+# Ground truth: the four canonical sample benchmarks (docs/sample-benchmark.md)
+# ---------------------------------------------------------------------------
+
+def test_canonical_benchmarks_ground_truth():
+    rows = linetimer.parse((FIXTURES / "output.txt").read_text())
+    by = _by_name(rows)
+    assert {"benchmark1", "benchmark2", "benchmark3", "benchmark4"} <= set(by)
+
+    # Every block: seconds-normalised, lower-is-better, framework tagged.
+    for name in ("benchmark1", "benchmark2", "benchmark3", "benchmark4"):
+        m = _metric(by[name])
+        assert m["unit"] == "s"
+        assert m["direction"] == "lower_is_better"
+        assert by[name]["env"]["framework"]["name"] == "linetimer"
+        assert by[name]["run"]["passed"] is True
+
+    # Test 1 — ~2.15 s sleep.
+    assert 2.0 < _metric(by["benchmark1"])["value"] < 2.4
+    # Test 2 — sub-millisecond CPU loop, but NOT rounded to zero.
+    assert 0.0 < _metric(by["benchmark2"])["value"] < 0.05
+    # Test 3 — 1.4 MB to /dev/null: sub-ms to a few ms.
+    assert 0.0 < _metric(by["benchmark3"])["value"] < 0.1
+    # Test 4 — change-detection showcase: one of {1.15, 2.15, 3.15} s
+    # depending on the capture month (loose check per the spec).
+    v4 = _metric(by["benchmark4"])["value"]
+    assert any(abs(v4 - t) < 0.25 for t in (1.15, 2.15, 3.15)), v4
+
+
+# ---------------------------------------------------------------------------
+# Format handling: GH-log timestamp prefix, unit normalisation, edge cases
+# ---------------------------------------------------------------------------
+
 def test_sniff_identifies_timestamped_log():
     assert sniff(_LOG) == "linetimer/text"
 
@@ -56,12 +93,9 @@ def test_parses_timestamped_log():
     m = _metric(r["Run polars query 1"])
     assert m["value"] == pytest.approx(1.50120)
     assert m["unit"] == "s"
-    assert m["direction"] == "lower_is_better"
-    assert r["Run polars query 1"]["env"]["framework"]["name"] == "linetimer"
-    assert r["Run polars query 1"]["run"]["passed"] is True
 
 
-def test_parses_clean_artifact_form_and_normalises_units():
+def test_normalises_units_to_seconds():
     rows = linetimer.parse(
         "Code block 'a' took: 0.5 s\n"
         "Code block 'b' took: 1250 ms\n"     # linetimer's DEFAULT unit
@@ -80,38 +114,3 @@ def test_ignores_anonymous_and_non_took_lines():
         "Code block 'kept' took: 3.0 s\n"
     )
     assert [r["test"]["test_name"] for r in rows] == ["kept"]
-
-
-def test_four_sample_benchmarks_round_trip(capsys):
-    """Run the four sample CodeTimer blocks (same as the
-    ``frameworks/language/linetimer`` example) through real linetimer,
-    capture stdout, and parse it. All four must round-trip with
-    seconds-normalised, lower-is-better timings.
-    """
-    lt = pytest.importorskip("linetimer")
-
-    with lt.CodeTimer("benchmark1"):
-        time.sleep(0.05)
-    with lt.CodeTimer("benchmark2"):
-        time.sleep(0.10)
-    with lt.CodeTimer("benchmark3"):
-        time.sleep(0.15)
-    with lt.CodeTimer("benchmark4", unit="s"):   # seconds, like polars
-        time.sleep(0.20)
-
-    rows = linetimer.parse(capsys.readouterr().out)
-    by = _by_name(rows)
-    assert set(by) == {"benchmark1", "benchmark2", "benchmark3", "benchmark4"}
-
-    # Defaults emit ms; benchmark4 emits s. The parser normalises all to
-    # seconds, so each block's value is at least its sleep (CI jitter only
-    # makes it longer). Generous upper bound guards against a unit-scaling
-    # bug (e.g. ms read as s would be ~1000x off).
-    lower = {"benchmark1": 0.03, "benchmark2": 0.07,
-             "benchmark3": 0.11, "benchmark4": 0.15}
-    for name, row in by.items():
-        m = _metric(row)
-        assert m["unit"] == "s"
-        assert m["direction"] == "lower_is_better"
-        assert row["env"]["framework"]["name"] == "linetimer"
-        assert lower[name] <= m["value"] <= 5.0, (name, m)
